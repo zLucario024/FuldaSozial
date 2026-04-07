@@ -2,14 +2,16 @@ name: Fulda News Aggregator
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Jede Stunde
-  workflow_dispatch:       # Manuell startbar
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   aggregator:
     runs-on: ubuntu-latest
     env:
-        FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
     steps:
       - name: Code auschecken
         uses: actions/checkout@v4
@@ -20,7 +22,7 @@ jobs:
           python-version: '3.12'
 
       - name: Pakete installieren
-        run: pip install feedparser requests
+        run: pip install feedparser requests anthropic python-dotenv
 
       - name: Aggregator starten
         run: python fulda_news_aggregator.py
