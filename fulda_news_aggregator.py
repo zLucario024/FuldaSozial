@@ -15,6 +15,7 @@ import requests
 import sqlite3
 import hashlib
 from datetime import datetime
+import zoneinfo
 from email.utils import parsedate_to_datetime
 
 # ─────────────────────────────────────────────
@@ -81,9 +82,12 @@ def artikel_hash(link):
 def datum_parsen(datum_str):
     """Wandelt RSS-Datum in ein einheitliches Format um."""
     try:
-        return parsedate_to_datetime(datum_str).strftime("%Y-%m-%d %H:%M:%S")
+        berlin = zoneinfo.ZoneInfo("Europe/Berlin")
+        dt = parsedate_to_datetime(datum_str)
+        return dt.astimezone(berlin).strftime("%Y-%m-%d %H:%M:%S")
     except Exception:
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        berlin = zoneinfo.ZoneInfo("Europe/Berlin")
+        return datetime.now(berlin).strftime("%Y-%m-%d %H:%M:%S")
 
 # ─────────────────────────────────────────────
 # FEED ABRUFEN UND SPEICHERN
