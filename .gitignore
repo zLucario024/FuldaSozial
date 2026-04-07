@@ -3,4 +3,5 @@ venv/
 fulda_news.db
 __pycache__/
 *.pyc
-Notes
+Notes.html
+.env

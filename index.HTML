@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RegioNachrichten Fulda</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rot: #c0152a;
+    --rot-dunkel: #8f0f1f;
+    --rot-hell: #fdf0f2;
+    --schwarz: #111111;
+    --grau-dunkel: #333333;
+    --grau-mittel: #666666;
+    --grau-hell: #f4f4f4;
+    --border: #e0e0e0;
+    --weiss: #ffffff;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--weiss);
+    color: var(--schwarz);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--weiss);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--schwarz);
+  }
+  .logo-icon {
+    width: 36px; height: 36px; background: var(--rot);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .logo-text { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+  .logo-text span { color: var(--rot); }
+
+  .suche-wrapper {
+    position: relative; width: 280px;
+  }
+  .suche-wrapper svg {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; stroke: var(--grau-mittel); fill: none;
+  }
+  .suche-wrapper input {
+    width: 100%; padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border); border-radius: 20px;
+    font-family: var(--font-body); font-size: 14px; color: var(--schwarz);
+    background: var(--grau-hell); outline: none;
+    transition: border-color .2s, background .2s;
+  }
+  .suche-wrapper input:focus { border-color: var(--rot); background: var(--weiss); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 1400px; margin: 0 auto;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900; line-height: 1.15;
+    margin-bottom: .75rem;
+  }
+  .hero h1 em { color: var(--rot); font-style: normal; }
+  .hero p { font-size: 1rem; color: var(--grau-mittel); max-width: 540px; line-height: 1.6; }
+  .hero-sub { margin-top: .5rem; font-size: .85rem; color: var(--rot); border-left: 3px solid var(--rot); padding-left: .6rem; }
+
+  /* ── FILTER ── */
+  .filter-bereich {
+    max-width: 1400px; margin: 0 auto;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+  .filter-gruppe { display: flex; flex-direction: column; gap: .6rem; }
+  .filter-label {
+    font-size: .7rem; font-weight: 600; letter-spacing: .12em;
+    color: var(--rot); text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .filter-label svg { width: 13px; height: 13px; stroke: var(--rot); fill: none; }
+  .chip-reihe { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+  .chip {
+    padding: 6px 16px; border-radius: 20px; font-size: .85rem;
+    font-family: var(--font-body); font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border); background: var(--weiss);
+    color: var(--grau-dunkel); transition: all .15s;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--rot); color: var(--rot); }
+  .chip.aktiv { background: var(--rot); color: var(--weiss); border-color: var(--rot); }
+  .chip.aktiv-dunkel { background: var(--schwarz); color: var(--weiss); border-color: var(--schwarz); }
+
+  .zeitraum-reihe { display: flex; align-items: flex-end; gap: .75rem; flex-wrap: wrap; }
+  .zeitraum-gruppe { display: flex; flex-direction: column; gap: 4px; }
+  .zeitraum-gruppe label { font-size: .7rem; font-weight: 600; letter-spacing: .1em; color: var(--grau-mittel); text-transform: uppercase; }
+  .zeitraum-gruppe input[type=date] {
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px;
+    font-family: var(--font-body); font-size: .85rem; color: var(--schwarz);
+    outline: none; cursor: pointer;
+  }
+  .zeitraum-gruppe input[type=date]:focus { border-color: var(--rot); }
+  .btn-reset {
+    padding: 6px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--weiss); font-family: var(--font-body); font-size: .85rem;
+    color: var(--grau-mittel); cursor: pointer; transition: all .15s;
+  }
+  .btn-reset:hover { border-color: var(--rot); color: var(--rot); }
+
+  /* ── ERGEBNISSE ── */
+  .ergebnis-bar {
+    max-width: 1400px; margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .9rem; color: var(--grau-mittel);
+  }
+  .sortier-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .75rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--grau-dunkel);
+    background: none; border: none; cursor: pointer;
+  }
+  .sortier-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+  /* ── GRID ── */
+  .grid {
+    max-width: 1400px; margin: 0 auto;
+    padding: 0 2rem 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* ── KARTE ── */
+  .karte {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--weiss);
+    display: flex; flex-direction: column;
+    transition: box-shadow .2s, transform .2s;
+    animation: einblenden .3s ease both;
+  }
+  .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
+
+  @keyframes einblenden {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .karte-bild {
+    position: relative; height: 200px; background: var(--grau-hell);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .karte-bild img { width: 100%; height: 100%; object-fit: cover; }
+  .karte-bild .platzhalter svg { width: 48px; height: 48px; fill: #ddd; }
+
+  .badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--rot); color: var(--weiss);
+    font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .badge svg { width: 10px; height: 10px; fill: white; }
+
+  .karte-inhalt { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; gap: .6rem; }
+
+  .karte-titel {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+    line-height: 1.35; color: var(--schwarz);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .karte-beschreibung {
+    font-size: .875rem; color: var(--grau-mittel); line-height: 1.6;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    flex: 1;
+  }
+
+  .karte-meta {
+    display: flex; flex-wrap: wrap; gap: .4rem;
+    font-size: .75rem; color: var(--grau-mittel);
+    align-items: center; padding-top: .4rem;
+    border-top: 1px solid var(--border);
+  }
+  .meta-pill {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .meta-pill svg { width: 11px; height: 11px; stroke: currentColor; fill: none; }
+  .meta-trenner { color: var(--border); }
+  .quelle-pill {
+    background: var(--rot-hell); color: var(--rot);
+    padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: .7rem;
+  }
+
+  .karte-footer {
+    padding: .8rem 1.2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .lese-link {
+    display: flex; align-items: center; gap: 5px;
+    color: var(--rot); font-size: .8rem; font-weight: 600;
+    text-decoration: none; letter-spacing: .03em;
+    transition: gap .15s;
+  }
+  .lese-link:hover { gap: 8px; }
+  .lese-link svg { width: 14px; height: 14px; stroke: var(--rot); fill: none; }
+
+  .meld-btn {
+    font-size: .75rem; color: var(--grau-mittel);
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+    transition: color .15s;
+  }
+  .meld-btn:hover { color: var(--rot); }
+  .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+
+  /* ── LADEN / LEER ── */
+  .lade-container {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 4rem 2rem;
+    color: var(--grau-mittel); gap: 1rem;
+  }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid var(--border);
+    border-top-color: var(--rot); border-radius: 50%;
+    animation: drehen .7s linear infinite;
+  }
+  @keyframes drehen { to { transform: rotate(360deg); } }
+
+  .mehr-btn {
+    display: block; margin: 0 auto 3rem;
+    padding: 12px 32px; border-radius: 8px;
+    background: var(--weiss); border: 1px solid var(--border);
+    font-family: var(--font-body); font-size: .9rem; font-weight: 600;
+    color: var(--grau-dunkel); cursor: pointer; transition: all .2s;
+  }
+  .mehr-btn:hover { border-color: var(--rot); color: var(--rot); }
+  .mehr-btn:disabled { opacity: .5; cursor: default; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    .suche-wrapper { width: 160px; }
+    .hero, .filter-bereich, .ergebnis-bar, .grid { padding-left: 1rem; padding-right: 1rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+    </div>
+    <span class="logo-text">Regio<span>Nachrichten</span> Fulda</span>
+  </a>
+  <div class="suche-wrapper">
+    <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
+  <p>Aktuelle Nachrichten, Polizeimeldungen, Veranstaltungen und mehr aus Stadt und Landkreis Fulda – automatisch gesammelt, chronologisch sortiert.</p>
+  <p class="hero-sub">Demnächst: RegioNachrichten für ganz Hessen</p>
+</section>
+
+<!-- FILTER -->
+<div class="filter-bereich">
+  <div class="filter-gruppe">
+    <div class="filter-label">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Region auswählen
+    </div>
+    <div class="chip-reihe" id="region-chips">
+      <button class="chip aktiv" onclick="regionWaehlen(this, '')">Alle Nachrichten</button>
+      <button class="chip" onclick="regionWaehlen(this, 'landkreis-fulda')">Gesamte Region</button>
+      <button class="chip" onclick="regionWaehlen(this, 'hessen')">Hessen</button>
+    </div>
+  </div>
+
+  <div class="filter-gruppe">
+    <div class="filter-label">
+      <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Quelle filtern
+    </div>
+    <div class="chip-reihe" id="quelle-chips">
+      <button class="chip aktiv-dunkel" onclick="quelleWaehlen(this, '')">Alle Quellen</button>
+    </div>
+  </div>
+
+  <div class="filter-gruppe">
+    <div class="filter-label">
+      <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Zeitraum
+    </div>
+    <div class="zeitraum-reihe">
+      <div class="zeitraum-gruppe">
+        <label>Von</label>
+        <input type="date" id="datum-von" onchange="artikelLaden()">
+      </div>
+      <div class="zeitraum-gruppe">
+        <label>Bis</label>
+        <input type="date" id="datum-bis" onchange="artikelLaden()">
+      </div>
+      <button class="btn-reset" onclick="zeitraumZurueck()">Zurücksetzen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ERGEBNIS-LEISTE -->
+<div class="ergebnis-bar">
+  <span id="anzahl-text">Lade Artikel...</span>
+  <button class="sortier-btn">
+    <svg viewBox="0 0 24 24" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+    Neueste zuerst
+  </button>
+</div>
+
+<!-- ARTIKEL-GRID -->
+<div class="grid" id="artikel-grid"></div>
+<button class="mehr-btn" id="mehr-btn" onclick="mehrLaden()" style="display:none">Mehr laden</button>
+
+<script>
+const API = 'http://localhost:8000';
+let alleArtikel = [];
+let gezeigt = 0;
+const PRO_SEITE = 24;
+let aktivRegion = '';
+let aktivQuelle = '';
+let suchbegriff = '';
+
+// Zeitstempel lesbar machen
+function zeitAusgabe(datumStr) {
+  if (!datumStr) return '';
+  const d = new Date(datumStr);
+  const jetzt = new Date();
+  const diff = Math.floor((jetzt - d) / 60000);
+  if (diff < 60) return `Vor ${diff} Minute${diff !== 1 ? 'n' : ''}`;
+  if (diff < 1440) return `Vor ${Math.floor(diff/60)} Stunde${Math.floor(diff/60) !== 1 ? 'n' : ''}`;
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// Kategorie aus Titel erraten
+function kategorieBestimmen(titel) {
+  const t = titel.toLowerCase();
+  if (t.match(/polizei|unfall|brand|einbruch|diebstahl|festnahme|mord|tat/)) return ['Lokale Vorfälle', '🚨'];
+  if (t.match(/wahl|politik|bürgermeister|gemeinde|stadtrat|bundestag|hessen/)) return ['Politik', '🏛'];
+  if (t.match(/sport|fußball|handball|tennis|turnier|verein|liga/)) return ['Sport', '⚽'];
+  if (t.match(/konzert|theater|ausstellung|kultur|museum|festival|kunst/)) return ['Kultur', '🎭'];
+  if (t.match(/wirtschaft|unternehmen|jobs|stellenanzeige|betrieb|markt/)) return ['Wirtschaft', '📈'];
+  if (t.match(/veranstaltung|fest|markt|feier|event|messe/)) return ['Veranstaltungen', '📅'];
+  return ['Lokales', '📍'];
+}
+
+// Quellen-Chips befüllen
+async function quellenLaden() {
+  try {
+    const res = await fetch(`${API}/quellen`);
+    const data = await res.json();
+    const container = document.getElementById('quelle-chips');
+    data.quellen.forEach(q => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = q.quelle;
+      btn.onclick = () => quelleWaehlen(btn, q.quelle);
+      container.appendChild(btn);
+    });
+  } catch(e) {}
+}
+
+// Artikel laden
+async function artikelLaden() {
+  gezeigt = 0;
+  alleArtikel = [];
+  document.getElementById('artikel-grid').innerHTML =
+    '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
+
+  let url = `${API}/artikel?limit=200`;
+  if (aktivRegion) url += `&region=${encodeURIComponent(aktivRegion)}`;
+  if (aktivQuelle) url += `&quelle=${encodeURIComponent(aktivQuelle)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    alleArtikel = data.artikel || [];
+    artikelAnzeigen();
+  } catch(e) {
+    document.getElementById('artikel-grid').innerHTML =
+      '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ API nicht erreichbar. Stelle sicher dass <strong>uvicorn api:app --reload</strong> läuft.</p></div>';
+    document.getElementById('anzahl-text').textContent = 'Keine Verbindung zur API';
+  }
+}
+
+function gefilterteArtikel() {
+  return alleArtikel.filter(a => {
+    if (suchbegriff && !a.titel.toLowerCase().includes(suchbegriff)) return false;
+    const von = document.getElementById('datum-von').value;
+    const bis = document.getElementById('datum-bis').value;
+    if (von && a.datum < von) return false;
+    if (bis && a.datum > bis + ' 23:59:59') return false;
+    return true;
+  });
+}
+
+function artikelAnzeigen() {
+  const gefiltert = gefilterteArtikel();
+  const grid = document.getElementById('artikel-grid');
+  grid.innerHTML = '';
+  gezeigt = 0;
+
+  document.getElementById('anzahl-text').textContent =
+    `Zeige ${Math.min(PRO_SEITE, gefiltert.length)} von ${gefiltert.length} Artikel${gefiltert.length !== 1 ? 'n' : ''}`;
+
+  if (gefiltert.length === 0) {
+    grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel gefunden.</p></div>';
+    document.getElementById('mehr-btn').style.display = 'none';
+    return;
+  }
+
+  const batch = gefiltert.slice(0, PRO_SEITE);
+  batch.forEach((a, i) => grid.appendChild(karteErstellen(a, i)));
+  gezeigt = batch.length;
+
+  document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
+}
+
+function mehrLaden() {
+  const gefiltert = gefilterteArtikel();
+  const grid = document.getElementById('artikel-grid');
+  const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
+  batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
+  gezeigt += batch.length;
+
+  document.getElementById('anzahl-text').textContent =
+    `Zeige ${gezeigt} von ${gefiltert.length} Artikeln`;
+  document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
+}
+
+function karteErstellen(artikel, index) {
+  const [kategorie] = kategorieBestimmen(artikel.titel || '');
+  const div = document.createElement('div');
+  div.className = 'karte';
+  div.style.animationDelay = `${(index % PRO_SEITE) * 30}ms`;
+
+  div.innerHTML = `
+    <div class="karte-bild">
+      <div class="platzhalter">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+      </div>
+      <div class="badge">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+        ${kategorie}
+      </div>
+    </div>
+    <div class="karte-inhalt">
+      <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
+      <div class="karte-meta">
+        <span class="meta-pill">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          ${zeitAusgabe(artikel.datum)}
+        </span>
+        <span class="meta-trenner">·</span>
+        <span class="quelle-pill">${artikel.quelle || ''}</span>
+      </div>
+    </div>
+    <div class="karte-footer">
+      <a href="${artikel.link}" target="_blank" rel="noopener" class="lese-link">
+        Ganzen Artikel lesen
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <button class="meld-btn">
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        Melden
+      </button>
+    </div>`;
+  return div;
+}
+
+// Filter-Funktionen
+function regionWaehlen(btn, region) {
+  document.querySelectorAll('#region-chips .chip').forEach(c => c.classList.remove('aktiv'));
+  btn.classList.add('aktiv');
+  aktivRegion = region;
+  artikelLaden();
+}
+
+function quelleWaehlen(btn, quelle) {
+  document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
+  btn.classList.add('aktiv-dunkel');
+  aktivQuelle = quelle;
+  artikelLaden();
+}
+
+function sucheAktualisieren() {
+  suchbegriff = document.getElementById('suche').value.toLowerCase().trim();
+  artikelAnzeigen();
+}
+
+function zeitraumZurueck() {
+  document.getElementById('datum-von').value = '';
+  document.getElementById('datum-bis').value = '';
+  artikelAnzeigen();
+}
+
+// Start
+quellenLaden();
+artikelLaden();
+</script>
+</body>
+</html>

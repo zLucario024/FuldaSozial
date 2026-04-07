@@ -1,10 +1,10 @@
 """
 Fulda News Aggregator
 =====================
-Ruft RSS-Feeds ab und speichert Artikel in einer SQLite-Datenbank.
+Ruft RSS-Feeds ab, speichert Artikel in SQLite und generiert Tags per KI.
 
 Installation:
-    pip install feedparser requests
+    pip install feedparser requests anthropic python-dotenv
 
 Ausführen:
     python fulda_news_aggregator.py
@@ -14,12 +14,16 @@ import feedparser
 import requests
 import sqlite3
 import hashlib
+import anthropic
 from datetime import datetime
-import zoneinfo
 from email.utils import parsedate_to_datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # ─────────────────────────────────────────────
-# QUELLENLISTE
+# KONFIGURATION
 # ─────────────────────────────────────────────
 
 FEEDS = [
@@ -50,11 +54,11 @@ HEADERS = {
 DB_DATEI = "fulda_news.db"
 
 # ─────────────────────────────────────────────
-# DATENBANK EINRICHTEN
+# DATENBANK
 # ─────────────────────────────────────────────
 
 def datenbank_einrichten(conn):
-    """Erstellt die Tabelle falls sie noch nicht existiert."""
+    """Erstellt die Tabelle und fügt tags-Spalte hinzu falls nötig."""
     conn.execute("""
         CREATE TABLE IF NOT EXISTS artikel (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,9 +69,15 @@ def datenbank_einrichten(conn):
             typ         TEXT,
             region      TEXT,
             datum       TEXT,
-            gespeichert TEXT
+            gespeichert TEXT,
+            tags        TEXT
         )
     """)
+    # Tags-Spalte nachrüsten falls Datenbank bereits existiert
+    try:
+        conn.execute("ALTER TABLE artikel ADD COLUMN tags TEXT")
+    except sqlite3.OperationalError:
+        pass  # Spalte existiert bereits
     conn.commit()
     print(f"Datenbank bereit: {DB_DATEI}")
 
@@ -76,25 +86,70 @@ def datenbank_einrichten(conn):
 # ─────────────────────────────────────────────
 
 def artikel_hash(link):
-    """Erstellt einen eindeutigen Hash aus der URL – verhindert Duplikate."""
     return hashlib.md5(link.encode()).hexdigest()
 
 def datum_parsen(datum_str):
-    """Wandelt RSS-Datum in ein einheitliches Format um."""
     try:
+        import zoneinfo
         berlin = zoneinfo.ZoneInfo("Europe/Berlin")
         dt = parsedate_to_datetime(datum_str)
         return dt.astimezone(berlin).strftime("%Y-%m-%d %H:%M:%S")
     except Exception:
-        berlin = zoneinfo.ZoneInfo("Europe/Berlin")
-        return datetime.now(berlin).strftime("%Y-%m-%d %H:%M:%S")
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # ─────────────────────────────────────────────
-# FEED ABRUFEN UND SPEICHERN
+# KI TAG-GENERIERUNG
+# ─────────────────────────────────────────────
+
+def tags_generieren(titel_liste):
+    """
+    Schickt eine Liste von Titeln an Claude Haiku.
+    Gibt ein Dictionary {titel: "tag1 · tag2 · tag3"} zurück.
+    """
+    if not titel_liste:
+        return {}
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("  WARNUNG: Kein API-Schlüssel gefunden, Tags werden übersprungen.")
+        return {}
+
+    client = anthropic.Anthropic(api_key=api_key)
+
+    titel_text = "\n".join(
+        f"{i+1}. {titel}" for i, titel in enumerate(titel_liste)
+    )
+
+    prompt = f"""Du bist ein Redakteur für regionale Nachrichten aus Hessen.
+Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
+Fokus auf: Ort, Thema, beteiligte Personen oder Institutionen.
+Trenne die Tags mit " · ".
+Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung.
+
+Titel:
+{titel_text}"""
+
+    try:
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=500,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        zeilen = message.content[0].text.strip().split("\n")
+        ergebnis = {}
+        for i, titel in enumerate(titel_liste):
+            if i < len(zeilen):
+                ergebnis[titel] = zeilen[i].strip()
+        return ergebnis
+    except Exception as e:
+        print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
+        return {}
+
+# ─────────────────────────────────────────────
+# FEED VERARBEITEN
 # ─────────────────────────────────────────────
 
 def feed_verarbeiten(feed, conn):
-    """Ruft einen RSS-Feed ab und speichert neue Artikel in der Datenbank."""
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {feed['name']}")
 
@@ -108,52 +163,58 @@ def feed_verarbeiten(feed, conn):
     entries = parsed.entries
     neu = 0
     duplikate = 0
+    neue_artikel = []
 
+    # Erst alle neuen Artikel speichern (ohne Tags)
     for entry in entries:
-        link   = entry.get("link", "")
-        titel  = entry.get("title", "Kein Titel")
-        datum  = datum_parsen(entry.get("published", ""))
-        hash   = artikel_hash(link)
+        link  = entry.get("link", "")
+        titel = entry.get("title", "Kein Titel")
+        datum = datum_parsen(entry.get("published", ""))
+        hash  = artikel_hash(link)
 
         try:
             conn.execute("""
-                INSERT INTO artikel (hash, titel, link, quelle, typ, region, datum, gespeichert)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO artikel
+                (hash, titel, link, quelle, typ, region, datum, gespeichert, tags)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 hash, titel, link,
                 feed["name"], feed["typ"], feed["region"],
                 datum,
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                None
             ))
+            neue_artikel.append((hash, titel))
             neu += 1
         except sqlite3.IntegrityError:
-            # Artikel bereits vorhanden (Duplikat)
             duplikate += 1
 
     conn.commit()
-    print(f"  Gefunden: {len(entries)} | Neu: {neu} | Duplikate: {duplikate}")
+
+    # Tags für neue Artikel generieren (in Batches à 20)
+    if neue_artikel:
+        print(f"  Gefunden: {len(entries)} | Neu: {neu} | Duplikate: {duplikate}")
+        print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
+
+        batch_groesse = 20
+        for i in range(0, len(neue_artikel), batch_groesse):
+            batch = neue_artikel[i:i + batch_groesse]
+            titel_liste = [t for _, t in batch]
+            tags_dict = tags_generieren(titel_liste)
+
+            for hash_wert, titel in batch:
+                tags = tags_dict.get(titel, "")
+                if tags:
+                    conn.execute(
+                        "UPDATE artikel SET tags = ? WHERE hash = ?",
+                        (tags, hash_wert)
+                    )
+            conn.commit()
+            print(f"  Tags generiert: {min(i + batch_groesse, len(neue_artikel))}/{len(neue_artikel)}")
+    else:
+        print(f"  Gefunden: {len(entries)} | Neu: 0 | Duplikate: {duplikate}")
+
     return neu, duplikate
-
-# ─────────────────────────────────────────────
-# NEUESTE ARTIKEL ANZEIGEN
-# ─────────────────────────────────────────────
-
-def neueste_artikel_anzeigen(conn, anzahl=5):
-    """Zeigt die neuesten Artikel aus der Datenbank."""
-    print(f"\n{'=' * 55}")
-    print(f"NEUESTE {anzahl} ARTIKEL IN DER DATENBANK:")
-    cursor = conn.execute("""
-        SELECT titel, quelle, datum, link
-        FROM artikel
-        ORDER BY datum DESC
-        LIMIT ?
-    """, (anzahl,))
-
-    for i, row in enumerate(cursor.fetchall(), 1):
-        titel, quelle, datum, link = row
-        print(f"\n  [{i}] {titel}")
-        print(f"       Quelle: {quelle} | {datum}")
-        print(f"       {link}")
 
 # ─────────────────────────────────────────────
 # HAUPTPROGRAMM
@@ -179,14 +240,31 @@ def main():
     print(f"  Neue Artikel gespeichert: {gesamt_neu}")
     print(f"  Duplikate übersprungen:   {gesamt_duplikate}")
 
-    # Gesamtanzahl in der Datenbank
     gesamt = conn.execute("SELECT COUNT(*) FROM artikel").fetchone()[0]
+    mit_tags = conn.execute(
+        "SELECT COUNT(*) FROM artikel WHERE tags IS NOT NULL AND tags != ''"
+    ).fetchone()[0]
     print(f"  Artikel gesamt in DB:     {gesamt}")
+    print(f"  Davon mit Tags:           {mit_tags}")
 
-    neueste_artikel_anzeigen(conn)
+    # Beispiel: 3 Artikel mit Tags anzeigen
+    print(f"\n{'=' * 55}")
+    print("BEISPIEL-ARTIKEL MIT TAGS:")
+    rows = conn.execute("""
+        SELECT titel, tags, quelle, datum
+        FROM artikel
+        WHERE tags IS NOT NULL AND tags != ''
+        ORDER BY datum DESC
+        LIMIT 3
+    """).fetchall()
+
+    for titel, tags, quelle, datum in rows:
+        print(f"\n  {titel}")
+        print(f"  Tags: {tags}")
+        print(f"  {quelle} | {datum}")
 
     conn.close()
-    print(f"\nFertig! Datenbank gespeichert als: {DB_DATEI}")
+    print(f"\nFertig!")
 
 if __name__ == "__main__":
     main()
