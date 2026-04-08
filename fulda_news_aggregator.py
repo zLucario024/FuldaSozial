@@ -41,6 +41,21 @@ FEEDS = [
         "typ": "Öffentlich-rechtlich",
         "region": "hessen"
     },
+
+        {
+        "name": "Bistum Fulda",
+        "url": "https://www.bistum-fulda.de",
+        "rss": "https://www.bistum-fulda.de/bistum_fulda/presse_medien/wRss/",
+        "typ": "Kirche",
+        "region": "landkreis-fulda"
+    },
+    {
+        "name": "Fuldainfo",
+        "url": "https://www.fuldainfo.de",
+        "rss": "https://www.fuldainfo.de/feed",
+        "typ": "Online-Portal",
+        "region": "landkreis-fulda"
+    },
 ]
 
 HEADERS = {

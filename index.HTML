@@ -277,7 +277,7 @@
 <script>
 const API = 'http://localhost:8000';
 let alleArtikel = [], gezeigt = 0;
-const PRO_SEITE = 24;
+const PRO_SEITE = 50;
 let aktivOrt = '', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
 
 // ── ORTE LANDKREIS FULDA ──
@@ -501,7 +501,9 @@ function artikelAnzeigen() {
 
 function mehrLaden() {
   const gefiltert = gefilterteArtikel();
-  gefiltert.slice(gezeigt, gezeigt + PRO_SEITE).forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
+  const grid = document.getElementById('artikel-grid');
+  const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
+  batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
   gezeigt = Math.min(gezeigt + PRO_SEITE, gefiltert.length);
   document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length} Artikeln`;
   document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
