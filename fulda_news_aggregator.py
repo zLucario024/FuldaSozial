@@ -173,6 +173,16 @@ def feed_verarbeiten(feed, conn):
         hash  = artikel_hash(link)
 
         try:
+            # Prüfen ob Titel bereits existiert
+            existiert = conn.execute(
+                "SELECT id FROM artikel WHERE titel = ? OR hash = ?",
+                (titel, hash)
+            ).fetchone()
+
+            if existiert:
+                duplikate += 1
+                continue
+
             conn.execute("""
                 INSERT INTO artikel
                 (hash, titel, link, quelle, typ, region, datum, gespeichert, tags)
