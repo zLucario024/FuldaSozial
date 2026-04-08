@@ -89,12 +89,17 @@ def artikel_hash(link):
     return hashlib.md5(link.encode()).hexdigest()
 
 def datum_parsen(datum_str):
+    if not datum_str:
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
-        import zoneinfo
-        berlin = zoneinfo.ZoneInfo("Europe/Berlin")
         dt = parsedate_to_datetime(datum_str)
-        return dt.astimezone(berlin).strftime("%Y-%m-%d %H:%M:%S")
-    except Exception:
+        # UTC zu Berlin: +1 Winter, +2 Sommer
+        from datetime import timezone, timedelta
+        utc_offset = timedelta(hours=2)  # MESZ (Sommerzeit)
+        dt_berlin = dt.astimezone(timezone(utc_offset))
+        return dt_berlin.strftime("%Y-%m-%d %H:%M:%S")
+    except Exception as e:
+        print(f"  WARNUNG: Datum konnte nicht geparst werden ({datum_str}): {e}")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # ─────────────────────────────────────────────
