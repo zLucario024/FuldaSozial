@@ -41,14 +41,6 @@ FEEDS = [
         "typ": "Öffentlich-rechtlich",
         "region": "hessen"
     },
-
-        {
-        "name": "Bistum Fulda",
-        "url": "https://www.bistum-fulda.de",
-        "rss": "https://www.bistum-fulda.de/bistum_fulda/presse_medien/wRss/",
-        "typ": "Kirche",
-        "region": "landkreis-fulda"
-    },
     {
         "name": "Fuldainfo",
         "url": "https://www.fuldainfo.de",
@@ -56,6 +48,21 @@ FEEDS = [
         "typ": "Online-Portal",
         "region": "landkreis-fulda"
     },
+    {
+        "name": "Landkreis Fulda",
+        "url": "https://www.landkreis-fulda.de",
+        "rss": "https://www.landkreis-fulda.de/rss-feed",
+        "typ": "Öffentlich-rechtlich",
+        "region": "landkreis-fulda"
+    },
+    {
+        "name": "Presseportal Fulda",
+        "url": "https://www.presseportal.de/regional/Fulda",
+        "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2",
+        "typ": "Öffentlich-rechtlich",
+        "region": "landkreis-fulda"
+    }
+
 ]
 
 HEADERS = {
@@ -187,10 +194,15 @@ def feed_verarbeiten(feed, conn):
 
     # Erst alle neuen Artikel speichern (ohne Tags)
     for entry in entries:
-        link  = entry.get("link", "")
-        titel = entry.get("title", "Kein Titel")
-        datum = datum_parsen(entry.get("published", ""))
-        hash  = artikel_hash(link)
+        link         = entry.get("link", "")
+        titel        = entry.get("title", "Kein Titel")
+        datum        = datum_parsen(entry.get("published", ""))
+        hash         = artikel_hash(link)
+        beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
+        # HTML-Tags aus Beschreibung entfernen
+        import re
+        beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()
+        beschreibung = beschreibung[:500]  # Max 500 Zeichen
 
         try:
             # Prüfen ob Titel bereits existiert
@@ -205,14 +217,15 @@ def feed_verarbeiten(feed, conn):
 
             conn.execute("""
                 INSERT INTO artikel
-                (hash, titel, link, quelle, typ, region, datum, gespeichert, tags)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 hash, titel, link,
                 feed["name"], feed["typ"], feed["region"],
                 datum,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                None
+                None,
+                beschreibung
             ))
             neue_artikel.append((hash, titel))
             neu += 1
