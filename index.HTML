@@ -417,8 +417,12 @@ function tagTypBestimmen(tag) {
 
 function zeitAusgabe(datumStr) {
   if (!datumStr) return '';
-  const d = new Date(datumStr), jetzt = new Date();
+  // Leerzeichen durch T ersetzen damit JavaScript die Zeitzone korrekt liest
+  const d = new Date(datumStr.replace(' ', 'T'));
+  const jetzt = new Date();
   const diff = Math.floor((jetzt - d) / 60000);
+  if (diff < 0) return 'Gerade eben';
+  if (diff < 1) return 'Gerade eben';
   if (diff < 60) return `Vor ${diff} Min.`;
   if (diff < 1440) return `Vor ${Math.floor(diff/60)} Std.`;
   return d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
