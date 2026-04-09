@@ -1,96 +1,44 @@
 """
 Fulda News Aggregator
 =====================
-Ruft RSS-Feeds ab, speichert Artikel in SQLite und generiert Tags per KI.
-
-Installation:
-    pip install feedparser requests anthropic python-dotenv
-
-Ausführen:
-    python fulda_news_aggregator.py
+Ruft RSS-Feeds ab, speichert Artikel in PostgreSQL und generiert Tags per KI.
 """
 
 import feedparser
 import requests
 import psycopg2
+import psycopg2.extras
 import hashlib
 import anthropic
-from datetime import datetime
+import re
+import os
+from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
-# ─────────────────────────────────────────────
-# KONFIGURATION
-# ─────────────────────────────────────────────
-
 FEEDS = [
-    {
-        "name": "Hessenschau Osthessen",
-        "url": "https://www.hessenschau.de/osthessen/index.html",
-        "rss": "https://www.hessenschau.de/osthessen/index.rss",
-        "typ": "Öffentlich-rechtlich",
-        "region": "osthessen"
-    },
-    {
-        "name": "Hessenschau Alle Hessen",
-        "url": "https://www.hessenschau.de",
-        "rss": "https://www.hessenschau.de/index.rss",
-        "typ": "Öffentlich-rechtlich",
-        "region": "hessen"
-    },
-    {
-        "name": "Fuldainfo",
-        "url": "https://www.fuldainfo.de",
-        "rss": "https://www.fuldainfo.de/feed",
-        "typ": "Online-Portal",
-        "region": "landkreis-fulda"
-    },
-    {
-        "name": "Landkreis Fulda",
-        "url": "https://www.landkreis-fulda.de",
-        "rss": "https://www.landkreis-fulda.de/rss-feed",
-        "typ": "Öffentlich-rechtlich",
-        "region": "landkreis-fulda"
-    },
-    {
-        "name": "Presseportal Fulda",
-        "url": "https://www.presseportal.de/regional/Fulda",
-        "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2",
-        "typ": "Online-Portal",
-        "region": "landkreis-fulda"
-    },
-    {
-        "name": "Osthessen-News",
-        "url": "https://osthessen-news.de",
-        "rss": "https://osthessen-news.de/rss_feed.xml",
-        "typ": "Online-Portal",
-        "region": "osthessen"
-    }
-
+    {"name": "Hessenschau Osthessen", "url": "https://www.hessenschau.de/osthessen/index.html", "rss": "https://www.hessenschau.de/osthessen/index.rss", "typ": "Öffentlich-rechtlich", "region": "osthessen"},
+    {"name": "Hessenschau Alle Hessen", "url": "https://www.hessenschau.de", "rss": "https://www.hessenschau.de/index.rss", "typ": "Öffentlich-rechtlich", "region": "hessen"},
+    {"name": "Fuldainfo", "url": "https://www.fuldainfo.de", "rss": "https://www.fuldainfo.de/feed", "typ": "Online-Portal", "region": "landkreis-fulda"},
+    {"name": "Landkreis Fulda", "url": "https://www.landkreis-fulda.de", "rss": "https://www.landkreis-fulda.de/rss-feed", "typ": "Öffentlich-rechtlich", "region": "landkreis-fulda"},
+    {"name": "Presseportal Fulda", "url": "https://www.presseportal.de/regional/Fulda", "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2", "typ": "Online-Portal", "region": "landkreis-fulda"},
+    {"name": "Osthessen-News", "url": "https://osthessen-news.de", "rss": "https://osthessen-news.de/rss_feed.xml", "typ": "Online-Portal", "region": "osthessen"},
 ]
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    )
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-DB_DATEI = "fulda_news.db"
-
-# ─────────────────────────────────────────────
-# DATENBANK
-# ─────────────────────────────────────────────
+def db_verbinden():
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
 
 def datenbank_einrichten(conn):
-    """Erstellt die Tabelle und fügt tags-Spalte hinzu falls nötig."""
-    conn.execute("""
+    cursor = conn.cursor()
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS artikel (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            id          SERIAL PRIMARY KEY,
             hash        TEXT UNIQUE,
             titel       TEXT NOT NULL,
             link        TEXT NOT NULL,
@@ -99,20 +47,13 @@ def datenbank_einrichten(conn):
             region      TEXT,
             datum       TEXT,
             gespeichert TEXT,
-            tags        TEXT
+            tags        TEXT,
+            beschreibung TEXT
         )
     """)
-    # Tags-Spalte nachrüsten falls Datenbank bereits existiert
-    try:
-        conn.execute("ALTER TABLE artikel ADD COLUMN tags TEXT")
-    except psycopg2.OperationalError:
-        pass  # Spalte existiert bereits
     conn.commit()
-    print(f"Datenbank bereit: {DB_DATEI}")
-
-# ─────────────────────────────────────────────
-# HILFSFUNKTIONEN
-# ─────────────────────────────────────────────
+    cursor.close()
+    print("Datenbank bereit (PostgreSQL/Supabase)")
 
 def artikel_hash(link):
     return hashlib.md5(link.encode()).hexdigest()
@@ -122,38 +63,20 @@ def datum_parsen(datum_str):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         dt = parsedate_to_datetime(datum_str)
-        # UTC zu Berlin: +1 Winter, +2 Sommer
-        from datetime import timezone, timedelta
-        utc_offset = timedelta(hours=2)  # MESZ (Sommerzeit)
-        dt_berlin = dt.astimezone(timezone(utc_offset))
+        dt_berlin = dt.astimezone(timezone(timedelta(hours=2)))
         return dt_berlin.strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
         print(f"  WARNUNG: Datum konnte nicht geparst werden ({datum_str}): {e}")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# ─────────────────────────────────────────────
-# KI TAG-GENERIERUNG
-# ─────────────────────────────────────────────
-
 def tags_generieren(titel_liste):
-    """
-    Schickt eine Liste von Titeln an Claude Haiku.
-    Gibt ein Dictionary {titel: "tag1 · tag2 · tag3"} zurück.
-    """
     if not titel_liste:
         return {}
-
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        print("  WARNUNG: Kein API-Schlüssel gefunden, Tags werden übersprungen.")
         return {}
-
     client = anthropic.Anthropic(api_key=api_key)
-
-    titel_text = "\n".join(
-        f"{i+1}. {titel}" for i, titel in enumerate(titel_liste)
-    )
-
+    titel_text = "\n".join(f"{i+1}. {titel}" for i, titel in enumerate(titel_liste))
     prompt = f"""Du bist ein Redakteur für regionale Nachrichten aus Hessen.
 Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
 Fokus auf: Ort, Thema, beteiligte Personen oder Institutionen.
@@ -162,7 +85,6 @@ Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung.
 
 Titel:
 {titel_text}"""
-
     try:
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
@@ -170,23 +92,14 @@ Titel:
             messages=[{"role": "user", "content": prompt}]
         )
         zeilen = message.content[0].text.strip().split("\n")
-        ergebnis = {}
-        for i, titel in enumerate(titel_liste):
-            if i < len(zeilen):
-                ergebnis[titel] = zeilen[i].strip()
-        return ergebnis
+        return {titel: zeilen[i].strip() for i, titel in enumerate(titel_liste) if i < len(zeilen)}
     except Exception as e:
         print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
         return {}
 
-# ─────────────────────────────────────────────
-# FEED VERARBEITEN
-# ─────────────────────────────────────────────
-
 def feed_verarbeiten(feed, conn):
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {feed['name']}")
-
     try:
         response = requests.get(feed["rss"], headers=HEADERS, timeout=10)
         parsed = feedparser.parse(response.content)
@@ -194,92 +107,74 @@ def feed_verarbeiten(feed, conn):
         print(f"  FEHLER: Verbindung fehlgeschlagen ({e})")
         return 0, 0
 
-    entries = parsed.entries
     neu = 0
     duplikate = 0
     neue_artikel = []
+    cursor = conn.cursor()
 
-    # Erst alle neuen Artikel speichern (ohne Tags)
-    for entry in entries:
+    for entry in parsed.entries:
         link         = entry.get("link", "")
         titel        = entry.get("title", "Kein Titel")
         datum        = datum_parsen(entry.get("published", ""))
-        hash         = artikel_hash(link)
+        hash_wert    = artikel_hash(link)
         beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
-        # HTML-Tags aus Beschreibung entfernen
-        import re
-        beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()
-        beschreibung = beschreibung[:500]  # Max 500 Zeichen
+        beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()[:500]
 
         try:
-            # Prüfen ob Titel bereits existiert
-            existiert = conn.execute(
-                "SELECT id FROM artikel WHERE titel = ? OR hash = ?",
-                (titel, hash)
-            ).fetchone()
-
-            if existiert:
+            cursor.execute(
+                "SELECT id FROM artikel WHERE titel = %s OR hash = %s",
+                (titel, hash_wert)
+            )
+            if cursor.fetchone():
                 duplikate += 1
                 continue
 
-            conn.execute("""
+            cursor.execute("""
                 INSERT INTO artikel
                 (hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
-                hash, titel, link,
+                hash_wert, titel, link,
                 feed["name"], feed["typ"], feed["region"],
                 datum,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 None,
                 beschreibung
             ))
-            neue_artikel.append((hash, titel))
+            neue_artikel.append((hash_wert, titel))
             neu += 1
         except psycopg2.IntegrityError:
+            conn.rollback()
             duplikate += 1
 
     conn.commit()
 
-    # Tags für neue Artikel generieren (in Batches à 20)
     if neue_artikel:
-        print(f"  Gefunden: {len(entries)} | Neu: {neu} | Duplikate: {duplikate}")
+        print(f"  Gefunden: {len(parsed.entries)} | Neu: {neu} | Duplikate: {duplikate}")
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
-
-        batch_groesse = 20
-        for i in range(0, len(neue_artikel), batch_groesse):
-            batch = neue_artikel[i:i + batch_groesse]
-            titel_liste = [t for _, t in batch]
-            tags_dict = tags_generieren(titel_liste)
-
+        for i in range(0, len(neue_artikel), 20):
+            batch = neue_artikel[i:i + 20]
+            tags_dict = tags_generieren([t for _, t in batch])
             for hash_wert, titel in batch:
                 tags = tags_dict.get(titel, "")
                 if tags:
-                    conn.execute(
-                        "UPDATE artikel SET tags = ? WHERE hash = ?",
+                    cursor.execute(
+                        "UPDATE artikel SET tags = %s WHERE hash = %s",
                         (tags, hash_wert)
                     )
             conn.commit()
-            print(f"  Tags generiert: {min(i + batch_groesse, len(neue_artikel))}/{len(neue_artikel)}")
+            print(f"  Tags generiert: {min(i + 20, len(neue_artikel))}/{len(neue_artikel)}")
     else:
-        print(f"  Gefunden: {len(entries)} | Neu: 0 | Duplikate: {duplikate}")
+        print(f"  Gefunden: {len(parsed.entries)} | Neu: 0 | Duplikate: {duplikate}")
 
+    cursor.close()
     return neu, duplikate
-
-# ─────────────────────────────────────────────
-# HAUPTPROGRAMM
-# ─────────────────────────────────────────────
 
 def main():
     print("Fulda News Aggregator")
     print(f"Gestartet: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
 
-    import psycopg2
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
-
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    conn = db_verbinden()
     datenbank_einrichten(conn)
 
     gesamt_neu = 0
@@ -290,34 +185,34 @@ def main():
         gesamt_neu += neu
         gesamt_duplikate += duplikate
 
+    cursor = conn.cursor()
     print(f"\n{'=' * 55}")
     print("ZUSAMMENFASSUNG")
     print(f"  Neue Artikel gespeichert: {gesamt_neu}")
     print(f"  Duplikate übersprungen:   {gesamt_duplikate}")
 
-    gesamt = conn.execute("SELECT COUNT(*) FROM artikel").fetchone()[0]
-    mit_tags = conn.execute(
-        "SELECT COUNT(*) FROM artikel WHERE tags IS NOT NULL AND tags != ''"
-    ).fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM artikel")
+    gesamt = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM artikel WHERE tags IS NOT NULL AND tags != ''")
+    mit_tags = cursor.fetchone()[0]
     print(f"  Artikel gesamt in DB:     {gesamt}")
     print(f"  Davon mit Tags:           {mit_tags}")
 
-    # Beispiel: 3 Artikel mit Tags anzeigen
     print(f"\n{'=' * 55}")
     print("BEISPIEL-ARTIKEL MIT TAGS:")
-    rows = conn.execute("""
+    cursor.execute("""
         SELECT titel, tags, quelle, datum
         FROM artikel
         WHERE tags IS NOT NULL AND tags != ''
         ORDER BY datum DESC
         LIMIT 3
-    """).fetchall()
-
-    for titel, tags, quelle, datum in rows:
+    """)
+    for titel, tags, quelle, datum in cursor.fetchall():
         print(f"\n  {titel}")
         print(f"  Tags: {tags}")
         print(f"  {quelle} | {datum}")
 
+    cursor.close()
     conn.close()
     print(f"\nFertig!")
 
