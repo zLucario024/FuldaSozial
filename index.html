@@ -99,6 +99,17 @@
 
   .grid { max-width: 1400px; margin: 0 auto; padding: 0 2rem 3rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
 
+  .karte-bild-link {
+  display: block;
+  text-decoration: none;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  }
+  .karte-bild-link:hover .karte-bild svg {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+  }
+
   .karte { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--weiss); display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; animation: einblenden .3s ease both; }
   .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
   @keyframes einblenden { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -632,7 +643,9 @@ function karteErstellen(artikel, index) {
   }
 
   div.innerHTML = `
+    <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link">
     <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div>${wappenHTML}</div>
+    </a>
     <div class="karte-inhalt">
       <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
       ${tagsHTML}
