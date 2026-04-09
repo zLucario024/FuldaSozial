@@ -189,11 +189,67 @@
     .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
   }
 </style>
+
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init("_0rF4yYy30_GWsq5y");</script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="ff8bd343-419c-41c7-86fe-c96a60506d8a">
-  function artikelMelden(titel, link, quelle) {
-  if (!confirm(`Diesen Artikel melden?\n\n"${titel}"`)) return;
+
+<!-- Umami Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="ff8bd343-419c-41c7-86fe-c96a60506d8a"></script>
+
+<!-- Melden Funktion -->
+<script>
+let aktiverMeldArtikel = null;
+
+function artikelMelden(titel, link, quelle) {
+  aktiverMeldArtikel = { titel, link, quelle };
+  document.getElementById('meld-titel').textContent = `"${titel}"`;
+  document.querySelectorAll('input[name="meld-grund"]').forEach(r => r.checked = false);
+  document.getElementById('meld-text').value = '';
+  const modal = document.getElementById('meld-modal');
+  modal.style.display = 'flex';
+}
+
+function meldModalSchliessen() {
+  document.getElementById('meld-modal').style.display = 'none';
+  aktiverMeldArtikel = null;
+}
+
+function meldungAbsenden() {
+  const grund = document.querySelector('input[name="meld-grund"]:checked');
+  if (!grund) {
+    alert('Bitte wähle einen Grund aus.');
+    return;
+  }
+
+  const btn = document.getElementById('meld-absenden-btn');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet...';
+
+  emailjs.send("service_qh9tx87", "template_2g2aod8", {
+    artikel_titel: aktiverMeldArtikel.titel,
+    artikel_link: aktiverMeldArtikel.link,
+    artikel_quelle: aktiverMeldArtikel.quelle,
+    meld_grund: grund.value,
+    meld_text: document.getElementById('meld-text').value || '(keine Angabe)',
+    zeit: new Date().toLocaleString('de-DE')
+  })
+  .then(() => {
+    meldModalSchliessen();
+    alert('Danke für deine Meldung!');
+  })
+  .catch((err) => {
+    btn.disabled = false;
+    btn.textContent = 'Melden';
+    alert('Fehler beim Senden. Bitte versuche es später.');
+    console.error(err);
+  });
+}
+
+// Modal schließen bei Klick außerhalb
+document.getElementById('meld-modal').addEventListener('click', function(e) {
+  if (e.target === this) meldModalSchliessen();
+});
 
   const btn = event.target.closest('.meld-btn');
   btn.disabled = true;
@@ -215,12 +271,46 @@
     alert('Fehler beim Senden. Bitte versuche es später.');
     console.error(err);
   });
-}
+
 </script>
 </head>
 
 
 <body>
+#Meldefunktionfenster#
+<div id="meld-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#ffffff; border-radius:12px; padding:1.5rem; max-width:420px; width:90%; border:0.5px solid #e0e0e0; box-shadow:0 4px 24px rgba(0,0,0,0.15);">
+    <h3 style="margin:0 0 1rem; font-size:16px; font-weight:500;">Artikel melden</h3>
+    <p id="meld-titel" style="font-size:13px; color:var(--color-text-secondary); margin:0 0 1rem; line-height:1.4;"></p>
+    
+    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Grund der Meldung</label>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="meld-grund" value="Falscher Ort"> Falscher Ort
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="meld-grund" value="Falsche Tags"> Falsche Tags
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="meld-grund" value="Falscher Inhalt"> Falscher Inhalt
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="meld-grund" value="Nicht regional relevant"> Nicht regional relevant
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="meld-grund" value="Sonstiges"> Sonstiges
+      </label>
+    </div>
+
+    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Anmerkung <span style="font-weight:400; color:var(--color-text-secondary);">(freiwillig)</span></label>
+    <textarea id="meld-text" rows="3" placeholder="Optionale Beschreibung..." style="width:100%; box-sizing:border-box; border:1px solid #d0d0d0; border-radius:8px; padding:8px; font-size:13px; font-family:inherit; resize:vertical; background:#ffffff; color:#111111;"></textarea>
+
+    <div style="display:flex; gap:8px; margin-top:1rem; justify-content:flex-end;">
+      <button onclick="meldModalSchliessen()" style="padding:8px 16px; border:0.5px solid var(--color-border-tertiary); border-radius:8px; background:transparent; cursor:pointer; font-size:13px; color:var(--color-text-secondary);">Abbrechen</button>
+      <button onclick="meldungAbsenden()" id="meld-absenden-btn" style="padding:8px 16px; border:none; border-radius:8px; background:#c0152a; color:white; cursor:pointer; font-size:13px; font-weight:500;">Melden</button>
+    </div>
+  </div>
+</div>
 
 <header>
   <a href="#" class="logo">
