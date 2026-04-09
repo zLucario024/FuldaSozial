@@ -3,23 +3,18 @@ Fulda News API
 ==============
 Stellt die gespeicherten Artikel aus der Datenbank als API bereit.
 
-Installation:
-    pip install fastapi uvicorn
-
 Starten:
     uvicorn api:app --reload
-
-Dann im Browser öffnen:
-    http://localhost:8000
-    http://localhost:8000/artikel
-    http://localhost:8000/docs
 """
 
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
+from dotenv import load_dotenv
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
-DB_DATEI = "fulda_news.db"
+load_dotenv()
 
 app = FastAPI(
     title="Fulda News API",
@@ -27,7 +22,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Erlaubt später der Website, die API abzufragen
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,58 +29,46 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─────────────────────────────────────────────
-# HILFSFUNKTION
-# ─────────────────────────────────────────────
-
 def db_verbinden():
-    conn = sqlite3.connect(DB_DATEI)
-    conn.row_factory = sqlite3.Row  # Gibt Zeilen als Dictionary zurück
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
     return conn
 
-# ─────────────────────────────────────────────
-# ENDPUNKTE
-# ─────────────────────────────────────────────
 
 @app.get("/")
 def startseite():
-    """Willkommensnachricht – zeigt ob die API läuft."""
     return {
         "status": "aktiv",
         "name": "Fulda News API",
-        "endpunkte": ["/artikel", "/quellen", "/docs"]
+        "endpunkte": ["/artikel", "/quellen", "/statistik", "/docs"]
     }
 
 
 @app.get("/artikel")
 def artikel_abrufen(
-    region: str = Query(None, description="z.B. landkreis-fulda"),
-    quelle: str = Query(None, description="z.B. Hessenschau Osthessen"),
-    limit:  int = Query(50,   description="Anzahl Artikel (max. 200)"),
-    offset: int = Query(0,    description="Ab welchem Artikel starten")
+    region: str = Query(None),
+    quelle: str = Query(None),
+    limit:  int = Query(50),
+    offset: int = Query(0)
 ):
-    """
-    Gibt Artikel chronologisch zurück – neueste zuerst.
-    Optional filterbar nach Region und Quelle.
-    """
-    limit = min(limit, 200)  # Maximal 200 auf einmal
-
+    limit = min(limit, 200)
     query = "SELECT * FROM artikel WHERE 1=1"
     params = []
 
     if region:
-        query += " AND region = ?"
+        query += " AND region = %s"
         params.append(region)
-
     if quelle:
-        query += " AND quelle = ?"
+        query += " AND quelle = %s"
         params.append(quelle)
 
-    query += " ORDER BY datum DESC LIMIT ? OFFSET ?"
+    query += " ORDER BY datum DESC LIMIT %s OFFSET %s"
     params.extend([limit, offset])
 
     conn = db_verbinden()
-    rows = conn.execute(query, params).fetchall()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    cursor.close()
     conn.close()
 
     return {
@@ -97,29 +79,30 @@ def artikel_abrufen(
 
 @app.get("/artikel/{artikel_id}")
 def einzelner_artikel(artikel_id: int):
-    """Gibt einen einzelnen Artikel anhand seiner ID zurück."""
     conn = db_verbinden()
-    row = conn.execute(
-        "SELECT * FROM artikel WHERE id = ?", (artikel_id,)
-    ).fetchone()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("SELECT * FROM artikel WHERE id = %s", (artikel_id,))
+    row = cursor.fetchone()
+    cursor.close()
     conn.close()
 
     if not row:
         return {"fehler": "Artikel nicht gefunden"}
-
     return dict(row)
 
 
 @app.get("/quellen")
 def quellen_abrufen():
-    """Gibt alle verfügbaren Quellen mit Artikelanzahl zurück."""
     conn = db_verbinden()
-    rows = conn.execute("""
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("""
         SELECT quelle, region, typ, COUNT(*) as anzahl
         FROM artikel
-        GROUP BY quelle
+        GROUP BY quelle, region, typ
         ORDER BY anzahl DESC
-    """).fetchall()
+    """)
+    rows = cursor.fetchall()
+    cursor.close()
     conn.close()
 
     return {
@@ -130,17 +113,19 @@ def quellen_abrufen():
 
 @app.get("/statistik")
 def statistik():
-    """Zeigt allgemeine Statistiken über die gesammelten Daten."""
     conn = db_verbinden()
+    cursor = conn.cursor()
 
-    gesamt = conn.execute("SELECT COUNT(*) FROM artikel").fetchone()[0]
-    neuester = conn.execute(
-        "SELECT datum FROM artikel ORDER BY datum DESC LIMIT 1"
-    ).fetchone()
-    aeltester = conn.execute(
-        "SELECT datum FROM artikel ORDER BY datum ASC LIMIT 1"
-    ).fetchone()
+    cursor.execute("SELECT COUNT(*) FROM artikel")
+    gesamt = cursor.fetchone()[0]
 
+    cursor.execute("SELECT datum FROM artikel ORDER BY datum DESC LIMIT 1")
+    neuester = cursor.fetchone()
+
+    cursor.execute("SELECT datum FROM artikel ORDER BY datum ASC LIMIT 1")
+    aeltester = cursor.fetchone()
+
+    cursor.close()
     conn.close()
 
     return {

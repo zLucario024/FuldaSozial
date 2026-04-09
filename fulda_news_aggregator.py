@@ -12,7 +12,7 @@ Ausführen:
 
 import feedparser
 import requests
-import sqlite3
+import psycopg2
 import hashlib
 import anthropic
 from datetime import datetime
@@ -105,7 +105,7 @@ def datenbank_einrichten(conn):
     # Tags-Spalte nachrüsten falls Datenbank bereits existiert
     try:
         conn.execute("ALTER TABLE artikel ADD COLUMN tags TEXT")
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         pass  # Spalte existiert bereits
     conn.commit()
     print(f"Datenbank bereit: {DB_DATEI}")
@@ -236,7 +236,7 @@ def feed_verarbeiten(feed, conn):
             ))
             neue_artikel.append((hash, titel))
             neu += 1
-        except sqlite3.IntegrityError:
+        except psycopg2.IntegrityError:
             duplikate += 1
 
     conn.commit()
@@ -274,7 +274,12 @@ def main():
     print("Fulda News Aggregator")
     print(f"Gestartet: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
 
-    conn = sqlite3.connect(DB_DATEI)
+    import psycopg2
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
     datenbank_einrichten(conn)
 
     gesamt_neu = 0
