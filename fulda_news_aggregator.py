@@ -32,7 +32,7 @@ FEEDS = [
         "url": "https://www.hessenschau.de/osthessen/index.html",
         "rss": "https://www.hessenschau.de/osthessen/index.rss",
         "typ": "Öffentlich-rechtlich",
-        "region": "landkreis-fulda"
+        "region": "osthessen"
     },
     {
         "name": "Hessenschau Alle Hessen",
@@ -59,8 +59,15 @@ FEEDS = [
         "name": "Presseportal Fulda",
         "url": "https://www.presseportal.de/regional/Fulda",
         "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2",
-        "typ": "Öffentlich-rechtlich",
+        "typ": "Online-Portal",
         "region": "landkreis-fulda"
+    },
+    {
+        "name": "Osthessen-News",
+        "url": "https://osthessen-news.de",
+        "rss": "https://osthessen-news.de/rss_feed.xml",
+        "typ": "Online-Portal",
+        "region": "osthessen"
     }
 
 ]
