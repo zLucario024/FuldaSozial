@@ -1,34 +1,23 @@
 name: Fulda News Aggregator
-
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
-
 jobs:
   aggregator:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: Code auschecken
         uses: actions/checkout@v4
-
       - name: Python einrichten
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Pakete installieren
-        run: pip install feedparser requests anthropic python-dotenv
-
+        run: pip install feedparser requests anthropic python-dotenv psycopg2-binary
       - name: Aggregator starten
         run: python fulda_news_aggregator.py
-
-      - name: Datenbank speichern
-        uses: actions/upload-artifact@v4
-        with:
-          name: fulda-news-db-${{ github.run_number }}
-          path: fulda_news.db
