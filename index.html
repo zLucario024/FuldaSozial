@@ -473,7 +473,7 @@ const KATEGORIEN = {
   },
   'Politik & Verwaltung': {
     farbe: '#1a3a5c', hell: '#eef2f7',
-    keys: ['wahl','politik','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag'],
+    keys: ['wahl','politik','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'CDU', 'SPD', 'Grüne', 'FDP', 'AfD', 'Linke', 'Volt', 'Kanzler','Minister','Opposition', 'Koalition'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef2f7"/>
       <rect x="155" y="95" width="90" height="30" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".2"/>
       <rect x="168" y="72" width="64" height="28" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".25"/>
@@ -487,7 +487,7 @@ const KATEGORIEN = {
   },
   'Wirtschaft & Arbeit': {
     farbe: '#1a5c3a', hell: '#eef7f2',
-    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe'],
+    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','Energiepreis'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef7f2"/>
       <polyline points="140,110 165,85 185,95 210,65 235,75 260,45" fill="none" stroke="#1a5c3a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="260" cy="45" r="4" fill="#1a5c3a"/>
@@ -529,7 +529,7 @@ const KATEGORIEN = {
   },
   'Natur & Umwelt': {
     farbe: '#2d5c1a', hell: '#f0f7ee',
-    keys: ['wetter','wald','rhön','naturschutz','tier','überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser'],
+    keys: ['wetter','wald','rhön','naturschutz','tier','Papagei','überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0f7ee"/>
       <line x1="200" y1="120" x2="200" y2="75" stroke="#2d5c1a" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
       <ellipse cx="200" cy="58" rx="30" ry="22" fill="none" stroke="#2d5c1a" stroke-width="2.5" opacity=".3"/>
@@ -654,7 +654,8 @@ async function quellenLaden() {
     const res = await fetch(`${API}/quellen`);
     const data = await res.json();
     const container = document.getElementById('quelle-chips');
-    data.quellen.forEach(q => {
+    const einzigartigeQuellen = [...new Map(data.quellen.map(q => [q.quelle, q])).values()];
+    einzigartigeQuellen.forEach(q => {
       const btn = document.createElement('button');
       btn.className = 'chip';
       btn.textContent = q.quelle;
