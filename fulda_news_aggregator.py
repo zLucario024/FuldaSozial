@@ -69,15 +69,20 @@ def datum_parsen(datum_str):
         print(f"  WARNUNG: Datum konnte nicht geparst werden ({datum_str}): {e}")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def tags_generieren(titel_liste):
+def tags_generieren(titel_liste, beschreibung_liste=None):
     if not titel_liste:
         return {}
+    if beschreibung_liste is None:
+        beschreibung_liste = [""] * len(titel_liste)
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         return {}
     client = anthropic.Anthropic(api_key=api_key)
-    titel_text = "\n".join(f"{i+1}. {titel}" for i, titel in enumerate(titel_liste))
-    prompt = f"""Du bist ein Redakteur für regionale Nachrichten aus Hessen.
+    titel_text = "\n".join(
+        f"{i+1}. {titel}" + (f"\n   Kontext: {beschreibung_liste[i]}" if beschreibung_liste[i] else "")
+        for i, titel in enumerate(titel_liste)
+    )
+    prompt = f"""Du bist ein Redakteur für regionale Nachrichten aus dem Landkreis Fulda in Hessen.
 Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
 Fokus auf: Ort, Thema, beteiligte Personen oder Institutionen.
 Trenne die Tags mit " · ".
@@ -120,15 +125,16 @@ def feed_verarbeiten(feed, conn):
         beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
         beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()[:500]
 
-        try:
-            cursor.execute(
-                "SELECT id FROM artikel WHERE titel = %s OR hash = %s",
-                (titel, hash_wert)
-            )
-            if cursor.fetchone():
-                duplikate += 1
-                continue
+        cursor.execute(
+            "SELECT id FROM artikel WHERE titel = %s OR hash = %s",
+            (titel, hash_wert)
+        )
+        if cursor.fetchone():
+            duplikate += 1
+            continue
 
+        try:
+            cursor.execute("SAVEPOINT sp1")
             cursor.execute("""
                 INSERT INTO artikel
                 (hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung)
@@ -141,10 +147,11 @@ def feed_verarbeiten(feed, conn):
                 None,
                 beschreibung
             ))
+            cursor.execute("RELEASE SAVEPOINT sp1")
             neue_artikel.append((hash_wert, titel))
             neu += 1
         except psycopg2.IntegrityError:
-            conn.rollback()
+            cursor.execute("ROLLBACK TO SAVEPOINT sp1")
             duplikate += 1
 
     conn.commit()
@@ -154,7 +161,13 @@ def feed_verarbeiten(feed, conn):
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
         for i in range(0, len(neue_artikel), 20):
             batch = neue_artikel[i:i + 20]
-            tags_dict = tags_generieren([t for _, t in batch])
+            # Beschreibungen aus DB holen
+            beschreibungen = []
+            for hash_wert, titel in batch:
+                cursor.execute("SELECT beschreibung FROM artikel WHERE hash = %s", (hash_wert,))
+                row = cursor.fetchone()
+                beschreibungen.append(row[0] if row and row[0] else "")
+            tags_dict = tags_generieren([t for _, t in batch], beschreibungen)
             for hash_wert, titel in batch:
                 tags = tags_dict.get(titel, "")
                 if tags:
@@ -166,6 +179,32 @@ def feed_verarbeiten(feed, conn):
             print(f"  Tags generiert: {min(i + 20, len(neue_artikel))}/{len(neue_artikel)}")
     else:
         print(f"  Gefunden: {len(parsed.entries)} | Neu: 0 | Duplikate: {duplikate}")
+
+# Region verfeinern anhand Beschreibung + Tags
+    ORTE_LANDKREIS = [
+        'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
+        'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
+        'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
+        'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf'
+    ]
+
+    for hash_wert, titel in neue_artikel:
+        cursor.execute(
+            "SELECT beschreibung, tags FROM artikel WHERE hash = %s", (hash_wert,)
+        )
+        row = cursor.fetchone()
+        if row:
+            text = ((row[0] or '') + ' ' + (row[1] or '') + ' ' + titel).lower()
+            if any(ort in text for ort in ORTE_LANDKREIS):
+                cursor.execute(
+                    "UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s",
+                    (hash_wert,)
+                )
+    conn.commit()
+
+    cursor.close()
+    return neu, duplikate
+
 
     cursor.close()
     return neu, duplikate
