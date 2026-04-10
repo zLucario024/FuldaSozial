@@ -120,6 +120,15 @@
 
   .karte-inhalt { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; gap: .6rem; }
   .karte-titel { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; line-height: 1.35; color: var(--schwarz); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .karte-titel-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.karte-titel-link:hover .karte-titel {
+  color: #c0152a;
+  transition: color 0.2s;
+}
 
   /* TAGS */
   .karte-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
@@ -762,8 +771,33 @@ function karteErstellen(artikel, index) {
   }
 
   div.innerHTML = `
-    <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link">
-    <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div>${wappenHTML}</div>
+    <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+      <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div>${wappenHTML}</div>
+    </a>
+    <div class="karte-inhalt">
+      <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-titel-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+        <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
+      </a>
+      ${tagsHTML}
+      <div class="karte-meta">
+        <span class="meta-pill">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          ${zeitAusgabe(artikel.datum)}
+        </span>
+        <span class="meta-trenner">·</span>
+        <span class="quelle-pill">${artikel.quelle || ''}</span>
+      </div>
+    </div>
+    <div class="karte-footer">
+      <a href="${artikel.link}" target="_blank" rel="noopener" class="lese-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+        Ganzen Artikel lesen
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <button class="meld-btn" onclick="artikelMelden('${artikel.titel.replace(/'/g,"\\'")}', '${artikel.link}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        Melden
+      </button>
+    </div>;
     </a>
     <div class="karte-inhalt">
       <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
@@ -867,6 +901,15 @@ function alleFilterZurueck() {
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   document.querySelector('#quelle-chips .chip').classList.add('aktiv-dunkel');
   artikelLaden();
+}
+
+function artikelGeoeffnet(titel, quelle, link) {
+  if (typeof umami !== 'undefined') {
+    umami.track('artikel-geklickt', {
+      titel: titel.substring(0, 50),
+      quelle: quelle,
+    });
+  }
 }
 
 quellenLaden();
