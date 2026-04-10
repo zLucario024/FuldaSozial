@@ -797,33 +797,9 @@ function karteErstellen(artikel, index) {
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
         Melden
       </button>
-    </div>;
-    </a>
-    <div class="karte-inhalt">
-      <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
-      ${tagsHTML}
-      <div class="karte-meta">
-        <span class="meta-pill">
-          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          ${zeitAusgabe(artikel.datum)}
-        </span>
-        <span class="meta-trenner">·</span>
-        <span class="quelle-pill">${artikel.quelle || ''}</span>
-      </div>
-    </div>
-    <div class="karte-footer">
-      <a href="${artikel.link}" target="_blank" rel="noopener" class="lese-link">
-        Ganzen Artikel lesen
-        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <button class="meld-btn" onclick="artikelMelden('${artikel.titel.replace(/'/g,"\\'")}', '${artikel.link}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
-      <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-      Melden
-      </button>
     </div>`;
   return div;
 }
-
 // Ort-Tag aus Karte geklickt
 function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
