@@ -30,9 +30,31 @@ app.add_middleware(
 )
 
 def db_verbinden():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    return conn
+    """Neue Datenbankverbindung mit SSL-Parametern für Supabase."""
+    return psycopg2.connect(
+        os.getenv("DATABASE_URL"),
+        connect_timeout=10,
+        keepalives=1,
+        keepalives_idle=30,
+        keepalives_interval=10,
+        keepalives_count=5,
+    )
 
+def mit_retry(fn):
+    """Führt fn(cursor) aus. Bei SSL-Fehler einmal neu verbinden und wiederholen."""
+    for versuch in range(2):
+        try:
+            conn = db_verbinden()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            ergebnis = fn(cursor)
+            cursor.close()
+            conn.close()
+            return ergebnis
+        except psycopg2.OperationalError as e:
+            if versuch == 1:
+                raise
+            # Erster Versuch fehlgeschlagen → sofort neu versuchen
+            continue
 
 @app.get("/")
 def startseite():
@@ -64,72 +86,63 @@ def artikel_abrufen(
     query += " ORDER BY datum DESC LIMIT %s OFFSET %s"
     params.extend([limit, offset])
 
-    conn = db_verbinden()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute(query, params)
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    def ausfuehren(cursor):
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        return {
+            "anzahl": len(rows),
+            "artikel": [dict(row) for row in rows]
+        }
 
-    return {
-        "anzahl": len(rows),
-        "artikel": [dict(row) for row in rows]
-    }
+    return mit_retry(ausfuehren)
 
 
 @app.get("/artikel/{artikel_id}")
 def einzelner_artikel(artikel_id: int):
-    conn = db_verbinden()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT * FROM artikel WHERE id = %s", (artikel_id,))
-    row = cursor.fetchone()
-    cursor.close()
-    conn.close()
+    def ausfuehren(cursor):
+        cursor.execute("SELECT * FROM artikel WHERE id = %s", (artikel_id,))
+        row = cursor.fetchone()
+        if not row:
+            return {"fehler": "Artikel nicht gefunden"}
+        return dict(row)
 
-    if not row:
-        return {"fehler": "Artikel nicht gefunden"}
-    return dict(row)
+    return mit_retry(ausfuehren)
 
 
 @app.get("/quellen")
 def quellen_abrufen():
-    conn = db_verbinden()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("""
-    SELECT quelle, region, typ, COUNT(*) as anzahl
-    FROM artikel
-    GROUP BY quelle
-    ORDER BY anzahl DESC
-    """)
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    def ausfuehren(cursor):
+        cursor.execute("""
+            SELECT quelle, region, typ, COUNT(*) as anzahl
+            FROM artikel
+            GROUP BY quelle, region, typ
+            ORDER BY anzahl DESC
+        """)
+        rows = cursor.fetchall()
+        return {
+            "anzahl": len(rows),
+            "quellen": [dict(row) for row in rows]
+        }
 
-    return {
-        "anzahl": len(rows),
-        "quellen": [dict(row) for row in rows]
-    }
+    return mit_retry(ausfuehren)
 
 
 @app.get("/statistik")
 def statistik():
-    conn = db_verbinden()
-    cursor = conn.cursor()
+    def ausfuehren(cursor):
+        cursor.execute("SELECT COUNT(*) FROM artikel")
+        gesamt = cursor.fetchone()["count"]
 
-    cursor.execute("SELECT COUNT(*) FROM artikel")
-    gesamt = cursor.fetchone()[0]
+        cursor.execute("SELECT datum FROM artikel ORDER BY datum DESC LIMIT 1")
+        neuester = cursor.fetchone()
 
-    cursor.execute("SELECT datum FROM artikel ORDER BY datum DESC LIMIT 1")
-    neuester = cursor.fetchone()
+        cursor.execute("SELECT datum FROM artikel ORDER BY datum ASC LIMIT 1")
+        aeltester = cursor.fetchone()
 
-    cursor.execute("SELECT datum FROM artikel ORDER BY datum ASC LIMIT 1")
-    aeltester = cursor.fetchone()
+        return {
+            "artikel_gesamt": gesamt,
+            "neuester_artikel": neuester["datum"] if neuester else None,
+            "aeltester_artikel": aeltester["datum"] if aeltester else None,
+        }
 
-    cursor.close()
-    conn.close()
-
-    return {
-        "artikel_gesamt": gesamt,
-        "neuester_artikel": neuester[0] if neuester else None,
-        "aeltester_artikel": aeltester[0] if aeltester else None,
-    }
+    return mit_retry(ausfuehren)
