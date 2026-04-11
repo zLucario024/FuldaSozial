@@ -175,6 +175,8 @@
   .meld-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .meld-btn:hover { color: var(--rot); }
   .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+  .feedback-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--weiss); color: var(--grau-dunkel); font-family: var(--font-body); font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .feedback-btn:hover { border-color: var(--rot); color: var(--rot); }
 
   .lade-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; color: var(--grau-mittel); gap: 1rem; }
   .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--rot); border-radius: 50%; animation: drehen .7s linear infinite; }
@@ -255,31 +257,66 @@ function meldungAbsenden() {
   });
 }
 
-// Modal schließen bei Klick außerhalb
-document.getElementById('meld-modal').addEventListener('click', function(e) {
-  if (e.target === this) meldModalSchliessen();
-});
+function feedbackModalOeffnen() {
+  document.querySelectorAll('input[name="feedback-typ"]').forEach(r => r.checked = false);
+  document.getElementById('feedback-text').value = '';
+  const btn = document.getElementById('feedback-absenden-btn');
+  btn.disabled = false;
+  btn.textContent = 'Absenden';
+  document.getElementById('feedback-modal').style.display = 'flex';
+}
 
-  const btn = event.target.closest('.meld-btn');
+function feedbackModalSchliessen() {
+  document.getElementById('feedback-modal').style.display = 'none';
+}
+
+function feedbackAbsenden() {
+  const typ = document.querySelector('input[name="feedback-typ"]:checked');
+  if (!typ) {
+    alert('Bitte wähle eine Art des Feedbacks aus.');
+    return;
+  }
+
+  const btn = document.getElementById('feedback-absenden-btn');
   btn.disabled = true;
   btn.textContent = 'Wird gesendet...';
 
   emailjs.send("service_qh9tx87", "template_2g2aod8", {
-    artikel_titel: titel,
-    artikel_link: link,
-    artikel_quelle: quelle,
+    meld_grund: typ.value,
+    meld_text: document.getElementById('feedback-text').value || '(keine Angabe)',
+    artikel_titel: '– Allgemeines Feedback –',
+    artikel_link: '',
+    artikel_quelle: '',
     zeit: new Date().toLocaleString('de-DE')
   })
   .then(() => {
-    btn.textContent = '✓ Gemeldet';
-    btn.style.color = 'green';
+    feedbackModalSchliessen();
+    alert('Danke für dein Feedback!');
   })
   .catch((err) => {
     btn.disabled = false;
-    btn.textContent = 'Melden';
+    btn.textContent = 'Absenden';
     alert('Fehler beim Senden. Bitte versuche es später.');
     console.error(err);
   });
+}
+
+// Modal schließen bei Klick außerhalb + Meld-Button via Event Delegation
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('meld-modal').addEventListener('click', function(e) {
+    if (e.target === this) meldModalSchliessen();
+  });
+
+  document.getElementById('feedback-modal').addEventListener('click', function(e) {
+    if (e.target === this) feedbackModalSchliessen();
+  });
+
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.meld-btn');
+    if (!btn) return;
+    artikelMelden(btn.dataset.titel, btn.dataset.link, btn.dataset.quelle);
+  });
+});
 
 </script>
 </head>
@@ -320,6 +357,34 @@ document.getElementById('meld-modal').addEventListener('click', function(e) {
   </div>
 </div>
 
+<!-- Feedback Modal -->
+<div id="feedback-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#ffffff; border-radius:12px; padding:1.5rem; max-width:420px; width:90%; border:0.5px solid #e0e0e0; box-shadow:0 4px 24px rgba(0,0,0,0.15);">
+    <h3 style="margin:0 0 1rem; font-size:16px; font-weight:500;">Feedback geben</h3>
+
+    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Art des Feedbacks</label>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="feedback-typ" value="Fehler melden"> Fehler melden
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="feedback-typ" value="Kritik"> Kritik
+      </label>
+      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="radio" name="feedback-typ" value="Lob"> Lob
+      </label>
+    </div>
+
+    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Nachricht <span style="font-weight:400; color:var(--color-text-secondary);">(freiwillig)</span></label>
+    <textarea id="feedback-text" rows="3" placeholder="Optionale Beschreibung..." style="width:100%; box-sizing:border-box; border:1px solid #d0d0d0; border-radius:8px; padding:8px; font-size:13px; font-family:inherit; resize:vertical; background:#ffffff; color:#111111;"></textarea>
+
+    <div style="display:flex; gap:8px; margin-top:1rem; justify-content:flex-end;">
+      <button onclick="feedbackModalSchliessen()" style="padding:8px 16px; border:0.5px solid var(--color-border-tertiary); border-radius:8px; background:transparent; cursor:pointer; font-size:13px; color:var(--color-text-secondary);">Abbrechen</button>
+      <button onclick="feedbackAbsenden()" id="feedback-absenden-btn" style="padding:8px 16px; border:none; border-radius:8px; background:#c0152a; color:white; cursor:pointer; font-size:13px; font-weight:500;">Absenden</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <a href="#" class="logo">
     <div class="logo-icon">
@@ -331,6 +396,10 @@ document.getElementById('meld-modal').addEventListener('click', function(e) {
     <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
   </div>
+  <button class="feedback-btn" onclick="feedbackModalOeffnen()">
+    <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Feedback geben
+  </button>
 </header>
 
 <section class="hero">
@@ -799,7 +868,7 @@ function karteErstellen(artikel, index) {
         Ganzen Artikel lesen
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <button class="meld-btn" onclick="artikelMelden('${artikel.titel.replace(/'/g,"\\'")}', '${artikel.link}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+      <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}">
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
         Melden
       </button>
