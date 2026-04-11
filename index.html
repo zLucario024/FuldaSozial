@@ -22,32 +22,16 @@
   }
   body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; }
 
-  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 1rem; }
+  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); }
   .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .logo-icon svg { width: 20px; height: 20px; fill: white; }
   .logo-text { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
   .logo-text span { color: var(--rot); }
-
-  .header-rechts { display: flex; align-items: center; gap: .75rem; }
-
   .suche-wrapper { position: relative; width: 280px; }
   .suche-wrapper svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--grau-mittel); fill: none; }
   .suche-wrapper input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-body); font-size: 14px; color: var(--schwarz); background: var(--grau-hell); outline: none; transition: border-color .2s; }
   .suche-wrapper input:focus { border-color: var(--rot); background: var(--weiss); }
-
-  /* FEEDBACK BUTTON */
-  .feedback-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--weiss); color: var(--grau-dunkel);
-    font-family: var(--font-body); font-size: .82rem; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-    transition: border-color .15s, color .15s, background .15s;
-  }
-  .feedback-btn:hover { border-color: var(--rot); color: var(--rot); background: var(--rot-hell); }
-  .feedback-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; flex-shrink: 0; }
 
   .hero { padding: 3rem 2rem 2rem; border-bottom: 1px solid var(--border); max-width: 1400px; margin: 0 auto; }
   .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.15; margin-bottom: .75rem; }
@@ -201,7 +185,6 @@
   @media (max-width: 600px) {
     header { padding: 0 1rem; }
     .suche-wrapper { width: 160px; }
-    .feedback-btn span { display: none; }
     .hero, .filter-bereich, .ergebnis-bar, .grid { padding-left: 1rem; padding-right: 1rem; }
     .grid { grid-template-columns: 1fr; }
   }
@@ -223,19 +206,90 @@
 <!-- Umami Analytics -->
 <script defer src="https://cloud.umami.is/script.js" data-website-id="ff8bd343-419c-41c7-86fe-c96a60506d8a"></script>
 
+<!-- Melden Funktion -->
+<script>
+let aktiverMeldArtikel = null;
+
+function artikelMelden(titel, link, quelle) {
+  aktiverMeldArtikel = { titel, link, quelle };
+  document.getElementById('meld-titel').textContent = `"${titel}"`;
+  document.querySelectorAll('input[name="meld-grund"]').forEach(r => r.checked = false);
+  document.getElementById('meld-text').value = '';
+  const modal = document.getElementById('meld-modal');
+  modal.style.display = 'flex';
+}
+
+function meldModalSchliessen() {
+  document.getElementById('meld-modal').style.display = 'none';
+  aktiverMeldArtikel = null;
+}
+
+function meldungAbsenden() {
+  const grund = document.querySelector('input[name="meld-grund"]:checked');
+  if (!grund) {
+    alert('Bitte wähle einen Grund aus.');
+    return;
+  }
+
+  const btn = document.getElementById('meld-absenden-btn');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet...';
+
+  emailjs.send("service_qh9tx87", "template_2g2aod8", {
+    artikel_titel: aktiverMeldArtikel.titel,
+    artikel_link: aktiverMeldArtikel.link,
+    artikel_quelle: aktiverMeldArtikel.quelle,
+    meld_grund: grund.value,
+    meld_text: document.getElementById('meld-text').value || '(keine Angabe)',
+    zeit: new Date().toLocaleString('de-DE')
+  })
+  .then(() => {
+    meldModalSchliessen();
+    alert('Danke für deine Meldung!');
+  })
+  .catch((err) => {
+    btn.disabled = false;
+    btn.textContent = 'Melden';
+    alert('Fehler beim Senden. Bitte versuche es später.');
+    console.error(err);
+  });
+}
+
+// Modal schließen bei Klick außerhalb
+document.getElementById('meld-modal').addEventListener('click', function(e) {
+  if (e.target === this) meldModalSchliessen();
+});
+
+  const btn = event.target.closest('.meld-btn');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet...';
+
+  emailjs.send("service_qh9tx87", "template_2g2aod8", {
+    artikel_titel: titel,
+    artikel_link: link,
+    artikel_quelle: quelle,
+    zeit: new Date().toLocaleString('de-DE')
+  })
+  .then(() => {
+    btn.textContent = '✓ Gemeldet';
+    btn.style.color = 'green';
+  })
+  .catch((err) => {
+    btn.disabled = false;
+    btn.textContent = 'Melden';
+    alert('Fehler beim Senden. Bitte versuche es später.');
+    console.error(err);
+  });
+
+</script>
 </head>
 
 
 <body>
-
-<!-- ═══════════════════════════════════════════════
-     ARTIKEL MELDEN – Modal
-     (Wird durch artikelMelden() aufgerufen)
-═══════════════════════════════════════════════ -->
 <div id="meld-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
   <div style="background:#ffffff; border-radius:12px; padding:1.5rem; max-width:420px; width:90%; border:0.5px solid #e0e0e0; box-shadow:0 4px 24px rgba(0,0,0,0.15);">
     <h3 style="margin:0 0 1rem; font-size:16px; font-weight:500;">Artikel melden</h3>
-    <p id="meld-titel" style="font-size:13px; color:#666; margin:0 0 1rem; line-height:1.4;"></p>
+    <p id="meld-titel" style="font-size:13px; color:var(--color-text-secondary); margin:0 0 1rem; line-height:1.4;"></p>
     
     <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Grund der Meldung</label>
     <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
@@ -256,50 +310,12 @@
       </label>
     </div>
 
-    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Anmerkung <span style="font-weight:400; color:#666;">(freiwillig)</span></label>
+    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Anmerkung <span style="font-weight:400; color:var(--color-text-secondary);">(freiwillig)</span></label>
     <textarea id="meld-text" rows="3" placeholder="Optionale Beschreibung..." style="width:100%; box-sizing:border-box; border:1px solid #d0d0d0; border-radius:8px; padding:8px; font-size:13px; font-family:inherit; resize:vertical; background:#ffffff; color:#111111;"></textarea>
 
     <div style="display:flex; gap:8px; margin-top:1rem; justify-content:flex-end;">
-      <button onclick="meldModalSchliessen()" style="padding:8px 16px; border:0.5px solid #d0d0d0; border-radius:8px; background:transparent; cursor:pointer; font-size:13px; color:#666;">Abbrechen</button>
+      <button onclick="meldModalSchliessen()" style="padding:8px 16px; border:0.5px solid var(--color-border-tertiary); border-radius:8px; background:transparent; cursor:pointer; font-size:13px; color:var(--color-text-secondary);">Abbrechen</button>
       <button onclick="meldungAbsenden()" id="meld-absenden-btn" style="padding:8px 16px; border:none; border-radius:8px; background:#c0152a; color:white; cursor:pointer; font-size:13px; font-weight:500;">Melden</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════
-     FEEDBACK GEBEN – Modal
-     (Wird durch feedbackOeffnen() aufgerufen)
-═══════════════════════════════════════════════ -->
-<div id="feedback-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-  <div style="background:#ffffff; border-radius:12px; padding:1.5rem; max-width:420px; width:90%; border:0.5px solid #e0e0e0; box-shadow:0 4px 24px rgba(0,0,0,0.15);">
-    <h3 style="margin:0 0 0.4rem; font-size:16px; font-weight:500;">Feedback geben</h3>
-    <p style="font-size:13px; color:#666; margin:0 0 1rem; line-height:1.4;">Ideen, Lob oder Kritik – alles willkommen.</p>
-
-    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Betreff</label>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
-      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="radio" name="feedback-typ" value="Verbesserungsvorschlag"> Verbesserungsvorschlag
-      </label>
-      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="radio" name="feedback-typ" value="Fehler gefunden"> Fehler gefunden
-      </label>
-      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="radio" name="feedback-typ" value="Fehlende Quelle"> Fehlende Quelle
-      </label>
-      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="radio" name="feedback-typ" value="Lob"> Lob 😊
-      </label>
-      <label style="font-size:13px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="radio" name="feedback-typ" value="Sonstiges"> Sonstiges
-      </label>
-    </div>
-
-    <label style="font-size:13px; font-weight:500; display:block; margin-bottom:0.5rem;">Nachricht</label>
-    <textarea id="feedback-text" rows="4" placeholder="Dein Feedback..." style="width:100%; box-sizing:border-box; border:1px solid #d0d0d0; border-radius:8px; padding:8px; font-size:13px; font-family:inherit; resize:vertical; background:#ffffff; color:#111111;"></textarea>
-
-    <div style="display:flex; gap:8px; margin-top:1rem; justify-content:flex-end;">
-      <button onclick="feedbackSchliessen()" style="padding:8px 16px; border:0.5px solid #d0d0d0; border-radius:8px; background:transparent; cursor:pointer; font-size:13px; color:#666;">Abbrechen</button>
-      <button onclick="feedbackAbsenden()" id="feedback-absenden-btn" style="padding:8px 16px; border:none; border-radius:8px; background:#c0152a; color:white; cursor:pointer; font-size:13px; font-weight:500;">Absenden</button>
     </div>
   </div>
 </div>
@@ -311,15 +327,9 @@
     </div>
     <span class="logo-text">Regio<span>Nachrichten</span> Fulda</span>
   </a>
-  <div class="header-rechts">
-    <button class="feedback-btn" onclick="feedbackOeffnen()">
-      <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>Feedback geben</span>
-    </button>
-    <div class="suche-wrapper">
-      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
-    </div>
+  <div class="suche-wrapper">
+    <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
   </div>
 </header>
 
@@ -330,6 +340,8 @@
   Ich hoffe, dass Sie Freude an den innovativen Funktionen finden werden</p>
   
   <p>Liebe Grüße</p>
+
+
 </section>
 
 <div class="filter-bereich">
@@ -437,122 +449,13 @@
 <div class="grid" id="artikel-grid"></div>
 <button class="mehr-btn" id="mehr-btn" onclick="mehrLaden()" style="display:none">Mehr laden</button>
 
-
-<!-- ═══════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════ -->
 <script>
-
-// ────────────────────────────────────────────────
-// ARTIKEL MELDEN
-// ────────────────────────────────────────────────
-let aktiverMeldArtikel = null;
-
-function artikelMelden(titel, link, quelle) {
-  aktiverMeldArtikel = { titel, link, quelle };
-  document.getElementById('meld-titel').textContent = `"${titel}"`;
-  document.querySelectorAll('input[name="meld-grund"]').forEach(r => r.checked = false);
-  document.getElementById('meld-text').value = '';
-  document.getElementById('meld-absenden-btn').disabled = false;
-  document.getElementById('meld-absenden-btn').textContent = 'Melden';
-  document.getElementById('meld-modal').style.display = 'flex';
-}
-
-function meldModalSchliessen() {
-  document.getElementById('meld-modal').style.display = 'none';
-  aktiverMeldArtikel = null;
-}
-
-function meldungAbsenden() {
-  const grund = document.querySelector('input[name="meld-grund"]:checked');
-  if (!grund) { alert('Bitte wähle einen Grund aus.'); return; }
-
-  const btn = document.getElementById('meld-absenden-btn');
-  btn.disabled = true;
-  btn.textContent = 'Wird gesendet...';
-
-  emailjs.send("service_qh9tx87", "template_2g2aod8", {
-    artikel_titel: aktiverMeldArtikel.titel,
-    artikel_link:  aktiverMeldArtikel.link,
-    artikel_quelle: aktiverMeldArtikel.quelle,
-    meld_grund: grund.value,
-    meld_text: document.getElementById('meld-text').value || '(keine Angabe)',
-    zeit: new Date().toLocaleString('de-DE')
-  })
-  .then(() => {
-    meldModalSchliessen();
-    alert('Danke für deine Meldung!');
-  })
-  .catch(err => {
-    btn.disabled = false;
-    btn.textContent = 'Melden';
-    alert('Fehler beim Senden. Bitte versuche es später.');
-    console.error(err);
-  });
-}
-
-// Modal schließen bei Klick außerhalb
-document.getElementById('meld-modal').addEventListener('click', function(e) {
-  if (e.target === this) meldModalSchliessen();
-});
-
-// ────────────────────────────────────────────────
-// FEEDBACK GEBEN
-// ────────────────────────────────────────────────
-function feedbackOeffnen() {
-  document.querySelectorAll('input[name="feedback-typ"]').forEach(r => r.checked = false);
-  document.getElementById('feedback-text').value = '';
-  document.getElementById('feedback-absenden-btn').disabled = false;
-  document.getElementById('feedback-absenden-btn').textContent = 'Absenden';
-  document.getElementById('feedback-modal').style.display = 'flex';
-}
-
-function feedbackSchliessen() {
-  document.getElementById('feedback-modal').style.display = 'none';
-}
-
-function feedbackAbsenden() {
-  const typ = document.querySelector('input[name="feedback-typ"]:checked');
-  const text = document.getElementById('feedback-text').value.trim();
-  if (!typ) { alert('Bitte wähle einen Betreff aus.'); return; }
-  if (!text) { alert('Bitte schreibe eine kurze Nachricht.'); return; }
-
-  const btn = document.getElementById('feedback-absenden-btn');
-  btn.disabled = true;
-  btn.textContent = 'Wird gesendet...';
-
-  emailjs.send("service_qh9tx87", "template_2g2aod8", {
-    artikel_titel: '[Feedback]',
-    artikel_link:  window.location.href,
-    artikel_quelle: typ.value,
-    meld_grund: typ.value,
-    meld_text: text,
-    zeit: new Date().toLocaleString('de-DE')
-  })
-  .then(() => {
-    feedbackSchliessen();
-    alert('Vielen Dank für dein Feedback!');
-  })
-  .catch(err => {
-    btn.disabled = false;
-    btn.textContent = 'Absenden';
-    alert('Fehler beim Senden. Bitte versuche es später.');
-    console.error(err);
-  });
-}
-
-document.getElementById('feedback-modal').addEventListener('click', function(e) {
-  if (e.target === this) feedbackSchliessen();
-});
-
-// ────────────────────────────────────────────────
-// ARTIKEL LOGIK
-// ────────────────────────────────────────────────
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
 const PRO_SEITE = 50;
 let aktivOrt = '', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
 
+// ── ORTE LANDKREIS FULDA ──
 const ORTE_LANDKREIS = [
   'fulda','hünfeld','künzell','petersberg','neuhof','eichenzell','flieden',
   'burghaun','großenlüder','hilders','hofbieber','gersfeld','tann','eiterfeld',
@@ -560,6 +463,7 @@ const ORTE_LANDKREIS = [
   'poppenhausen','bad salzschlirf','rhön','wasserkuppe','fuldaer','osthessen'
 ];
 
+// ── KATEGORIEN ──
 const KATEGORIEN = {
   'Lokale Vorfälle': {
     farbe: '#c0152a', hell: '#fdf0f2',
@@ -574,7 +478,7 @@ const KATEGORIEN = {
   },
   'Politik & Verwaltung': {
     farbe: '#1a3a5c', hell: '#eef2f7',
-    keys: ['wahl','politik','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag','cdu','spd','grüne','fdp','afD','linke','volt','kanzler','minister','opposition','koalition'],
+    keys: ['wahl','politik','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afD', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef2f7"/>
       <rect x="155" y="95" width="90" height="30" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".2"/>
       <rect x="168" y="72" width="64" height="28" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".25"/>
@@ -588,7 +492,7 @@ const KATEGORIEN = {
   },
   'Wirtschaft & Arbeit': {
     farbe: '#1a5c3a', hell: '#eef7f2',
-    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe','industrie','produktion','dienstleistung','export','import','konjunktur','streik','energiepreis'],
+    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef7f2"/>
       <polyline points="140,110 165,85 185,95 210,65 235,75 260,45" fill="none" stroke="#1a5c3a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="260" cy="45" r="4" fill="#1a5c3a"/>
@@ -597,7 +501,7 @@ const KATEGORIEN = {
   },
   'Sport': {
     farbe: '#5c3a1a', hell: '#f7f2ee',
-    keys: ['sport','fußball','handball','tennis','turnier','verein','liga','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft','playoff'],
+    keys: ['sport','fußball','handball','tennis','turnier','verein','liga','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft', 'playoff'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f7f2ee"/>
       <circle cx="200" cy="80" r="44" fill="none" stroke="#5c3a1a" stroke-width="2.5" opacity=".25"/>
       <path d="M200,36 C215,48 220,62 215,80 C210,98 195,108 200,124" fill="none" stroke="#5c3a1a" stroke-width="1.5" opacity=".3"/>
@@ -668,7 +572,6 @@ const KATEGORIEN = {
       <line x1="160" y1="95" x2="220" y2="95" stroke="#888" stroke-width="2" stroke-linecap="round" opacity=".3"/></svg>`
   }
 };
-
 const WAPPEN = {
   "Hünfeld": `<svg viewBox="0 0 56 70" width="100%" height="100%">
     <defs><clipPath id="wh"><path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z"/></clipPath></defs>
@@ -677,6 +580,7 @@ const WAPPEN = {
     <rect x="23" y="2" width="10" height="68" fill="white" clip-path="url(#wh)"/>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="none" stroke="#555" stroke-width="1.4"/>
   </svg>`,
+
   "Tann": `<svg viewBox="0 0 56 70" width="100%" height="100%">
     <defs><clipPath id="wt"><path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z"/></clipPath></defs>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="#f5c518"/>
@@ -688,6 +592,7 @@ const WAPPEN = {
     <line x1="34" y1="57" x2="42" y2="62" stroke="#7a4a1a" stroke-width="2.2" stroke-linecap="round" clip-path="url(#wt)"/>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="none" stroke="#555" stroke-width="1.4"/>
   </svg>`,
+
   "Eichenzell": `<svg viewBox="0 0 56 70" width="100%" height="100%">
     <defs><clipPath id="we"><path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z"/></clipPath></defs>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="#fff"/>
@@ -705,6 +610,7 @@ const WAPPEN = {
     <line x1="40" y1="44" x2="40" y2="52" stroke="white" stroke-width="2" clip-path="url(#we)"/>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="none" stroke="#555" stroke-width="1.4"/>
   </svg>`,
+
   "Dipperz": `<svg viewBox="0 0 56 70" width="100%" height="100%">
     <defs><clipPath id="wd"><path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z"/></clipPath></defs>
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="#fff"/>
@@ -718,7 +624,6 @@ const WAPPEN = {
     <path d="M28,2 L53,15 L53,55 L28,68 L3,55 L3,15Z" fill="none" stroke="#555" stroke-width="1.4"/>
   </svg>`,
 };
-
 const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
 
 function kategorieBestimmen(titel, tags) {
@@ -738,9 +643,11 @@ function tagTypBestimmen(tag) {
 
 function zeitAusgabe(datumStr) {
   if (!datumStr) return '';
+  // Leerzeichen durch T ersetzen damit JavaScript die Zeitzone korrekt liest
   const d = new Date(datumStr.replace(' ', 'T'));
   const jetzt = new Date();
   const diff = Math.floor((jetzt - d) / 60000);
+  if (diff < 0) return 'Gerade eben';
   if (diff < 1) return 'Gerade eben';
   if (diff < 60) return `Vor ${diff} Min.`;
   if (diff < 1440) return `Vor ${Math.floor(diff/60)} Std.`;
@@ -752,14 +659,15 @@ async function quellenLaden() {
     const res = await fetch(`${API}/quellen`);
     const data = await res.json();
     const container = document.getElementById('quelle-chips');
-    data.quellen.forEach(q => {
+    const einzigartigeQuellen = [...new Map(data.quellen.map(q => [q.quelle, q])).values()];
+    einzigartigeQuellen.forEach(q => {
       const btn = document.createElement('button');
       btn.className = 'chip';
       btn.textContent = q.quelle;
       btn.onclick = () => quelleWaehlen(btn, q.quelle);
       container.appendChild(btn);
     });
-  } catch(e) { console.error('Quellen laden fehlgeschlagen:', e); }
+  } catch(e) {}
 }
 
 async function artikelLaden() {
@@ -835,6 +743,7 @@ function karteErstellen(artikel, index) {
   div.className = 'karte';
   div.style.animationDelay = `${(index % PRO_SEITE) * 30}ms`;
 
+  // Tags mit Typ-Klassifizierung
   let tagsHTML = '';
   if (artikel.tags) {
     const tagListe = artikel.tags.split('·').map(t => t.trim()).filter(t => t);
@@ -852,6 +761,7 @@ function karteErstellen(artikel, index) {
     }).join('') + '</div>';
   }
 
+  // Wappen-Badge ermitteln
   let wappenHTML = '';
   if (artikel.tags) {
     const tagListe = artikel.tags.split('·').map(t => t.trim());
@@ -896,13 +806,14 @@ function karteErstellen(artikel, index) {
     </div>`;
   return div;
 }
-
+// Ort-Tag aus Karte geklickt
 function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
   if (aktivOrt === ortLower) { ortFilterLeeren(); return; }
   aktivOrt = ortLower;
   document.getElementById('aktiver-ort-text').textContent = ort;
   document.getElementById('ort-banner').style.display = 'flex';
+  // Ort-Chips aktualisieren
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const matching = [...document.querySelectorAll('#ort-chips .chip')].find(c => c.textContent.toLowerCase() === ortLower);
   if (matching) matching.classList.add('aktiv-ort');
@@ -974,7 +885,7 @@ function alleFilterZurueck() {
   artikelLaden();
 }
 
-function artikelGeoeffnet(titel, quelle) {
+function artikelGeoeffnet(titel, quelle, link) {
   if (typeof umami !== 'undefined') {
     umami.track('artikel-geklickt', {
       titel: titel.substring(0, 50),
