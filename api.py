@@ -96,10 +96,10 @@ def quellen_abrufen():
     conn = db_verbinden()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("""
-        SELECT quelle, region, typ, COUNT(*) as anzahl
-        FROM artikel
-        GROUP BY quelle, region, typ
-        ORDER BY anzahl DESC
+    SELECT quelle, region, typ, COUNT(*) as anzahl
+    FROM artikel
+    GROUP BY quelle
+    ORDER BY anzahl DESC
     """)
     rows = cursor.fetchall()
     cursor.close()
