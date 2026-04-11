@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RegioNachrichten Fulda</title>
+<link rel="icon" type="image/svg+xml" href="rn_fulda_logo_klein.svg">
 <style>
   @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
   @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
@@ -22,13 +23,13 @@
   }
   body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; }
 
-  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); }
+  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); flex-shrink: 0; }
   .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .logo-icon svg { width: 20px; height: 20px; fill: white; }
   .logo-text { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
   .logo-text span { color: var(--rot); }
-  .suche-wrapper { position: relative; width: 280px; }
+  .suche-wrapper { position: relative; flex: 1; max-width: 400px; margin: 0 auto; }
   .suche-wrapper svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--grau-mittel); fill: none; }
   .suche-wrapper input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-body); font-size: 14px; color: var(--schwarz); background: var(--grau-hell); outline: none; transition: border-color .2s; }
   .suche-wrapper input:focus { border-color: var(--rot); background: var(--weiss); }
@@ -119,7 +120,7 @@
   .badge { position: absolute; top: 12px; left: 12px; color: var(--weiss); font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
 
   .karte-inhalt { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; gap: .6rem; }
-  .karte-titel { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; line-height: 1.35; color: var(--schwarz); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .karte-titel { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; line-height: 1.35; color: var(--schwarz); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .karte-titel-link {
   text-decoration: none;
   color: inherit;
@@ -177,6 +178,8 @@
   .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
   .feedback-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--weiss); color: var(--grau-dunkel); font-family: var(--font-body); font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
   .feedback-btn:hover { border-color: var(--rot); color: var(--rot); }
+  .unterstuetzen-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--grau-hell); color: var(--grau-dunkel); font-family: var(--font-body); font-size: .8rem; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
+  .unterstuetzen-btn:hover { border-color: #888; color: var(--schwarz); }
 
   .lade-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; color: var(--grau-mittel); gap: 1rem; }
   .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--rot); border-radius: 50%; animation: drehen .7s linear infinite; }
@@ -396,6 +399,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
   </div>
+  <a href="https://ko-fi.com/regionachrichtenfulda" target="_blank" rel="noopener" class="unterstuetzen-btn">
+    <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Unterstütze uns
+  </a>
   <button class="feedback-btn" onclick="feedbackModalOeffnen()">
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     Feedback geben

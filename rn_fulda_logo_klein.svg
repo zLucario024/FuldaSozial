@@ -1,0 +1,13 @@
+<svg width="100%" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg"><defs><mask id="imagine-text-gaps-loubtb" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="680" fill="white"/><rect x="225.4291229248047" y="229.55555725097656" width="231.98394775390625" height="163.42222595214844" fill="black" rx="2"/><rect x="220.76593017578125" y="411.155517578125" width="238.4680633544922" height="62.17778015136719" fill="black" rx="2"/></mask></defs>
+<title>RN Fulda Logo</title>
+<desc>Quadratisches minimalistisches Logo für RegioNachrichten Fulda</desc>
+
+<rect x="140" y="140" width="400" height="400" rx="40" fill="#c0152a"/>
+
+<text x="340" y="360" font-family="Georgia, serif" font-size="140" font-weight="700" fill="white" text-anchor="middle" letter-spacing="-4">RN</text>
+
+<line x1="200" y1="390" x2="480" y2="390" stroke="white" stroke-width="1.5" opacity="0.4" mask="url(#imagine-text-gaps-loubtb)"/>
+
+<text x="340" y="460" font-family="Arial, sans-serif" font-size="52" font-weight="400" fill="white" text-anchor="middle" letter-spacing="12">FULDA</text>
+
+</svg>

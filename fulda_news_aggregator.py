@@ -93,11 +93,11 @@ Titel:
     try:
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=500,
+            max_tokens=1500,
             messages=[{"role": "user", "content": prompt}]
         )
-        zeilen = message.content[0].text.strip().split("\n")
-        return {titel: zeilen[i].strip() for i, titel in enumerate(titel_liste) if i < len(zeilen)}
+        zeilen = [z.strip() for z in message.content[0].text.strip().split("\n") if z.strip()]
+        return {titel: zeilen[i] for i, titel in enumerate(titel_liste) if i < len(zeilen)}
     except Exception as e:
         print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
         return {}
@@ -201,10 +201,6 @@ def feed_verarbeiten(feed, conn):
                     (hash_wert,)
                 )
     conn.commit()
-
-    cursor.close()
-    return neu, duplikate
-
 
     cursor.close()
     return neu, duplikate
