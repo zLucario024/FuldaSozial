@@ -50,7 +50,7 @@ def artikel_abrufen(
     limit:  int = Query(50),
     offset: int = Query(0)
 ):
-    limit = min(limit, 200)
+    limit = min(limit, 500)
     query = "SELECT * FROM artikel WHERE 1=1"
     params = []
 
