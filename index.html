@@ -193,11 +193,33 @@
   .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
   .footer-inner nav a:hover { color: var(--rot); }
 
+  @media (min-width: 769px) {
+    .hamburger-btn { display: none; }
+    .mobile-menu { display: none !important; }
+  }
+
   @media (max-width: 768px) {
     /* 1. Header */
     header { padding: 0 1rem; gap: 0.75rem; }
     .suche-wrapper { max-width: none; margin: 0; flex: 1; }
     .feedback-btn, .unterstuetzen-btn { display: none; }
+
+    /* Logo zweizeilig */
+    .logo-text { font-size: 1rem; line-height: 1.15; display: flex; flex-direction: column; }
+    .logo-ort { display: block; font-size: .68rem; font-weight: 600; color: var(--grau-mittel); letter-spacing: .04em; }
+
+    /* Hamburger */
+    .hamburger-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 0; color: var(--grau-dunkel); }
+    .hamburger-btn svg { width: 22px; height: 22px; }
+
+    /* Mobile Menü */
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 2000; }
+    .mobile-menu.aktiv { display: block; }
+    .mobile-menu-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+    .mobile-menu-panel { position: absolute; top: 0; right: 0; width: 78%; max-width: 300px; height: 100%; background: var(--weiss); display: flex; flex-direction: column; padding: 1rem; gap: .25rem; box-shadow: -4px 0 24px rgba(0,0,0,0.15); overflow-y: auto; }
+    .mobile-menu-close { align-self: flex-end; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--grau-mittel); padding: .25rem .5rem; margin-bottom: .5rem; }
+    .mobile-menu-item { display: flex; align-items: center; gap: 12px; padding: .9rem 1rem; border-radius: 8px; font-family: var(--font-body); font-size: .95rem; font-weight: 500; color: var(--schwarz); text-decoration: none; background: none; border: none; cursor: pointer; width: 100%; text-align: left; transition: background .15s; }
+    .mobile-menu-item:hover, .mobile-menu-item:active { background: var(--grau-hell); }
 
     /* 2. Filter-Chips: horizontal scroll */
     .chip-reihe { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
@@ -332,6 +354,15 @@ function feedbackAbsenden() {
   });
 }
 
+function mobilMenuOeffnen() {
+  document.getElementById('mobile-menu').classList.add('aktiv');
+  document.body.style.overflow = 'hidden';
+}
+function mobilMenuSchliessen() {
+  document.getElementById('mobile-menu').classList.remove('aktiv');
+  document.body.style.overflow = '';
+}
+
 // Modal schließen bei Klick außerhalb + Meld-Button via Event Delegation
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('meld-modal').addEventListener('click', function(e) {
@@ -341,6 +372,10 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('feedback-modal').addEventListener('click', function(e) {
     if (e.target === this) feedbackModalSchliessen();
   });
+
+  document.getElementById('hamburger-btn').addEventListener('click', mobilMenuOeffnen);
+  document.getElementById('mobile-menu-close').addEventListener('click', mobilMenuSchliessen);
+  document.getElementById('mobile-menu-overlay').addEventListener('click', mobilMenuSchliessen);
 
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.meld-btn');
@@ -421,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="logo-icon">
       <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
     </div>
-    <span class="logo-text">Regio<span>Nachrichten</span> Fulda</span>
+    <span class="logo-text">Regio<span>Nachrichten</span><span class="logo-ort"> Fulda</span></span>
   </a>
   <div class="suche-wrapper">
     <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -435,7 +470,34 @@ document.addEventListener('DOMContentLoaded', function() {
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     Feedback geben
   </button>
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Menü öffnen">
+    <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
 </header>
+
+<!-- Mobile Menü -->
+<div id="mobile-menu" class="mobile-menu">
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+  <nav class="mobile-menu-panel">
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Menü schließen">✕</button>
+    <button class="mobile-menu-item" onclick="mobilMenuSchliessen(); feedbackModalOeffnen()">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Feedback geben
+    </button>
+    <a href="https://ko-fi.com/regionachrichtenfulda" target="_blank" rel="noopener" class="mobile-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Unterstütze uns
+    </a>
+    <a href="impressum.html" class="mobile-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Impressum
+    </a>
+    <a href="datenschutz.html" class="mobile-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Datenschutz
+    </a>
+  </nav>
+</div>
 
 <section class="hero">
   <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
