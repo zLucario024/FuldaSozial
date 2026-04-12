@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="grau_hell">#F4F4F4</color>
+    <color name="grau_mittel">#666666</color>
+    <color name="rot">#C0152A</color>
+    <color name="rot_dunkel">#9e1022</color>
+    <color name="schwarz">#111111</color>
+    <color name="weiss">#FFFFFF</color>
+    <string name="app_name">RegioNachrichten Fulda</string>
+    <string name="btn_erneut">Erneut versuchen</string>
+    <string name="offline_text">Bitte prüfe deine Internetverbindung und versuche es erneut.</string>
+    <string name="offline_titel">Keine Verbindung</string>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/rot</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.FuldaSozial</item>
+    </style>
+    <style name="Theme.FuldaSozial" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/rot</item>
+        <item name="colorPrimaryVariant">@color/rot_dunkel</item>
+        <item name="colorOnPrimary">@color/weiss</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:navigationBarColor">@color/weiss</item>
+        <item name="android:windowBackground">@color/weiss</item>
+    </style>
+    <style name="Theme.FuldaSozial.Splash" parent="Theme.FuldaSozial">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+</resources>
