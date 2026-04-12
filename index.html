@@ -903,7 +903,7 @@ async function artikelLaden() {
   gezeigt = 0; alleArtikel = [];
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
-  let url = `${API}/artikel?limit=500`;
+  let url = `${API}/artikel?limit=1000`;
   if (aktivQuelle) url += `&quelle=${encodeURIComponent(aktivQuelle)}`;
   try {
     const res = await fetch(url);
