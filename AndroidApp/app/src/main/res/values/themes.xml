@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.FuldaSozial" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/rot</item>
+        <item name="colorPrimaryVariant">@color/rot_dunkel</item>
+        <item name="colorOnPrimary">@color/weiss</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:navigationBarColor">@color/weiss</item>
+        <item name="android:windowBackground">@color/weiss</item>
+    </style>
+
+    <!-- Modern Splash Screen API -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/rot</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.FuldaSozial</item>
+    </style>
+
+    <!-- Legacy Splash Screen: roter Hintergrund mit Logo -->
+    <style name="Theme.FuldaSozial.Splash" parent="Theme.FuldaSozial">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
+</resources>

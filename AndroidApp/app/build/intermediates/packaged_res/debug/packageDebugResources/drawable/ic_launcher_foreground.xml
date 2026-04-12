@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Stärkere Skalierung (0.55), damit das Logo garantiert in der Safe-Zone (Kreis) liegt -->
+    <group
+        android:translateX="54"
+        android:translateY="54"
+        android:scaleX="0.55"
+        android:scaleY="0.55">
+
+        <group
+            android:translateX="-54"
+            android:translateY="-54">
+
+            <!-- "RN" (Stilisierte Serif-Buchstaben) -->
+            <group android:translateY="5">
+                <!-- R -->
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:pathData="M25,28 L48,28 C54,28 58,32 58,38 C58,43 54,47 49,48 L59,62 L52,62 L43,50 L31,50 L31,62 L25,62 Z M31,34 L31,44 L48,44 C52,44 52,34 48,34 Z" />
+                <!-- N -->
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:pathData="M64,28 L72,28 L88,52 L88,28 L94,28 L94,62 L86,62 L70,38 L70,62 L64,62 Z" />
+            </group>
+
+            <!-- Trennlinie (etwas kürzer und näher an den Texten) -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M38,66 L80,66 L80,68 L38,68 Z" />
+
+            <!-- "FULDA" (Kräftige Sans-Serif Blockbuchstaben) -->
+            <group android:translateY="24">
+                <!-- F -->
+                <path android:fillColor="#FFFFFF" android:pathData="M22,68 L34,68 L34,70 L24,70 L24,74 L32,74 L32,76 L24,76 L24,81 L22,81 Z" />
+                <!-- U -->
+                <path android:fillColor="#FFFFFF" android:pathData="M38,68 L40,68 L40,79 L48,79 L48,68 L50,68 L50,81 L38,81 Z" />
+                <!-- L -->
+                <path android:fillColor="#FFFFFF" android:pathData="M54,68 L56,68 L56,79 L64,79 L64,81 L54,81 Z" />
+                <!-- D -->
+                <path android:fillColor="#FFFFFF" android:pathData="M68,68 L76,68 C80,68 82,70 82,74.5 C82,79 80,81 76,81 L68,81 Z M70,70 L70,79 L76,79 C79,79 80,78 80,74.5 C80,71 79,70 76,70 Z" />
+                <!-- A -->
+                <path android:fillColor="#FFFFFF" android:pathData="M90,68 L84,81 L86.5,81 L87.5,78.5 L93,78.5 L94,81 L96.5,81 L91,68 Z M88.5,76.5 L90.25,72 L92,76.5 Z" />
+            </group>
+
+        </group>
+    </group>
+
+</vector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RegioNachrichten Fulda</string>
+    <string name="offline_titel">Keine Verbindung</string>
+    <string name="offline_text">Bitte prüfe deine Internetverbindung und versuche es erneut.</string>
+    <string name="btn_erneut">Erneut versuchen</string>
+</resources>

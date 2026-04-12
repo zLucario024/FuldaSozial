@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rot">#C0152A</color>
+    <color name="rot_dunkel">#9e1022</color>
+    <color name="weiss">#FFFFFF</color>
+    <color name="schwarz">#111111</color>
+    <color name="grau_mittel">#666666</color>
+    <color name="grau_hell">#F4F4F4</color>
+</resources>
