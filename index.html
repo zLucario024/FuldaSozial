@@ -187,20 +187,48 @@
   .mehr-btn { display: block; margin: 0 auto 3rem; padding: 12px 32px; border-radius: 8px; background: var(--weiss); border: 1px solid var(--border); font-family: var(--font-body); font-size: .9rem; font-weight: 600; color: var(--grau-dunkel); cursor: pointer; transition: all .2s; }
   .mehr-btn:hover { border-color: var(--rot); color: var(--rot); }
 
-  @media (max-width: 600px) {
-    header { padding: 0 1rem; }
-    .suche-wrapper { width: 160px; }
-    .hero, .filter-bereich, .ergebnis-bar, .grid { padding-left: 1rem; padding-right: 1rem; }
-    .grid { grid-template-columns: 1fr; }
-  }
-
   footer { margin-top: 4rem; border-top: 1px solid var(--border); background: var(--grau-hell); }
   .footer-inner { max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .85rem; color: var(--grau-mittel); }
   .footer-inner nav { display: flex; gap: 1.5rem; }
   .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
   .footer-inner nav a:hover { color: var(--rot); }
-  @media (max-width: 600px) {
+
+  @media (max-width: 768px) {
+    /* 1. Header */
+    header { padding: 0 1rem; gap: 0.75rem; }
+    .suche-wrapper { max-width: none; margin: 0; flex: 1; }
+    .feedback-btn, .unterstuetzen-btn { display: none; }
+
+    /* 2. Filter-Chips: horizontal scroll */
+    .chip-reihe { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
+    .chip-reihe::-webkit-scrollbar { display: none; }
+
+    /* 3. Grid: eine Spalte */
+    .grid { grid-template-columns: 1fr; padding-left: 1rem; padding-right: 1rem; }
+
+    /* 4. Kartenbild-Höhe */
+    .karte-bild { height: 120px; }
+
+    /* 5. Tags */
+    .tag-ort, .tag-thema, .tag-neutral { font-size: .62rem; padding: 2px 6px; }
+
+    /* 6. Footer */
     .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
+
+    /* 7. Hero */
+    .hero { padding: 1.5rem 1rem 1.25rem; }
+    .hero h1 { font-size: 1.55rem; }
+    .hero p { font-size: .88rem; }
+    .hero-sub { font-size: .8rem; }
+
+    /* 8. "Mehr laden" Button */
+    .mehr-btn { width: calc(100% - 2rem); margin-left: 1rem; margin-right: 1rem; box-sizing: border-box; }
+
+    /* 9. Modals */
+    #meld-modal > div, #feedback-modal > div { width: calc(100% - 2rem); max-width: none; }
+
+    /* Allgemeine Abstände */
+    .filter-bereich, .ergebnis-bar { padding-left: 1rem; padding-right: 1rem; }
   }
 </style>
 
