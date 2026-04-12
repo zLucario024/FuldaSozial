@@ -10,7 +10,7 @@
 
 <!-- SEO -->
 <meta name="description" content="Aktuelle Nachrichten aus Fulda und dem Landkreis – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr aus Fulda, Hünfeld, Künzell, Petersberg, Neuhof, Eichenzell, Flieden, Burghaun, Großenlüder, Hilders, Hofbieber, Gersfeld, Tann, Eiterfeld, Rasdorf, Dipperz, Ebersburg, Ehrenberg, Hosenfeld, Kalbach, Nüsttal, Poppenhausen und Bad Salzschlirf.">
-<meta name="keywords" content="Fulda Nachrichten, Landkreis Fulda, Osthessen News, Fulda aktuell, Hünfeld, Künzell, Petersberg, Neuhof, Eichenzell, Flieden, Burghaun, Großenlüder, Hilders, Hofbieber, Gersfeld, Tann, Eiterfeld, Rasdorf, Dipperz, Ebersburg, Ehrenberg, Hosenfeld, Kalbach, Nüsttal, Poppenhausen, Bad Salzschlirf, Rhön, Osthessen, Hessen, Regionalnachrichten, Nachrichten, Vorfall">
+<meta name="keywords" content="Fulda Nachrichten, Landkreis Fulda, Osthessen News, Fulda aktuell, Hünfeld, Künzell, Petersberg, Neuhof, Eichenzell, Flieden, Burghaun, Großenlüder, Hilders, Hofbieber, Gersfeld, Tann, Eiterfeld, Rasdorf, Dipperz, Ebersburg, Ehrenberg, Hosenfeld, Kalbach, Nüsttal, Poppenhausen, Bad Salzschlirf, Rhön, Osthessen, Hessen, Regionalnachrichten, Nachrichten, Vorfall, Nachrichten Region Fulda, Region Fulda, Fulda, Stadt, Ort, Dorf, Gemeinde, Neu, Neues">
 <meta name="robots" content="index, follow">
 <meta name="author" content="RegioNachrichten Fulda">
 <link rel="canonical" href="https://fuldasozial.de">
@@ -898,6 +898,7 @@ async function quellenLaden() {
   } catch(e) {}
 }
 
+let ersterLade = true;
 async function artikelLaden() {
   gezeigt = 0; alleArtikel = [];
   document.getElementById('artikel-grid').innerHTML =
@@ -908,6 +909,7 @@ async function artikelLaden() {
     const res = await fetch(url);
     const data = await res.json();
     alleArtikel = data.artikel || [];
+    if (ersterLade) { ersterLade = false; filterAusUrlLesen(); }
     artikelAnzeigen();
   } catch(e) {
     document.getElementById('artikel-grid').innerHTML =
@@ -1041,18 +1043,17 @@ function ortAusTag(ort, el) {
   aktivOrt = ortLower;
   document.getElementById('aktiver-ort-text').textContent = ort;
   document.getElementById('ort-banner').style.display = 'flex';
-  // Ort-Chips aktualisieren
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const matching = [...document.querySelectorAll('#ort-chips .chip')].find(c => c.textContent.toLowerCase() === ortLower);
   if (matching) matching.classList.add('aktiv-ort');
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function tagFiltern(tag) {
   aktivTag = aktivTag === tag ? '' : tag;
   document.getElementById('aktiver-tag-text').textContent = aktivTag;
   document.getElementById('tag-banner').style.display = aktivTag ? 'flex' : 'none';
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function ortWaehlen(btn, ort) {
@@ -1061,14 +1062,14 @@ function ortWaehlen(btn, ort) {
   aktivOrt = ort;
   document.getElementById('ort-banner').style.display = ort ? 'flex' : 'none';
   document.getElementById('aktiver-ort-text').textContent = btn.textContent;
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function kategorieWaehlen(btn, k) {
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   btn.classList.add('aktiv');
   aktivKategorie = k;
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function quelleWaehlen(btn, q) {
@@ -1080,7 +1081,7 @@ function quelleWaehlen(btn, q) {
 
 function sucheAktualisieren() {
   suchbegriff = document.getElementById('suche').value.toLowerCase().trim();
-  artikelAnzeigen();
+  urlAktualisieren(true); artikelAnzeigen();
 }
 
 function ortFilterLeeren() {
@@ -1088,13 +1089,13 @@ function ortFilterLeeren() {
   document.getElementById('ort-banner').style.display = 'none';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelector('#ort-chips .chip').classList.add('aktiv');
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function tagFilterLeeren() {
   aktivTag = '';
   document.getElementById('tag-banner').style.display = 'none';
-  artikelAnzeigen();
+  urlAktualisieren(); artikelAnzeigen();
 }
 
 function alleFilterZurueck() {
@@ -1110,7 +1111,7 @@ function alleFilterZurueck() {
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   document.querySelector('#quelle-chips .chip').classList.add('aktiv-dunkel');
-  artikelLaden();
+  urlAktualisieren(true); artikelLaden();
 }
 
 function artikelGeoeffnet(titel, quelle, link) {
@@ -1121,6 +1122,85 @@ function artikelGeoeffnet(titel, quelle, link) {
     });
   }
 }
+
+// ── URL-NAVIGATION ──
+function urlAktualisieren(replace = false) {
+  const params = new URLSearchParams();
+  if (aktivOrt)       params.set('ort', aktivOrt);
+  if (aktivKategorie) params.set('kategorie', aktivKategorie);
+  if (aktivTag)       params.set('tag', aktivTag);
+  if (suchbegriff)    params.set('suche', suchbegriff);
+  const query = params.toString();
+  const neueUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+  const state = { ort: aktivOrt, kategorie: aktivKategorie, tag: aktivTag, suche: suchbegriff };
+  history[replace ? 'replaceState' : 'pushState'](state, '', neueUrl);
+}
+
+function filterAusUrlLesen() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('ort')) {
+    aktivOrt = params.get('ort');
+    document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+    const match = [...document.querySelectorAll('#ort-chips .chip')]
+      .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
+    if (match) match.classList.add('aktiv-ort');
+    else {
+      document.querySelector('#ort-chips .chip').classList.add('aktiv');
+      document.getElementById('ort-banner').style.display = 'flex';
+      document.getElementById('aktiver-ort-text').textContent = aktivOrt;
+    }
+  }
+  if (params.has('kategorie')) {
+    aktivKategorie = params.get('kategorie');
+    document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
+    const match = [...document.querySelectorAll('#kategorie-chips .chip')]
+      .find(c => c.textContent.trim() === aktivKategorie);
+    if (match) match.classList.add('aktiv');
+  }
+  if (params.has('tag')) {
+    aktivTag = params.get('tag');
+    document.getElementById('tag-banner').style.display = 'flex';
+    document.getElementById('aktiver-tag-text').textContent = aktivTag;
+  }
+  if (params.has('suche')) {
+    suchbegriff = params.get('suche');
+    document.getElementById('suche').value = suchbegriff;
+  }
+}
+
+window.addEventListener('popstate', function(e) {
+  const s = e.state || {};
+  aktivOrt       = s.ort || '';
+  aktivKategorie = s.kategorie || '';
+  aktivTag       = s.tag || '';
+  suchbegriff    = s.suche || '';
+  document.getElementById('suche').value = suchbegriff;
+  // UI zurücksetzen
+  document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+  document.querySelector('#ort-chips .chip').classList.add('aktiv');
+  document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
+  document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
+  // Aktive Filter wiederherstellen
+  if (aktivOrt) {
+    document.querySelector('#ort-chips .chip').classList.remove('aktiv');
+    const m = [...document.querySelectorAll('#ort-chips .chip')]
+      .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
+    if (m) m.classList.add('aktiv-ort');
+    document.getElementById('ort-banner').style.display = 'flex';
+    document.getElementById('aktiver-ort-text').textContent = aktivOrt;
+  } else {
+    document.getElementById('ort-banner').style.display = 'none';
+  }
+  if (aktivKategorie) {
+    document.querySelector('#kategorie-chips .chip').classList.remove('aktiv');
+    const m = [...document.querySelectorAll('#kategorie-chips .chip')]
+      .find(c => c.textContent.trim() === aktivKategorie);
+    if (m) m.classList.add('aktiv');
+  }
+  document.getElementById('tag-banner').style.display = aktivTag ? 'flex' : 'none';
+  if (aktivTag) document.getElementById('aktiver-tag-text').textContent = aktivTag;
+  artikelAnzeigen();
+});
 
 quellenLaden();
 artikelLaden();
