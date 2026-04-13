@@ -101,7 +101,7 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\adria\.gradle\cach
 		ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:13:9-49
 	android:usesCleartextTraffic
 		ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:14:9-45
-activity#de.fuldasozial.app.SplashActivity
+activity#de.rnfulda.app.SplashActivity
 ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:17:9-26:20
 	android:noHistory
 		ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:21:13-37
@@ -121,7 +121,7 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:24:17-77
 	android:name
 		ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:24:27-74
-activity#de.fuldasozial.app.MainActivity
+activity#de.rnfulda.app.MainActivity
 ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:29:9-33:58
 	android:windowSoftInputMode
 		ADDED from C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:33:13-55
@@ -255,7 +255,7 @@ ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\trans
 		ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
 	android:name
 		ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
-permission#de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+permission#de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
 		ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
@@ -265,7 +265,7 @@ uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
-uses-permission#de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission#de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:22-94

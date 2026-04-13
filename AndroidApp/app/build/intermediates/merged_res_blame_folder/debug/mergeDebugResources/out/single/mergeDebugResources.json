@@ -1,26 +1,26 @@
 [
     {
-        "merged": "de.fuldasozial.app-debug-33:/drawable_splash_background.xml.flat",
-        "source": "de.fuldasozial.app-main-35:/drawable/splash_background.xml"
+        "merged": "de.rnfulda.app-debug-33:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "de.rnfulda.app-main-35:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "de.fuldasozial.app-debug-33:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "de.fuldasozial.app-main-35:/drawable/ic_launcher_foreground.xml"
+        "merged": "de.rnfulda.app-debug-33:/drawable_logo.jpg.flat",
+        "source": "de.rnfulda.app-main-35:/drawable/logo.jpg"
     },
     {
-        "merged": "de.fuldasozial.app-debug-33:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "de.fuldasozial.app-main-35:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "de.rnfulda.app-debug-33:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "de.rnfulda.app-main-35:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "de.fuldasozial.app-debug-33:/layout_activity_main.xml.flat",
-        "source": "de.fuldasozial.app-main-35:/layout/activity_main.xml"
+        "merged": "de.rnfulda.app-debug-33:/layout_activity_main.xml.flat",
+        "source": "de.rnfulda.app-main-35:/layout/activity_main.xml"
     },
     {
-        "merged": "de.fuldasozial.app-debug-33:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "de.fuldasozial.app-main-35:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "de.rnfulda.app-debug-33:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "de.rnfulda.app-main-35:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "de.fuldasozial.app-debug-33:/drawable_logo.jpg.flat",
-        "source": "de.fuldasozial.app-main-35:/drawable/logo.jpg"
+        "merged": "de.rnfulda.app-debug-33:/drawable_splash_background.xml.flat",
+        "source": "de.rnfulda.app-main-35:/drawable/splash_background.xml"
     }
 ]

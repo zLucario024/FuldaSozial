@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "de.fuldasozial.app-mergeDebugResources-31:/values-w600dp-land-v13/values-w600dp-land-v13.xml",
+            "outputFile": "de.rnfulda.app-mergeDebugResources-31:/values-w600dp-land-v13/values-w600dp-land-v13.xml",
             "map": [
                 {
                     "source": "C:\\Users\\adria\\.gradle\\caches\\9.0.0\\transforms\\bfe84c31993a41ed92725569e5062e59\\transformed\\material-1.11.0\\res\\values-w600dp-land-v13\\values-w600dp-land-v13.xml",

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "de.fuldasozial.app-mergeReleaseResources-31:/values-am/values-am.xml",
+            "outputFile": "de.rnfulda.app-mergeReleaseResources-31:/values-am/values-am.xml",
             "map": [
                 {
                     "source": "C:\\Users\\adria\\.gradle\\caches\\9.0.0\\transforms\\b94b7470bf4e55617c754dd252a4d5dd\\transformed\\appcompat-1.6.1\\res\\values-am\\values-am.xml",

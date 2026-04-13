@@ -19567,23 +19567,23 @@ com.google.errorprone.annotations.concurrent.GuardedBy
 com.google.errorprone.annotations.concurrent.LazyInit
 com.google.errorprone.annotations.concurrent.LockMethod
 com.google.errorprone.annotations.concurrent.UnlockMethod
-de.fuldasozial.app.R$color:
+de.rnfulda.app.R$color:
     public static int grau_hell
     public static int grau_mittel
     public static int rot_dunkel
     public static int schwarz
     public static int weiss
     private void <init>()
-de.fuldasozial.app.R$drawable
-de.fuldasozial.app.R$id:
+de.rnfulda.app.R$drawable
+de.rnfulda.app.R$id:
     private void <init>()
-de.fuldasozial.app.R$layout:
+de.rnfulda.app.R$layout:
     private void <init>()
-de.fuldasozial.app.R$mipmap
-de.fuldasozial.app.R$string
-de.fuldasozial.app.R$style
-de.fuldasozial.app.R
-de.fuldasozial.app.databinding.ActivityMainBinding:
+de.rnfulda.app.R$mipmap
+de.rnfulda.app.R$string
+de.rnfulda.app.R$style
+de.rnfulda.app.R
+de.rnfulda.app.databinding.ActivityMainBinding:
     public synthetic bridge android.view.View getRoot()
 kotlin.ArrayIntrinsicsKt
 kotlin.BuilderInference
@@ -33507,16 +33507,16 @@ com.google.android.material.transformation.FabTransformationSheetBehavior:
 com.google.android.material.transformation.TransformationChildCard
 com.google.android.material.transformation.TransformationChildLayout
 com.google.common.util.concurrent.ListenableFuture
-de.fuldasozial.app.MainActivity$$InternalSyntheticLambda$1$503a8102cd41004e6e848a2369e904ff0080c02a0e1e9232ff1f9ef3a176baf6$0
-de.fuldasozial.app.MainActivity$$InternalSyntheticLambda$1$503a8102cd41004e6e848a2369e904ff0080c02a0e1e9232ff1f9ef3a176baf6$1
-de.fuldasozial.app.MainActivity$onCreate$1
-de.fuldasozial.app.MainActivity:
+de.rnfulda.app.MainActivity$$InternalSyntheticLambda$1$b6bca242e0ed9266773b84c907ba49537b0a1132a99a79a241b80556b2306de5$0
+de.rnfulda.app.MainActivity$$InternalSyntheticLambda$1$b6bca242e0ed9266773b84c907ba49537b0a1132a99a79a241b80556b2306de5$1
+de.rnfulda.app.MainActivity$onCreate$1
+de.rnfulda.app.MainActivity:
     public static boolean hatInternet()
     public static void webViewEinrichten()
-de.fuldasozial.app.R$color
-de.fuldasozial.app.R$id
-de.fuldasozial.app.R$layout
-de.fuldasozial.app.databinding.ActivityMainBinding
+de.rnfulda.app.R$color
+de.rnfulda.app.R$id
+de.rnfulda.app.R$layout
+de.rnfulda.app.databinding.ActivityMainBinding
 kotlin.Lazy
 kotlin.LazyKt
 kotlin.LazyKt__LazyJVMKt
@@ -33547,14 +33547,11 @@ kotlin.collections.AbstractMutableList:
 kotlin.collections.ArrayDeque$Companion
 kotlin.collections.ArrayDeque:
     public static final androidx.transition.Transition$1 Companion
-    public static void addFirst()
     public static void copyElements()
     public final int decremented(int)
     public final int getSize()
     public final int negativeMod(int)
     public final java.lang.Object removeAt()
-    public static java.lang.Object removeFirst()
-    public static java.lang.Object removeLast()
 kotlin.collections.ArraysKt
 kotlin.collections.ArraysKt__ArraysJVMKt
 kotlin.collections.ArraysKt__ArraysKt

@@ -4,7 +4,7 @@
     "type": "PACKAGED_MANIFESTS",
     "kind": "Directory"
   },
-  "applicationId": "de.fuldasozial.app",
+  "applicationId": "de.rnfulda.app",
   "variantName": "debug",
   "elements": [
     {

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "de.fuldasozial.app-mergeDebugResources-31:/values-or/values-or.xml",
+            "outputFile": "de.rnfulda.app-mergeDebugResources-31:/values-or/values-or.xml",
             "map": [
                 {
                     "source": "C:\\Users\\adria\\.gradle\\caches\\9.0.0\\transforms\\b94b7470bf4e55617c754dd252a4d5dd\\transformed\\appcompat-1.6.1\\res\\values-or\\values-or.xml",

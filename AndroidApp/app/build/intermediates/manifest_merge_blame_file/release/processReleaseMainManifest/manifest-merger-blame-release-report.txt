@@ -1,12 +1,12 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-3    package="de.fuldasozial.app"
-4    android:versionCode="1"
-5    android:versionName="1.0.0" >
+3    package="de.rnfulda.app"
+4    android:versionCode="2"
+5    android:versionName="1.0.1" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="24"
-9        android:targetSdkVersion="34" />
+9        android:targetSdkVersion="35" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
 11-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:4:5-67
@@ -17,12 +17,12 @@
 13
 14    <permission
 14-->[androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
-15        android:name="de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+15        android:name="de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
 15-->[androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
 16        android:protectionLevel="signature" />
 16-->[androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
 17
-18    <uses-permission android:name="de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+18    <uses-permission android:name="de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 18-->[androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
 18-->[androidx.core:core:1.12.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\9f7e0c810de21b53520a434fc593c475\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
 19
@@ -49,7 +49,7 @@
 31        <!-- Splash Screen -->
 32        <activity
 32-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:17:9-26:20
-33            android:name="de.fuldasozial.app.SplashActivity"
+33            android:name="de.rnfulda.app.SplashActivity"
 33-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:18:13-43
 34            android:exported="true"
 34-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:19:13-36
@@ -72,7 +72,7 @@
 44        <!-- Hauptansicht -->
 45        <activity
 45-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:29:9-33:58
-46            android:name="de.fuldasozial.app.MainActivity"
+46            android:name="de.rnfulda.app.MainActivity"
 46-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:30:13-41
 47            android:configChanges="orientation|screenSize|keyboardHidden"
 47-->C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\AndroidManifest.xml:32:13-74
@@ -85,7 +85,7 @@
 51-->[androidx.emoji2:emoji2:1.2.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\f52138f6962fe96f981293d22b3ca804\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
 52            android:name="androidx.startup.InitializationProvider"
 52-->[androidx.emoji2:emoji2:1.2.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\f52138f6962fe96f981293d22b3ca804\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
-53            android:authorities="de.fuldasozial.app.androidx-startup"
+53            android:authorities="de.rnfulda.app.androidx-startup"
 53-->[androidx.emoji2:emoji2:1.2.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\f52138f6962fe96f981293d22b3ca804\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
 54            android:exported="false" >
 54-->[androidx.emoji2:emoji2:1.2.0] C:\Users\adria\.gradle\caches\9.0.0\transforms\f52138f6962fe96f981293d22b3ca804\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37

@@ -1,8 +1,8 @@
 -keep class androidx.core.app.CoreComponentFactory { <init>(); }
 -keep class androidx.profileinstaller.ProfileInstallReceiver { <init>(); }
 -keep class androidx.startup.InitializationProvider { <init>(); }
--keep class de.fuldasozial.app.MainActivity { <init>(); }
--keep class de.fuldasozial.app.SplashActivity { <init>(); }
+-keep class de.rnfulda.app.MainActivity { <init>(); }
+-keep class de.rnfulda.app.SplashActivity { <init>(); }
 -keep class android.widget.Space { <init>(android.content.Context, android.util.AttributeSet); }
 
 -keep class androidx.appcompat.app.AlertController$RecycleListView { <init>(android.content.Context, android.util.AttributeSet); }

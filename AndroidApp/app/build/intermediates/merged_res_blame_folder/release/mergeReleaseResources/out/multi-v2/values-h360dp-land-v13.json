@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "de.fuldasozial.app-mergeReleaseResources-31:/values-h360dp-land-v13/values-h360dp-land-v13.xml",
+            "outputFile": "de.rnfulda.app-mergeReleaseResources-31:/values-h360dp-land-v13/values-h360dp-land-v13.xml",
             "map": [
                 {
                     "source": "C:\\Users\\adria\\.gradle\\caches\\9.0.0\\transforms\\bfe84c31993a41ed92725569e5062e59\\transformed\\material-1.11.0\\res\\values-h360dp-land-v13\\values-h360dp-land-v13.xml",

@@ -4,7 +4,7 @@
     "type": "BUNDLE",
     "kind": "RegularFile"
   },
-  "applicationId": "de.fuldasozial.app",
+  "applicationId": "de.rnfulda.app",
   "variantName": "release",
   "elements": [
     {

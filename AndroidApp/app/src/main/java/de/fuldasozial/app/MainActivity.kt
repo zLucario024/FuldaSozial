@@ -1,4 +1,4 @@
-package de.fuldasozial.app
+package de.rnfulda.app
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -11,7 +11,7 @@ import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import de.fuldasozial.app.databinding.ActivityMainBinding
+import de.rnfulda.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

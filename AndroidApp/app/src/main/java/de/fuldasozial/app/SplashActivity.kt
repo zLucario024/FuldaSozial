@@ -1,4 +1,4 @@
-package de.fuldasozial.app
+package de.rnfulda.app
 
 import android.content.Intent
 import android.os.Bundle

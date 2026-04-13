@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.fuldasozial.app"
-    android:versionCode="1"
-    android:versionName="1.0.0" >
+    package="de.rnfulda.app"
+    android:versionCode="2"
+    android:versionName="1.0.1" >
 
     <uses-sdk
         android:minSdkVersion="24"
-        android:targetSdkVersion="34" />
+        android:targetSdkVersion="35" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
-        android:name="de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:name="de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="de.fuldasozial.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+    <uses-permission android:name="de.rnfulda.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +30,7 @@
 
         <!-- Splash Screen -->
         <activity
-            android:name="de.fuldasozial.app.SplashActivity"
+            android:name="de.rnfulda.app.SplashActivity"
             android:exported="true"
             android:noHistory="true"
             android:theme="@style/Theme.App.Starting" >
@@ -43,14 +43,14 @@
 
         <!-- Hauptansicht -->
         <activity
-            android:name="de.fuldasozial.app.MainActivity"
+            android:name="de.rnfulda.app.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="de.fuldasozial.app.androidx-startup"
+            android:authorities="de.rnfulda.app.androidx-startup"
             android:exported="false" >
             <meta-data
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"

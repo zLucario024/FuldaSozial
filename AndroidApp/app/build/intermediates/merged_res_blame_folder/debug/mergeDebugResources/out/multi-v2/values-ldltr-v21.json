@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "de.fuldasozial.app-mergeDebugResources-31:/values-ldltr-v21/values-ldltr-v21.xml",
+            "outputFile": "de.rnfulda.app-mergeDebugResources-31:/values-ldltr-v21/values-ldltr-v21.xml",
             "map": [
                 {
                     "source": "C:\\Users\\adria\\.gradle\\caches\\9.0.0\\transforms\\b94b7470bf4e55617c754dd252a4d5dd\\transformed\\appcompat-1.6.1\\res\\values-ldltr-v21\\values-ldltr-v21.xml",
