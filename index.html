@@ -511,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target === this) feedbackModalSchliessen();
   });
 
-  document.getElementById('mobile-menu-close').addEventListener('click', mobilMenuSchliessen);
   document.getElementById('mobile-menu-overlay').addEventListener('click', mobilMenuSchliessen);
 
   document.addEventListener('click', function(e) {
@@ -619,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="mobile-menu" class="mobile-menu">
   <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
   <nav class="mobile-menu-panel">
-    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Menü schließen">✕</button>
+    <button class="mobile-menu-close" id="mobile-menu-close" onclick="mobilMenuSchliessen()" aria-label="Menü schließen">✕</button>
     <button class="mobile-menu-item" onclick="mobilMenuSchliessen(); feedbackModalOeffnen()">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Feedback geben
