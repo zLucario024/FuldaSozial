@@ -511,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target === this) feedbackModalSchliessen();
   });
 
-  document.getElementById('hamburger-btn').addEventListener('click', mobilMenuOeffnen);
   document.getElementById('mobile-menu-close').addEventListener('click', mobilMenuSchliessen);
   document.getElementById('mobile-menu-overlay').addEventListener('click', mobilMenuSchliessen);
 
@@ -611,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     Feedback geben
   </button>
-  <button class="hamburger-btn" id="hamburger-btn" aria-label="Menü öffnen">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="mobilMenuOeffnen()" aria-label="Menü öffnen">
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 </header>
