@@ -117,8 +117,11 @@ follow">
   .logo-text span { color: var(--rot); }
   .suche-wrapper { position: relative; flex: 1; max-width: 400px; margin: 0 auto; }
   .suche-wrapper svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--grau-mittel); fill: none; }
-  .suche-wrapper input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-body); font-size: 14px; color: var(--schwarz); background: var(--grau-hell); outline: none; transition: border-color .2s; }
+  .suche-wrapper input { width: 100%; padding: 8px 32px 8px 36px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-body); font-size: 14px; color: var(--schwarz); background: var(--grau-hell); outline: none; transition: border-color .2s; }
   .suche-wrapper input:focus { border-color: var(--rot); background: var(--weiss); }
+  .suche-clear-btn { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 2px; display: none; color: var(--grau-mittel); line-height: 0; }
+  .suche-clear-btn:hover { color: var(--schwarz); }
+  .suche-clear-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
   .hero { padding: 3rem 2rem 2rem; border-bottom: 1px solid var(--border); max-width: 1400px; margin: 0 auto; }
   .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.15; margin-bottom: .75rem; }
@@ -356,8 +359,10 @@ function artikelMelden(titel, link, quelle) {
   document.getElementById('meld-titel').textContent = `"${titel}"`;
   document.querySelectorAll('input[name="meld-grund"]').forEach(r => r.checked = false);
   document.getElementById('meld-text').value = '';
-  const modal = document.getElementById('meld-modal');
-  modal.style.display = 'flex';
+  const btn = document.getElementById('meld-absenden-btn');
+  btn.disabled = false;
+  btn.textContent = 'Melden';
+  document.getElementById('meld-modal').style.display = 'flex';
 }
 
 function meldModalSchliessen() {
@@ -547,6 +552,9 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="suche-wrapper">
     <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="suche" placeholder="Artikel suchen..." oninput="sucheAktualisieren()">
+    <button id="suche-clear" class="suche-clear-btn" onclick="sucheLöschen()" title="Suche löschen">
+      <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
   </div>
   <a href="https://ko-fi.com/regionachrichtenfulda" target="_blank" rel="noopener" class="unterstuetzen-btn">
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1182,7 +1190,13 @@ function quelleWaehlen(btn, q) {
 
 function sucheAktualisieren() {
   suchbegriff = document.getElementById('suche').value.toLowerCase().trim();
+  document.getElementById('suche-clear').style.display = suchbegriff ? 'block' : 'none';
   urlAktualisieren(true); artikelAnzeigen();
+}
+
+function sucheLöschen() {
+  document.getElementById('suche').value = '';
+  sucheAktualisieren();
 }
 
 function ortFilterLeeren() {
@@ -1202,6 +1216,7 @@ function tagFilterLeeren() {
 function alleFilterZurueck() {
   aktivOrt = ''; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = '';
   document.getElementById('suche').value = '';
+  document.getElementById('suche-clear').style.display = 'none';
   document.getElementById('datum-von').value = '';
   document.getElementById('datum-bis').value = '';
   document.getElementById('ort-banner').style.display = 'none';
