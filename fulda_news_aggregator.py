@@ -31,6 +31,20 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
+# Quellen, deren RSS-Beschreibung Sidebar-/Infobox-Inhalte enthält → Meta-Tag direkt vom Artikel holen
+QUELLEN_META_DESC = {'osthessen-news.de'}
+
+def meta_beschreibung_holen(url):
+    """Holt <meta name='description'> direkt aus dem Artikel-HTML."""
+    try:
+        r = requests.get(url, timeout=8, headers=HEADERS)
+        m = re.search(r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']', r.text, re.IGNORECASE)
+        if not m:
+            m = re.search(r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']', r.text, re.IGNORECASE)
+        return m.group(1).strip()[:500] if m else ""
+    except Exception:
+        return ""
+
 def db_verbinden():
     return psycopg2.connect(os.getenv("DATABASE_URL"))
 
@@ -124,6 +138,10 @@ def feed_verarbeiten(feed, conn):
         hash_wert    = artikel_hash(link)
         beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
         beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()[:500]
+        if any(dom in link for dom in QUELLEN_META_DESC):
+            meta = meta_beschreibung_holen(link)
+            if meta:
+                beschreibung = meta
 
         cursor.execute(
             "SELECT id FROM artikel WHERE titel = %s OR hash = %s",

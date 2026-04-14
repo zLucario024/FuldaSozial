@@ -715,6 +715,81 @@ const ORTE_LANDKREIS = [
   'poppenhausen','bad salzschlirf','rhön','wasserkuppe','fuldaer','osthessen'
 ];
 
+// ── ORTSTEILE / STADTTEILE → GEMEINDE ──
+const ORTSTEILE_MAPPING = {
+  // Stadt Fulda – Stadtteile
+  'aschenberg':'fulda','bronnzell':'fulda','dietershan':'fulda',
+  'döllbach':'fulda','edelzell':'fulda','frauenberg':'fulda',
+  'gläserzell':'fulda','haimbach':'fulda','horas':'fulda',
+  'johannesberg':'fulda','kämmerzell':'fulda','kohlhaus':'fulda',
+  'lehnerz':'fulda','malkes':'fulda','neuenberg':'fulda','niesig':'fulda',
+  'roßberg':'fulda','sickels':'fulda','süßenbach':'fulda',
+  'uffhausen':'fulda','ziehers':'fulda',
+  // Gemeinde Künzell
+  'bachrain':'künzell','dirlos':'künzell','engelhelms':'künzell',
+  'haunes':'künzell','pilgerzell':'künzell',
+  // Gemeinde Petersberg
+  'almendorf':'petersberg','böckels':'petersberg','dalherda':'petersberg',
+  'giesel':'petersberg','großsassen':'petersberg','habelsbach':'petersberg',
+  'kesselbach':'petersberg','kleinsassen':'petersberg','marbach':'petersberg',
+  'orferode':'petersberg','roßbach':'petersberg',
+  // Gemeinde Neuhof
+  'hauswurz':'neuhof','hainzell':'neuhof','motzlar':'neuhof',
+  'rommerz':'neuhof','schachten':'neuhof',
+  // Gemeinde Eichenzell
+  'kerzell':'eichenzell','löschenrod':'eichenzell','lütter':'eichenzell',
+  'rothemann':'eichenzell','welkers':'eichenzell','wissels':'eichenzell',
+  'zirkenbach':'eichenzell',
+  // Gemeinde Flieden
+  'haindorf':'flieden','kohlgrund':'flieden','rückers':'flieden',
+  // Gemeinde Burghaun
+  'gruben':'burghaun','hünhan':'burghaun','nüst':'burghaun',
+  'rothenkirchen':'burghaun','schmalnau':'burghaun','steens':'burghaun',
+  'thälau':'burghaun','wehrda':'burghaun','hettenhausen':'burghaun',
+  // Gemeinde Großenlüder
+  'bimbach':'großenlüder','kleinlüder':'großenlüder',
+  'müs':'großenlüder','uttrichshausen':'großenlüder',
+  // Stadt Hünfeld
+  'großenbach':'hünfeld','kirchhasel':'hünfeld','mackenzell':'hünfeld',
+  'malges':'hünfeld','molzbach':'hünfeld','steinbach':'hünfeld',
+  // Gemeinde Hofbieber
+  'langenbieber':'hofbieber','mittelbieber':'hofbieber',
+  'niederbieber':'hofbieber','schwarzbach':'hofbieber','traisbach':'hofbieber',
+  // Gemeinde Kalbach
+  'heubach':'kalbach','mittelkalbach':'kalbach','niederkalbach':'kalbach',
+  'oberkalbach':'kalbach','zünters':'kalbach',
+  // Gemeinde Hosenfeld
+  'altenhof':'hosenfeld','büchenberg':'hosenfeld',
+  'eichenberg':'hosenfeld','mittelhaun':'hosenfeld',
+  // Gemeinde Dipperz
+  'dörnhagen':'dipperz','rönshausen':'dipperz',
+  // Gemeinde Ebersburg
+  'euters':'ebersburg','götzenhof':'ebersburg',
+  'thalau':'ebersburg','weyhers':'ebersburg',
+  // Gemeinde Ehrenberg (Rhön)
+  'reulbach':'ehrenberg','seiferts':'ehrenberg','wüstensachsen':'ehrenberg',
+  // Gemeinde Hilders
+  'dietges':'hilders','liebhards':'hilders',
+  'simmershausen':'hilders','unterweid':'hilders',
+  // Stadt Gersfeld (Rhön)
+  'melperts':'gersfeld',
+  // Gemeinde Tann (Rhön)
+  'günthers':'tann','lahrbach':'tann','neuswarts':'tann',
+  // Gemeinde Poppenhausen (Wasserkuppe)
+  'abtsroda':'poppenhausen','rodholz':'poppenhausen','sieblos':'poppenhausen',
+  // Gemeinde Nüsttal
+  'hofaschenbach':'nüsttal','morles':'nüsttal',
+  'mottgers':'nüsttal','ützhausen':'nüsttal',
+  // Gemeinde Eiterfeld
+  'arzell':'eiterfeld','buchenau':'eiterfeld',
+  'großentaft':'eiterfeld','leibolz':'eiterfeld','soisdorf':'eiterfeld',
+};
+// Reverse-Lookup: Gemeinde → Array ihrer Ortsteile (einmalig berechnet)
+const GEMEINDE_ORTSTEILE = {};
+for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
+  (GEMEINDE_ORTSTEILE[gemeinde] ??= []).push(ortsteil);
+}
+
 // ── KATEGORIEN ──
 const KATEGORIEN = {
   'Lokale Vorfälle': {
@@ -927,7 +1002,7 @@ async function artikelLaden() {
   gezeigt = 0; alleArtikel = [];
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
-  let url = `${API}/artikel?limit=1000`;
+  let url = `${API}/artikel?tage=60&limit=3000`;
   if (aktivQuelle) url += `&quelle=${encodeURIComponent(aktivQuelle)}`;
   try {
     const res = await fetch(url);
@@ -944,14 +1019,16 @@ async function artikelLaden() {
 
 function gefilterteArtikel() {
   return alleArtikel.filter(a => {
-    const text = ((a.titel || '') + ' ' + (a.tags || '')).toLowerCase();
+    const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
       if (aktivOrt === 'hessen') {
-        const hatLandkreisOrt = ORTE_LANDKREIS.some(o => text.includes(o));
+        const hatLandkreisOrt = ORTE_LANDKREIS.some(o => text.includes(o))
+          || Object.keys(ORTSTEILE_MAPPING).some(o => text.includes(o));
         if (hatLandkreisOrt) return false;
       } else {
-        if (!text.includes(aktivOrt)) return false;
+        const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
+        if (!text.includes(aktivOrt) && !ortsteile.some(o => text.includes(o))) return false;
       }
     }
     if (aktivKategorie && kategorieBestimmen(a.titel, a.tags) !== aktivKategorie) return false;

@@ -47,12 +47,25 @@ def startseite():
 def artikel_abrufen(
     region: str = Query(None),
     quelle: str = Query(None),
-    limit:  int = Query(50),
+    tage:   int = Query(60),
+    limit:  int = Query(3000),
     offset: int = Query(0)
 ):
-    limit = min(limit, 1000)
-    query = "SELECT * FROM artikel WHERE 1=1"
-    params = []
+    tage  = min(max(tage, 1), 180)
+    limit = min(limit, 3000)
+
+    # Nicht-kategorisierte Artikel (tags leer) werden nach 7 Tagen ausgeblendet,
+    # bleiben aber in der Datenbank erhalten.
+    # datum ist als TEXT gespeichert → Vergleich über TO_CHAR (gleiche Format-Darstellung)
+    query = """
+        SELECT * FROM artikel
+        WHERE datum >= TO_CHAR(NOW() - (%s * INTERVAL '1 day'), 'YYYY-MM-DD HH24:MI:SS')
+        AND NOT (
+            (tags IS NULL OR tags = '')
+            AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+        )
+    """
+    params = [tage]
 
     if region:
         query += " AND region = %s"
