@@ -451,16 +451,8 @@ function feedbackAbsenden() {
   });
 }
 
-// ── DARK MODE (nur App) ──
-(function() {
-  const istApp = navigator.userAgent.includes('RNFuldaApp');
-  if (!istApp) return;
-  const btn = document.getElementById('darkmode-btn');
-  const sep = document.getElementById('darkmode-separator');
-  if (btn) btn.style.display = 'flex';
-  if (sep) sep.style.display = 'block';
-  if (localStorage.getItem('darkmode') === '1') _darkmodeAktivieren();
-})();
+// ── DARK MODE ──
+if (localStorage.getItem('darkmode') === '1') _darkmodeAktivieren();
 
 function _darkmodeAktivieren() {
   document.body.classList.add('dark-mode');
@@ -613,11 +605,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
   <nav class="mobile-menu-panel">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Menü schließen">✕</button>
-    <hr style="border:none;border-top:1px solid var(--border);margin:.25rem 0" id="darkmode-separator" style="display:none">
-    <button id="darkmode-btn" class="mobile-menu-item" onclick="darkmodeToggle()" style="display:none;background:var(--grau-hell);border-radius:10px;margin-top:.25rem">
-      <svg id="darkmode-icon" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:20px;height:20px;flex-shrink:0;color:var(--rot)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <span id="darkmode-label" style="font-weight:600">Dark Mode</span>
-    </button>
     <button class="mobile-menu-item" onclick="mobilMenuSchliessen(); feedbackModalOeffnen()">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Feedback geben
@@ -634,6 +621,11 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Datenschutz
     </a>
+    <hr style="border:none;border-top:1px solid var(--border);margin:.5rem 0">
+    <button id="darkmode-btn" class="mobile-menu-item" onclick="darkmodeToggle()">
+      <svg id="darkmode-icon" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span id="darkmode-label">Dark Mode</span>
+    </button>
   </nav>
 </div>
 
