@@ -107,7 +107,13 @@ follow">
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Source Sans 3', sans-serif;
   }
-  body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; }
+  body.dark-mode {
+    --weiss: #121212; --schwarz: #e8e8e8;
+    --grau-dunkel: #c0c0c0; --grau-mittel: #888;
+    --grau-hell: #1e1e1e; --border: #2d2d2d;
+    --rot-hell: #2a0a0f;
+  }
+  body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; transition: background .2s, color .2s; }
 
   header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; }
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); flex-shrink: 0; }
@@ -445,6 +451,39 @@ function feedbackAbsenden() {
   });
 }
 
+// ── DARK MODE (nur App) ──
+(function() {
+  const istApp = navigator.userAgent.includes('RNFuldaApp');
+  if (!istApp) return;
+  const btn = document.getElementById('darkmode-btn');
+  const sep = document.getElementById('darkmode-separator');
+  if (btn) btn.style.display = 'flex';
+  if (sep) sep.style.display = 'block';
+  if (localStorage.getItem('darkmode') === '1') _darkmodeAktivieren();
+})();
+
+function _darkmodeAktivieren() {
+  document.body.classList.add('dark-mode');
+  document.getElementById('darkmode-icon').innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  document.getElementById('darkmode-label').textContent = 'Hell Mode';
+}
+
+function _darkmodeDeaktivieren() {
+  document.body.classList.remove('dark-mode');
+  document.getElementById('darkmode-icon').innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  document.getElementById('darkmode-label').textContent = 'Dark Mode';
+}
+
+function darkmodeToggle() {
+  if (document.body.classList.contains('dark-mode')) {
+    _darkmodeDeaktivieren();
+    localStorage.setItem('darkmode', '0');
+  } else {
+    _darkmodeAktivieren();
+    localStorage.setItem('darkmode', '1');
+  }
+}
+
 function mobilMenuOeffnen() {
   document.getElementById('mobile-menu').classList.add('aktiv');
   document.body.style.overflow = 'hidden';
@@ -574,6 +613,11 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
   <nav class="mobile-menu-panel">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Menü schließen">✕</button>
+    <hr style="border:none;border-top:1px solid var(--border);margin:.25rem 0" id="darkmode-separator" style="display:none">
+    <button id="darkmode-btn" class="mobile-menu-item" onclick="darkmodeToggle()" style="display:none;background:var(--grau-hell);border-radius:10px;margin-top:.25rem">
+      <svg id="darkmode-icon" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:20px;height:20px;flex-shrink:0;color:var(--rot)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span id="darkmode-label" style="font-weight:600">Dark Mode</span>
+    </button>
     <button class="mobile-menu-item" onclick="mobilMenuSchliessen(); feedbackModalOeffnen()">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Feedback geben
