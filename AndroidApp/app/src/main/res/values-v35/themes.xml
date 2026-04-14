@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 15+ erzwingt Edge-to-Edge — hier deaktivieren, damit die Statusleiste
+         korrekt über dem Layout liegt und Buttons nicht verdeckt werden. -->
+    <style name="Theme.FuldaSozial" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/rot</item>
+        <item name="colorPrimaryVariant">@color/rot_dunkel</item>
+        <item name="colorOnPrimary">@color/weiss</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:navigationBarColor">@color/weiss</item>
+        <item name="android:windowBackground">@color/weiss</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>

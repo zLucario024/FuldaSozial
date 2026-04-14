@@ -14,4 +14,12 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@color/rot</item>
         <item name="android:windowFullscreen">false</item>
+    </style></file><file path="C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\main\res\values-v35\themes.xml" qualifiers="v35"><style name="Theme.FuldaSozial" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/rot</item>
+        <item name="colorPrimaryVariant">@color/rot_dunkel</item>
+        <item name="colorOnPrimary">@color/weiss</item>
+        <item name="android:statusBarColor">@color/rot</item>
+        <item name="android:navigationBarColor">@color/weiss</item>
+        <item name="android:windowBackground">@color/weiss</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\adria\OneDrive\Desktop\Arbeit\FuldaSozial\AndroidApp\app\build\generated\res\resValues\debug"/></dataSet><mergedItems/></merger>

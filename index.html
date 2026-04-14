@@ -108,11 +108,27 @@ follow">
     --font-body: 'Source Sans 3', sans-serif;
   }
   body.dark-mode {
-    --weiss: #121212; --schwarz: #e8e8e8;
-    --grau-dunkel: #c0c0c0; --grau-mittel: #888;
-    --grau-hell: #1e1e1e; --border: #2d2d2d;
-    --rot-hell: #2a0a0f;
+    --weiss: #141414; --schwarz: #ececec;
+    --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa;
+    --grau-hell: #202020; --border: #333333;
+    --rot-hell: #2c0c10;
   }
+  /* Hardcodierte Farben im Dark Mode überschreiben */
+  body.dark-mode .ort-banner { background: #1a2a3a !important; border-color: #2a3a50 !important; color: #7aabcc !important; }
+  body.dark-mode .ort-banner button { color: #7aabcc !important; }
+  body.dark-mode .filter-banner { border-color: #4a1520 !important; }
+  body.dark-mode .tag-ort { background: #1a2a3a !important; color: #7aabcc !important; border-color: #2a3a50 !important; }
+  body.dark-mode .tag-ort:hover, body.dark-mode .tag-ort.aktiv { background: #1a3a5c !important; color: #aad4f0 !important; border-color: #1a3a5c !important; }
+  body.dark-mode .chip.aktiv-ort { background: #1a3a5c !important; border-color: #1a3a5c !important; }
+  body.dark-mode .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+  body.dark-mode #meld-modal > div,
+  body.dark-mode #feedback-modal > div { background: #1e1e1e !important; border-color: #333 !important; }
+  body.dark-mode #meld-modal label,
+  body.dark-mode #feedback-modal label { color: var(--schwarz); }
+  body.dark-mode #meld-text,
+  body.dark-mode #feedback-text { background: #2a2a2a !important; color: var(--schwarz) !important; border-color: #444 !important; }
+  body.dark-mode .mehr-btn { background: var(--grau-hell); color: var(--schwarz); border-color: var(--border); }
+  body.dark-mode header { background: var(--weiss); border-color: var(--border); }
   body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; transition: background .2s, color .2s; }
 
   header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; }
