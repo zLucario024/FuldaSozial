@@ -1325,7 +1325,7 @@ function artikelGeoeffnet(titel, quelle, link) {
 // ── URL-NAVIGATION ──
 function urlAktualisieren(replace = false) {
   const params = new URLSearchParams();
-  if (aktivOrt)       params.set('ort', aktivOrt);
+  if (aktivOrt && aktivOrt !== 'landkreis-fulda') params.set('ort', aktivOrt);
   if (aktivKategorie) params.set('kategorie', aktivKategorie);
   if (aktivTag)       params.set('tag', aktivTag);
   if (suchbegriff)    params.set('suche', suchbegriff);
@@ -1333,6 +1333,30 @@ function urlAktualisieren(replace = false) {
   const neueUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
   const state = { ort: aktivOrt, kategorie: aktivKategorie, tag: aktivTag, suche: suchbegriff };
   history[replace ? 'replaceState' : 'pushState'](state, '', neueUrl);
+
+  // Dynamischer Seitentitel für besseres SEO-Indexing
+  const ORT_LABEL = {
+    'landkreis-fulda': 'Landkreis Fulda', 'fulda': 'Stadt Fulda',
+    'hessen': 'Hessen', 'hünfeld': 'Hünfeld', 'künzell': 'Künzell',
+    'petersberg': 'Petersberg', 'neuhof': 'Neuhof', 'eichenzell': 'Eichenzell',
+    'flieden': 'Flieden', 'burghaun': 'Burghaun', 'großenlüder': 'Großenlüder',
+    'hilders': 'Hilders', 'hofbieber': 'Hofbieber', 'gersfeld': 'Gersfeld',
+    'tann': 'Tann', 'eiterfeld': 'Eiterfeld', 'rasdorf': 'Rasdorf',
+    'dipperz': 'Dipperz', 'ebersburg': 'Ebersburg', 'ehrenberg': 'Ehrenberg',
+    'hosenfeld': 'Hosenfeld', 'kalbach': 'Kalbach', 'nüsttal': 'Nüsttal',
+    'poppenhausen': 'Poppenhausen', 'bad salzschlirf': 'Bad Salzschlirf'
+  };
+  const ortLabel = ORT_LABEL[aktivOrt] || null;
+  const teile = [];
+  if (ortLabel) teile.push(ortLabel + ' Nachrichten');
+  if (aktivKategorie) teile.push(aktivKategorie);
+  if (suchbegriff) teile.push(`"${suchbegriff}"`);
+  document.title = teile.length
+    ? teile.join(' · ') + ' – RegioNachrichten Fulda'
+    : 'RegioNachrichten Fulda – Lokale Nachrichten aus Fulda und Osthessen';
+
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.href = 'https://fuldasozial.de' + neueUrl;
 }
 
 function filterAusUrlLesen() {
