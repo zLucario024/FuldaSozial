@@ -1,7 +1,7 @@
 name: Fulda News Aggregator
 on:
-  schedule:
-    - cron: '0 */2 * * *'
+  # Schedule moved to Render Cron Job (render.yaml) for reliable timing.
+  # Keep workflow_dispatch for manual runs.
   workflow_dispatch:
 jobs:
   aggregator:

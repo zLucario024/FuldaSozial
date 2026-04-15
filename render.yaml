@@ -1,0 +1,12 @@
+services:
+  - type: cron
+    name: fulda-news-aggregator
+    runtime: python
+    schedule: "0 1,6-20 * * *"   # 03:00 + 08:00–22:00 CEST (UTC+2)
+    buildCommand: pip install feedparser requests anthropic python-dotenv psycopg2-binary
+    startCommand: python fulda_news_aggregator.py
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false

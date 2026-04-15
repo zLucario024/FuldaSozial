@@ -266,8 +266,101 @@ def main():
         print(f"  {quelle} | {datum}")
 
     cursor.close()
+    sitemap_generieren(conn)
     conn.close()
     print(f"\nFertig!")
+
+
+def sitemap_generieren(conn):
+    """Regeneriert sitemap.xml mit allen statischen Seiten + allen bekannten Tags aus der DB."""
+    from urllib.parse import quote
+
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT tags FROM artikel
+        WHERE tags IS NOT NULL AND tags != ''
+    """)
+    rows = cursor.fetchall()
+    cursor.close()
+
+    # Einzelne Tags zählen (getrennt durch " · ")
+    from collections import Counter
+    tag_counter = Counter()
+    for (tags_str,) in rows:
+        for tag in tags_str.split('·'):
+            tag = tag.strip()
+            if tag:
+                tag_counter[tag] += 1
+
+    # Nur Tags mit mindestens 3 Artikeln aufnehmen (vermeidet Einzel-Tags)
+    haeufige_tags = [tag for tag, count in tag_counter.items() if count >= 3]
+    haeufige_tags.sort()
+
+    STATIC_URLS = [
+        ("https://fuldasozial.de",                                  "hourly", "1.0"),
+        ("https://fuldasozial.de/impressum.html",                   "yearly", "0.3"),
+        ("https://fuldasozial.de/datenschutz.html",                 "yearly", "0.3"),
+        ("https://fuldasozial.de/?ort=landkreis-fulda",             "hourly", "0.9"),
+        ("https://fuldasozial.de/?ort=fulda",                       "hourly", "0.9"),
+        ("https://fuldasozial.de/?ort=h%C3%BCnfeld",                "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=k%C3%BCnzell",                "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=petersberg",                  "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=neuhof",                      "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=eichenzell",                  "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=flieden",                     "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=burghaun",                    "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=gro%C3%9Fenl%C3%BCder",       "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=hilders",                     "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=hofbieber",                   "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=gersfeld",                    "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=tann",                        "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=eiterfeld",                   "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=rasdorf",                     "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=dipperz",                     "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=ebersburg",                   "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=ehrenberg",                   "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=hosenfeld",                   "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=kalbach",                     "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=n%C3%BCsttal",                "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=poppenhausen",                "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=bad%20salzschlirf",           "daily",  "0.7"),
+        ("https://fuldasozial.de/?ort=hessen",                      "hourly", "0.6"),
+        ("https://fuldasozial.de/?kategorie=Lokale%20Vorf%C3%A4lle","hourly", "0.8"),
+        ("https://fuldasozial.de/?kategorie=Politik%20%26%20Verwaltung", "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Wirtschaft%20%26%20Arbeit",  "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Sport",                 "daily",  "0.7"),
+        ("https://fuldasozial.de/?kategorie=Kultur%20%26%20Freizeit",    "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Bildung%20%26%20Familie",    "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Natur%20%26%20Umwelt",       "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Verkehr%20%26%20Bau",        "daily", "0.7"),
+        ("https://fuldasozial.de/?kategorie=Gesundheit",            "daily",  "0.7"),
+    ]
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+             '',
+             '  <!-- Statische Seiten & Filter -->']
+    for loc, freq, prio in STATIC_URLS:
+        lines += [f'  <url>', f'    <loc>{loc}</loc>',
+                  f'    <changefreq>{freq}</changefreq>',
+                  f'    <priority>{prio}</priority>', f'  </url>']
+
+    lines += ['', f'  <!-- Dynamische Tag-Seiten ({len(haeufige_tags)} Tags mit ≥3 Artikeln) -->']
+    for tag in haeufige_tags:
+        encoded = quote(tag, safe='')
+        lines += [f'  <url>',
+                  f'    <loc>https://fuldasozial.de/?tag={encoded}</loc>',
+                  f'    <changefreq>daily</changefreq>',
+                  f'    <priority>0.5</priority>',
+                  f'  </url>']
+
+    lines += ['', '</urlset>', '']
+
+    sitemap_pfad = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sitemap.xml')
+    with open(sitemap_pfad, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines))
+
+    print(f"  Sitemap aktualisiert: {len(STATIC_URLS)} statische + {len(haeufige_tags)} Tag-URLs → sitemap.xml")
 
 if __name__ == "__main__":
     main()
