@@ -664,7 +664,8 @@ document.addEventListener('DOMContentLoaded', function() {
       Ort / Region
     </div>
     <div class="chip-reihe" id="ort-chips">
-      <button class="chip aktiv" onclick="ortWaehlen(this, '')">Alle</button>
+      <button class="chip" onclick="ortWaehlen(this, '')">Alle</button>
+      <button class="chip aktiv-ort" onclick="ortWaehlen(this, 'landkreis-fulda')">Landkreis Fulda</button>
       <button class="chip" onclick="ortWaehlen(this, 'hessen')">Hessen</button>
       <button class="chip" onclick="ortWaehlen(this, 'fulda')">Stadt Fulda</button>
       <button class="chip" onclick="ortWaehlen(this, 'hünfeld')">Hünfeld</button>
@@ -764,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
 const PRO_SEITE = 50;
-let aktivOrt = '', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
+let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
 
 // ── ORTE LANDKREIS FULDA ──
 const ORTE_LANDKREIS = [
@@ -1054,7 +1055,12 @@ function gefilterteArtikel() {
     const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
-      if (aktivOrt === 'hessen') {
+      if (aktivOrt === 'landkreis-fulda') {
+        const istLandkreis = a.region === 'landkreis-fulda'
+          || ORTE_LANDKREIS.some(o => text.includes(o))
+          || Object.keys(ORTSTEILE_MAPPING).some(o => text.includes(o));
+        if (!istLandkreis) return false;
+      } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => text.includes(o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => text.includes(o));
         if (hatLandkreisOrt) return false;
@@ -1238,7 +1244,7 @@ function tagFilterLeeren() {
 }
 
 function alleFilterZurueck() {
-  aktivOrt = ''; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = '';
+  aktivOrt = 'landkreis-fulda'; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = '';
   document.getElementById('suche').value = '';
   document.getElementById('suche-clear').style.display = 'none';
   document.getElementById('datum-von').value = '';
@@ -1246,7 +1252,9 @@ function alleFilterZurueck() {
   document.getElementById('ort-banner').style.display = 'none';
   document.getElementById('tag-banner').style.display = 'none';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
-  document.querySelector('#ort-chips .chip').classList.add('aktiv');
+  const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
+  if (lkChip) lkChip.classList.add('aktiv-ort');
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
@@ -1310,27 +1318,25 @@ function filterAusUrlLesen() {
 
 window.addEventListener('popstate', function(e) {
   const s = e.state || {};
-  aktivOrt       = s.ort || '';
+  aktivOrt       = s.ort !== undefined ? s.ort : 'landkreis-fulda';
   aktivKategorie = s.kategorie || '';
   aktivTag       = s.tag || '';
   suchbegriff    = s.suche || '';
   document.getElementById('suche').value = suchbegriff;
   // UI zurücksetzen
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
-  document.querySelector('#ort-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
-  // Aktive Filter wiederherstellen
-  if (aktivOrt) {
-    document.querySelector('#ort-chips .chip').classList.remove('aktiv');
-    const m = [...document.querySelectorAll('#ort-chips .chip')]
-      .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
-    if (m) m.classList.add('aktiv-ort');
-    document.getElementById('ort-banner').style.display = 'flex';
-    document.getElementById('aktiver-ort-text').textContent = aktivOrt;
+  // Aktive Ort-Filter wiederherstellen
+  const ortChip = [...document.querySelectorAll('#ort-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
+  if (ortChip) {
+    ortChip.classList.add(aktivOrt ? 'aktiv-ort' : 'aktiv');
   } else {
-    document.getElementById('ort-banner').style.display = 'none';
+    document.querySelector('#ort-chips .chip').classList.add('aktiv');
   }
+  document.getElementById('ort-banner').style.display = (aktivOrt && aktivOrt !== 'landkreis-fulda') ? 'flex' : 'none';
+  if (aktivOrt && aktivOrt !== 'landkreis-fulda') document.getElementById('aktiver-ort-text').textContent = aktivOrt;
   if (aktivKategorie) {
     document.querySelector('#kategorie-chips .chip').classList.remove('aktiv');
     const m = [...document.querySelectorAll('#kategorie-chips .chip')]
