@@ -33,9 +33,7 @@ Nachrichten Region Fulda,
 Region Fulda,
 Fulda,
 Fulda Nachrichten">
-<meta name="robots" content="index,
-
-follow">
+<meta name="robots" content="index, follow">
 <meta name="author" content="RegioNachrichten Fulda">
 <link rel="canonical" href="https://fuldasozial.de">
 
@@ -46,49 +44,61 @@ follow">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="de_DE">
 <meta property="og:site_name" content="RegioNachrichten Fulda">
+<meta property="og:image" content="https://fuldasozial.de/Design/rn_logo_192.jpg">
+<meta property="og:image:width" content="192">
+<meta property="og:image:height" content="192">
+
+<!-- Twitter / X Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RegioNachrichten Fulda – Lokale Nachrichten aus Fulda und Osthessen">
+<meta name="twitter:description" content="Aktuelle Nachrichten aus Fulda, dem Landkreis und der Rhön – automatisch gesammelt aus lokalen Quellen.">
+<meta name="twitter:image" content="https://fuldasozial.de/Design/rn_logo_192.jpg">
 
 <!-- Schema.org -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "NewsMediaOrganization",
-  "name": "RegioNachrichten Fulda",
-  "url": "https://fuldasozial.de",
-  "description": "Aktuelle Nachrichten aus Fulda, dem Landkreis und der Region Osthessen – automatisch gesammelt aus lokalen Quellen.",
-  "areaServed": [
-    "Fulda",
-    "Landkreis Fulda",
-    "Hünfeld",
-    "Künzell",
-    "Petersberg",
-    "Neuhof",
-    "Eichenzell",
-    "Flieden",
-    "Burghaun",
-    "Großenlüder",
-    "Hilders",
-    "Hofbieber",
-    "Gersfeld",
-    "Tann (Rhön)",
-    "Eiterfeld",
-    "Rasdorf",
-    "Dipperz",
-    "Ebersburg",
-    "Ehrenberg (Rhön)",
-    "Hosenfeld",
-    "Kalbach",
-    "Nüsttal",
-    "Poppenhausen (Wasserkuppe)",
-    "Bad Salzschlirf",
-    "Osthessen",
-    "Rhön"
-  ],
-  "inLanguage": "de",
-  "publisher": {
-    "@type": "Organization",
-    "name": "RegioNachrichten Fulda",
-    "url": "https://fuldasozial.de"
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://fuldasozial.de/#website",
+      "url": "https://fuldasozial.de",
+      "name": "RegioNachrichten Fulda",
+      "description": "Aktuelle Nachrichten aus Fulda, dem Landkreis und der Region Osthessen",
+      "inLanguage": "de",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://fuldasozial.de/?suche={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "NewsMediaOrganization",
+      "@id": "https://fuldasozial.de/#organization",
+      "name": "RegioNachrichten Fulda",
+      "url": "https://fuldasozial.de",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://fuldasozial.de/Design/rn_logo_192.jpg",
+        "width": 192,
+        "height": 192
+      },
+      "description": "Aktuelle Nachrichten aus Fulda, dem Landkreis und der Region Osthessen – automatisch gesammelt aus lokalen Quellen.",
+      "areaServed": [
+        "Fulda", "Landkreis Fulda", "Hünfeld", "Künzell", "Petersberg",
+        "Neuhof", "Eichenzell", "Flieden", "Burghaun", "Großenlüder",
+        "Hilders", "Hofbieber", "Gersfeld", "Tann (Rhön)", "Eiterfeld",
+        "Rasdorf", "Dipperz", "Ebersburg", "Ehrenberg (Rhön)", "Hosenfeld",
+        "Kalbach", "Nüsttal", "Poppenhausen (Wasserkuppe)", "Bad Salzschlirf",
+        "Osthessen", "Rhön"
+      ],
+      "inLanguage": "de",
+      "publishingPrinciples": "https://fuldasozial.de/impressum.html"
+    }
+  ]
 }
 </script>
 <style>

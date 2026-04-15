@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /AndroidApp/
+Disallow: /venv/
+Disallow: /.venv/
+Disallow: /venv313/
+Disallow: /Design/Wappen/
+
+Sitemap: https://fuldasozial.de/sitemap.xml
