@@ -152,6 +152,7 @@ follow">
   .hero p { font-size: 1rem; color: var(--grau-mittel); max-width: 540px; line-height: 1.6; }
   .hero-sub { margin-top: .5rem; font-size: .85rem; color: var(--rot); border-left: 3px solid var(--rot); padding-left: .6rem; }
 
+.karte-bild-wrap { position: relative; }
 .wappen-badge {
   position: absolute;
   top: 10px;
@@ -784,7 +785,7 @@ const ORTSTEILE_MAPPING = {
   'johannesberg':'fulda','kämmerzell':'fulda','kohlhaus':'fulda',
   'lehnerz':'fulda','malkes':'fulda','neuenberg':'fulda','niesig':'fulda',
   'roßberg':'fulda','sickels':'fulda','süßenbach':'fulda',
-  'uffhausen':'fulda','ziehers':'fulda',
+  'uffhausen':'fulda','ziehers':'fulda', 'hochschule fulda' : 'fulda',
   // Gemeinde Künzell
   'bachrain':'künzell','dirlos':'künzell','engelhelms':'künzell',
   'haunes':'künzell','pilgerzell':'künzell',
@@ -969,6 +970,7 @@ const KATEGORIEN = {
   }
 };
 const WAPPEN = {
+  "Landkreis Fulda": `<img src="Design/Wappen/Landkreis Fulda.png" style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
   "Bad Salzschlirf": `<img src="Design/Wappen/Bad Salzschlirf.png" style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
   "Burghaun":        `<img src="Design/Wappen/Burghaun.png"        style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
   "Dipperz":         `<img src="Design/Wappen/Dipperz.png"         style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
@@ -1139,24 +1141,54 @@ function karteErstellen(artikel, index) {
   }
 
   // Wappen-Badge ermitteln
+  // Priorität: Tags (KI-kuratiert, zuverlässig für Regionen).
+  // Fallback: Titel + Beschreibung, nur wenn Tags keine Region enthalten.
   let wappenHTML = '';
-  if (artikel.tags) {
-    const tagListe = artikel.tags.split('·').map(t => t.trim());
-    for (const tag of tagListe) {
-      if (WAPPEN[tag]) {
-        wappenHTML = `<div class="wappen-badge" onclick="ortAusTag('${tag.replace(/'/g,"\\'")}', this)" title="${tag}">
-          <div class="wappen-svg">${WAPPEN[tag]}</div>
-          <span class="wappen-name">${tag}</span>
-        </div>`;
-        break;
+  {
+    function gemeindenAusScan(text) {
+      const gefunden = new Set();
+      for (const key of Object.keys(WAPPEN)) {
+        if (key === 'Landkreis Fulda') continue;
+        if (ortMatch(text, key.toLowerCase())) gefunden.add(key);
       }
+      for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
+        if (ortMatch(text, ortsteil)) {
+          const k = Object.keys(WAPPEN).find(k => k !== 'Landkreis Fulda' && k.toLowerCase() === gemeinde);
+          if (k) gefunden.add(k);
+        }
+      }
+      return gefunden;
+    }
+
+    // 1. Tags als primäre Quelle
+    const tagText = (artikel.tags || '').toLowerCase();
+    let gefunden = gemeindenAusScan(tagText);
+
+    // 2. Nur wenn Tags keine Region liefern: Titel + Beschreibung hinzuziehen
+    if (gefunden.size === 0) {
+      const fallbackText = ((artikel.titel || '') + ' ' + (artikel.beschreibung || '')).toLowerCase();
+      gefunden = gemeindenAusScan(fallbackText);
+    }
+
+    const wappenKey = gefunden.size > 1  ? 'Landkreis Fulda'
+                    : gefunden.size === 1 ? [...gefunden][0]
+                    : null;
+    if (wappenKey) {
+      const filterOrt = wappenKey === 'Landkreis Fulda' ? 'landkreis-fulda' : wappenKey;
+      wappenHTML = `<div class="wappen-badge" onclick="ortAusTag('${filterOrt.replace(/'/g,"\\'")}', this)" title="${wappenKey}">
+        <div class="wappen-svg">${WAPPEN[wappenKey]}</div>
+        <span class="wappen-name">${wappenKey}</span>
+      </div>`;
     }
   }
 
   div.innerHTML = `
-    <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
-      <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div>${wappenHTML}</div>
-    </a>
+    <div class="karte-bild-wrap">
+      <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+        <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div></div>
+      </a>
+      ${wappenHTML}
+    </div>
     <div class="karte-inhalt">
       <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-titel-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
         <div class="karte-titel">${artikel.titel || 'Kein Titel'}</div>
@@ -1188,10 +1220,11 @@ function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
   if (aktivOrt === ortLower) { ortFilterLeeren(); return; }
   aktivOrt = ortLower;
-  document.getElementById('aktiver-ort-text').textContent = ort;
-  document.getElementById('ort-banner').style.display = 'flex';
+  document.getElementById('aktiver-ort-text').textContent = ort === 'landkreis-fulda' ? 'Landkreis Fulda' : ort;
+  document.getElementById('ort-banner').style.display = ort === 'landkreis-fulda' ? 'none' : 'flex';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
-  const matching = [...document.querySelectorAll('#ort-chips .chip')].find(c => c.textContent.toLowerCase() === ortLower);
+  const matching = [...document.querySelectorAll('#ort-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes(`'${ortLower}'`));
   if (matching) matching.classList.add('aktiv-ort');
   urlAktualisieren(); artikelAnzeigen();
 }
