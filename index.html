@@ -850,6 +850,15 @@ for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
   (GEMEINDE_ORTSTEILE[gemeinde] ??= []).push(ortsteil);
 }
 
+// Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
+// Verhindert z.B. "fuldatal" bei Suche nach "fulda".
+function ortMatch(text, ort) {
+  const idx = text.indexOf(ort);
+  if (idx < 0) return false;
+  const nach = text[idx + ort.length];
+  return !nach || !/[a-zäöüß]/.test(nach);
+}
+
 // ── KATEGORIEN ──
 const KATEGORIEN = {
   'Lokale Vorfälle': {
@@ -1056,17 +1065,16 @@ function gefilterteArtikel() {
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
       if (aktivOrt === 'landkreis-fulda') {
-        const istLandkreis = a.region === 'landkreis-fulda'
-          || ORTE_LANDKREIS.some(o => text.includes(o))
-          || Object.keys(ORTSTEILE_MAPPING).some(o => text.includes(o));
+        const istLandkreis = ORTE_LANDKREIS.some(o => ortMatch(text, o))
+          || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
         if (!istLandkreis) return false;
       } else if (aktivOrt === 'hessen') {
-        const hatLandkreisOrt = ORTE_LANDKREIS.some(o => text.includes(o))
-          || Object.keys(ORTSTEILE_MAPPING).some(o => text.includes(o));
+        const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
+          || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
         if (hatLandkreisOrt) return false;
       } else {
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
-        if (!text.includes(aktivOrt) && !ortsteile.some(o => text.includes(o))) return false;
+        if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
       }
     }
     if (aktivKategorie && kategorieBestimmen(a.titel, a.tags) !== aktivKategorie) return false;
