@@ -11,7 +11,7 @@ import os
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -146,3 +146,21 @@ def statistik():
         "neuester_artikel": neuester[0] if neuester else None,
         "aeltester_artikel": aeltester[0] if aeltester else None,
     }
+
+
+def _aggregator_ausfuehren():
+    import fulda_news_aggregator as agg
+    conn = agg.db_verbinden()
+    agg.datenbank_einrichten(conn)
+    for feed in agg.FEEDS:
+        agg.feed_verarbeiten(feed, conn)
+    agg.sitemap_generieren(conn)
+    conn.close()
+
+
+@app.get("/aggregator-starten")
+def aggregator_starten(key: str, background_tasks: BackgroundTasks):
+    if key != os.getenv("AGGREGATOR_KEY"):
+        raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
+    background_tasks.add_task(_aggregator_ausfuehren)
+    return {"status": "gestartet"}
