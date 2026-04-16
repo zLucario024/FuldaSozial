@@ -123,9 +123,9 @@ Fulda Nachrichten">
     --rot-hell: #2c0c10;
   }
   /* Hardcodierte Farben im Dark Mode überschreiben */
-  body.dark-mode .ort-banner { background: #1a2a3a !important; border-color: #2a3a50 !important; color: #7aabcc !important; }
-  body.dark-mode .ort-banner button { color: #7aabcc !important; }
-  body.dark-mode .filter-banner { border-color: #4a1520 !important; }
+  body.dark-mode .filter-chip-ort  { background: #1a2a3a !important; border-color: #2a3a50 !important; color: #7aabcc !important; }
+  body.dark-mode .filter-chip-ort button { color: #7aabcc !important; }
+  body.dark-mode .filter-chip-kat  { background: #2c0c10 !important; border-color: #4a1520 !important; }
   body.dark-mode .tag-ort { background: #1a2a3a !important; color: #7aabcc !important; border-color: #2a3a50 !important; }
   body.dark-mode .tag-ort:hover, body.dark-mode .tag-ort.aktiv { background: #1a3a5c !important; color: #aad4f0 !important; border-color: #1a3a5c !important; }
   body.dark-mode .chip.aktiv-ort { background: #1a3a5c !important; border-color: #1a3a5c !important; }
@@ -214,11 +214,31 @@ Fulda Nachrichten">
   .ergebnis-bar { max-width: 1400px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; font-size: .9rem; color: var(--grau-mittel); }
 
   /* AKTIVE FILTER BANNER */
-  .filter-banner { display: none; max-width: 1400px; margin: 0 auto; padding: .5rem 2rem; background: var(--rot-hell); border-bottom: 1px solid #f5c0c8; font-size: .85rem; color: var(--rot); align-items: center; gap: 8px; flex-wrap: wrap; }
-  .filter-banner button { background: none; border: none; color: var(--rot); cursor: pointer; font-size: 1rem; line-height: 1; }
+  /* Aktive Filter Leiste */
+  .aktive-filter-leiste { display: none; max-width: 1400px; margin: 0 auto; padding: .5rem 2rem; align-items: center; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: var(--weiss); }
+  .filter-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px 3px 10px; border-radius: 20px; font-size: .8rem; background: var(--grau-hell); border: 1px solid var(--border); white-space: nowrap; }
+  .filter-chip-label { font-weight: 600; color: var(--grau-mittel); }
+  .filter-chip button { background: none; border: none; cursor: pointer; font-size: .85rem; color: var(--grau-mittel); padding: 0 2px; line-height: 1; transition: color .15s; }
+  .filter-chip button:hover { color: var(--rot); }
+  .filter-chip-ort    { background: #eef2f7; border-color: #c5d3e0; }
+  .filter-chip-ort .filter-chip-label { color: #1a3a5c; }
+  .filter-chip-ort button { color: #1a3a5c; }
+  .filter-chip-kat    { background: var(--rot-hell); border-color: #f5c0c8; }
+  .filter-chip-kat .filter-chip-label { color: var(--rot); }
+  .filter-chip-kat button { color: var(--rot); }
+  .filter-chip-tag    { background: #eef7f2; border-color: #b0d8c0; }
+  .filter-chip-tag .filter-chip-label { color: #1a5c3a; }
+  .filter-chip-tag button { color: #1a5c3a; }
+  .filter-chip-quelle { background: #f7f4ee; border-color: #d8cfb0; }
+  .filter-chip-datum  { background: #f7eef7; border-color: #d8b0d8; }
+  .filter-trenner { color: var(--grau-mittel); font-size: .75rem; user-select: none; }
+  .filter-reset-sichtbar { margin-left: 4px; padding: 3px 12px; border-radius: 20px; border: 1.5px solid var(--rot); background: none; color: var(--rot); font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .15s, color .15s; white-space: nowrap; }
+  .filter-reset-sichtbar:hover { background: var(--rot); color: var(--weiss); }
 
-  .ort-banner { background: #eef2f7; border-bottom: 1px solid #c5d3e0; color: #1a3a5c; }
-  .ort-banner button { color: #1a3a5c; }
+  /* Scroll-to-top */
+  #scroll-top-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 42px; height: 42px; border-radius: 50%; background: var(--rot); border: none; color: #fff; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,.2); z-index: 200; transition: transform .2s, box-shadow .2s; }
+  #scroll-top-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 16px rgba(0,0,0,.25); }
+  #scroll-top-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
   .grid { max-width: 1400px; margin: 0 auto; padding: 0 2rem 3rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
 
@@ -657,11 +677,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <section class="hero">
   <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
   <p>Aktuelle Nachrichten aus Landkreis Fulda, den dazugehörigen Gemeinden und der Stadt – automatisch gesammelt, chronologisch sortiert. Keine Cookies</p>
-  <p class="hero-sub">Guten Tag lieber Nutzer, RegioNachrichten befindet sich aktuell in der Entwicklung. Nutzen Sie gerne die Meldefunktion, wenn Ihnen etwas auffällt.
-  Ich hoffe, dass Sie Freude an den innovativen Funktionen finden werden</p>
-  
-  <p>Liebe Grüße</p>
-
+  <p class="hero-sub">Ob Neuhof, Petserberg, Nüsttal oder die Stadt, auf RegioNachrichten finden Sie die wichtigsten Nachrichten über unsere Heimat. </p>
+  <p class="hero-sub">Wieso RegioNachrichten nützlich für jeden ist: Neues über Fulda und den Landkreis lernen, Auf dem neusten Stand bleiben, Recherchen betreiben, Quellensuche, akurate Filterung für Interessierte, Medienforschung, kulturelle Prozesse beobachten...</p>
+  <p class="hero-sub">Genießen Sie diese Neuheiten für Fulda und lassen Sie gerne Feedback da
+  </section>
 
 </section>
 
@@ -754,15 +773,13 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- AKTIVE FILTER BANNER -->
-<div id="ort-banner" class="filter-banner ort-banner">
-  <span>Ort: <strong id="aktiver-ort-text"></strong></span>
-  <button onclick="ortFilterLeeren()">✕</button>
-</div>
-<div id="tag-banner" class="filter-banner">
-  <span>Tag-Filter: <strong id="aktiver-tag-text"></strong></span>
-  <button onclick="tagFilterLeeren()">✕</button>
-</div>
+<!-- AKTIVE FILTER LEISTE -->
+<div id="aktive-filter-leiste" class="aktive-filter-leiste"></div>
+
+<!-- SCROLL-TO-TOP -->
+<button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nach oben">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <div class="ergebnis-bar">
   <span id="anzahl-text">Lade Artikel...</span>
@@ -776,6 +793,47 @@ const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
 const PRO_SEITE = 50;
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
+
+const ORT_ANZEIGE = {
+  'landkreis-fulda':'Landkreis Fulda','fulda':'Stadt Fulda','hessen':'Hessen',
+  'hünfeld':'Hünfeld','künzell':'Künzell','petersberg':'Petersberg',
+  'neuhof':'Neuhof','eichenzell':'Eichenzell','flieden':'Flieden',
+  'burghaun':'Burghaun','großenlüder':'Großenlüder','hilders':'Hilders',
+  'hofbieber':'Hofbieber','gersfeld':'Gersfeld','tann':'Tann',
+  'eiterfeld':'Eiterfeld','rasdorf':'Rasdorf','dipperz':'Dipperz',
+  'ebersburg':'Ebersburg','ehrenberg':'Ehrenberg','hosenfeld':'Hosenfeld',
+  'kalbach':'Kalbach','nüsttal':'Nüsttal','poppenhausen':'Poppenhausen',
+  'bad salzschlirf':'Bad Salzschlirf'
+};
+
+function filterLeistAktualisieren() {
+  const leiste = document.getElementById('aktive-filter-leiste');
+  const chips = [];
+  if (aktivOrt && aktivOrt !== 'landkreis-fulda')
+    chips.push(`<span class="filter-chip filter-chip-ort"><span class="filter-chip-label">Ort:</span> ${ORT_ANZEIGE[aktivOrt]||aktivOrt} <button onclick="ortFilterLeeren()" title="Entfernen">✕</button></span>`);
+  if (aktivKategorie)
+    chips.push(`<span class="filter-chip filter-chip-kat"><span class="filter-chip-label">Kategorie:</span> ${aktivKategorie} <button onclick="kategorieFilterLeeren()" title="Entfernen">✕</button></span>`);
+  if (aktivQuelle)
+    chips.push(`<span class="filter-chip filter-chip-quelle"><span class="filter-chip-label">Quelle:</span> ${aktivQuelle} <button onclick="quelleFilterLeeren()" title="Entfernen">✕</button></span>`);
+  if (aktivTag)
+    chips.push(`<span class="filter-chip filter-chip-tag"><span class="filter-chip-label">Tag:</span> ${aktivTag} <button onclick="tagFilterLeeren()" title="Entfernen">✕</button></span>`);
+  const von = document.getElementById('datum-von').value;
+  const bis = document.getElementById('datum-bis').value;
+  if (von || bis) {
+    const label = von && bis ? `${von} – ${bis}` : von ? `ab ${von}` : `bis ${bis}`;
+    chips.push(`<span class="filter-chip filter-chip-datum"><span class="filter-chip-label">Datum:</span> ${label} <button onclick="datumFilterLeeren()" title="Entfernen">✕</button></span>`);
+  }
+  if (!chips.length) { leiste.style.display = 'none'; leiste.innerHTML = ''; return; }
+  leiste.innerHTML = chips.join('<span class="filter-trenner">//</span>')
+    + `<button class="filter-reset-sichtbar" onclick="alleFilterZurueck()">Alle zurücksetzen</button>`;
+  leiste.style.display = 'flex';
+}
+
+// Scroll-to-top
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scroll-top-btn');
+  btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
 
 // ── ORTE LANDKREIS FULDA ──
 const ORTE_LANDKREIS = [
@@ -884,7 +942,7 @@ const KATEGORIEN = {
   },
   'Politik & Verwaltung': {
     farbe: '#1a3a5c', hell: '#eef2f7',
-    keys: ['wahl','politik','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz'],
+    keys: ['wahl','politik','föderalismus','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef2f7"/>
       <rect x="155" y="95" width="90" height="30" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".2"/>
       <rect x="168" y="72" width="64" height="28" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".25"/>
@@ -917,7 +975,7 @@ const KATEGORIEN = {
   },
   'Kultur & Freizeit': {
     farbe: '#5c1a5c', hell: '#f7eef7',
-    keys: ['konzert','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik'],
+    keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f7eef7"/>
       <line x1="155" y1="115" x2="245" y2="115" stroke="#5c1a5c" stroke-width="2" stroke-linecap="round" opacity=".3"/>
       <line x1="155" y1="115" x2="155" y2="55" stroke="#5c1a5c" stroke-width="2" stroke-linecap="round" opacity=".2"/>
@@ -1229,43 +1287,37 @@ function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
   if (aktivOrt === ortLower) { ortFilterLeeren(); return; }
   aktivOrt = ortLower;
-  document.getElementById('aktiver-ort-text').textContent = ort === 'landkreis-fulda' ? 'Landkreis Fulda' : ort;
-  document.getElementById('ort-banner').style.display = ort === 'landkreis-fulda' ? 'none' : 'flex';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const matching = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${ortLower}'`));
   if (matching) matching.classList.add('aktiv-ort');
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
 function tagFiltern(tag) {
   aktivTag = aktivTag === tag ? '' : tag;
-  document.getElementById('aktiver-tag-text').textContent = aktivTag;
-  document.getElementById('tag-banner').style.display = aktivTag ? 'flex' : 'none';
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
 function ortWaehlen(btn, ort) {
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
-  document.getElementById('ort-banner').style.display = ort ? 'flex' : 'none';
-  document.getElementById('aktiver-ort-text').textContent = btn.textContent;
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
 function kategorieWaehlen(btn, k) {
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   btn.classList.add('aktiv');
   aktivKategorie = k;
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
 function quelleWaehlen(btn, q) {
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   btn.classList.add('aktiv-dunkel');
   aktivQuelle = q;
-  artikelLaden();
+  filterLeistAktualisieren(); artikelLaden();
 }
 
 function sucheAktualisieren() {
@@ -1281,16 +1333,34 @@ function sucheLöschen() {
 
 function ortFilterLeeren() {
   aktivOrt = '';
-  document.getElementById('ort-banner').style.display = 'none';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelector('#ort-chips .chip').classList.add('aktiv');
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+}
+
+function kategorieFilterLeeren() {
+  aktivKategorie = '';
+  document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
+  document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+}
+
+function quelleFilterLeeren() {
+  aktivQuelle = '';
+  document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
+  document.querySelector('#quelle-chips .chip').classList.add('aktiv-dunkel');
+  filterLeistAktualisieren(); artikelLaden();
 }
 
 function tagFilterLeeren() {
   aktivTag = '';
-  document.getElementById('tag-banner').style.display = 'none';
-  urlAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+}
+
+function datumFilterLeeren() {
+  document.getElementById('datum-von').value = '';
+  document.getElementById('datum-bis').value = '';
+  filterLeistAktualisieren(); artikelAnzeigen();
 }
 
 function alleFilterZurueck() {
@@ -1299,8 +1369,6 @@ function alleFilterZurueck() {
   document.getElementById('suche-clear').style.display = 'none';
   document.getElementById('datum-von').value = '';
   document.getElementById('datum-bis').value = '';
-  document.getElementById('ort-banner').style.display = 'none';
-  document.getElementById('tag-banner').style.display = 'none';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
@@ -1309,7 +1377,7 @@ function alleFilterZurueck() {
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   document.querySelector('#quelle-chips .chip').classList.add('aktiv-dunkel');
-  urlAktualisieren(true); artikelLaden();
+  urlAktualisieren(true); filterLeistAktualisieren(); artikelLaden();
 }
 
 function artikelGeoeffnet(titel, quelle, link) {
@@ -1334,18 +1402,7 @@ function urlAktualisieren(replace = false) {
   history[replace ? 'replaceState' : 'pushState'](state, '', neueUrl);
 
   // Dynamischer Seitentitel für besseres SEO-Indexing
-  const ORT_LABEL = {
-    'landkreis-fulda': 'Landkreis Fulda', 'fulda': 'Stadt Fulda',
-    'hessen': 'Hessen', 'hünfeld': 'Hünfeld', 'künzell': 'Künzell',
-    'petersberg': 'Petersberg', 'neuhof': 'Neuhof', 'eichenzell': 'Eichenzell',
-    'flieden': 'Flieden', 'burghaun': 'Burghaun', 'großenlüder': 'Großenlüder',
-    'hilders': 'Hilders', 'hofbieber': 'Hofbieber', 'gersfeld': 'Gersfeld',
-    'tann': 'Tann', 'eiterfeld': 'Eiterfeld', 'rasdorf': 'Rasdorf',
-    'dipperz': 'Dipperz', 'ebersburg': 'Ebersburg', 'ehrenberg': 'Ehrenberg',
-    'hosenfeld': 'Hosenfeld', 'kalbach': 'Kalbach', 'nüsttal': 'Nüsttal',
-    'poppenhausen': 'Poppenhausen', 'bad salzschlirf': 'Bad Salzschlirf'
-  };
-  const ortLabel = ORT_LABEL[aktivOrt] || null;
+  const ortLabel = ORT_ANZEIGE[aktivOrt] || null;
   const teile = [];
   if (ortLabel) teile.push(ortLabel + ' Nachrichten');
   if (aktivKategorie) teile.push(aktivKategorie);
@@ -1366,11 +1423,7 @@ function filterAusUrlLesen() {
     const match = [...document.querySelectorAll('#ort-chips .chip')]
       .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
     if (match) match.classList.add('aktiv-ort');
-    else {
-      document.querySelector('#ort-chips .chip').classList.add('aktiv');
-      document.getElementById('ort-banner').style.display = 'flex';
-      document.getElementById('aktiver-ort-text').textContent = aktivOrt;
-    }
+    else document.querySelector('#ort-chips .chip').classList.add('aktiv');
   }
   if (params.has('kategorie')) {
     aktivKategorie = params.get('kategorie');
@@ -1379,15 +1432,9 @@ function filterAusUrlLesen() {
       .find(c => c.textContent.trim() === aktivKategorie);
     if (match) match.classList.add('aktiv');
   }
-  if (params.has('tag')) {
-    aktivTag = params.get('tag');
-    document.getElementById('tag-banner').style.display = 'flex';
-    document.getElementById('aktiver-tag-text').textContent = aktivTag;
-  }
-  if (params.has('suche')) {
-    suchbegriff = params.get('suche');
-    document.getElementById('suche').value = suchbegriff;
-  }
+  if (params.has('tag'))   aktivTag = params.get('tag');
+  if (params.has('suche')) { suchbegriff = params.get('suche'); document.getElementById('suche').value = suchbegriff; }
+  filterLeistAktualisieren();
 }
 
 window.addEventListener('popstate', function(e) {
@@ -1397,29 +1444,20 @@ window.addEventListener('popstate', function(e) {
   aktivTag       = s.tag || '';
   suchbegriff    = s.suche || '';
   document.getElementById('suche').value = suchbegriff;
-  // UI zurücksetzen
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
-  // Aktive Ort-Filter wiederherstellen
   const ortChip = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
-  if (ortChip) {
-    ortChip.classList.add(aktivOrt ? 'aktiv-ort' : 'aktiv');
-  } else {
-    document.querySelector('#ort-chips .chip').classList.add('aktiv');
-  }
-  document.getElementById('ort-banner').style.display = (aktivOrt && aktivOrt !== 'landkreis-fulda') ? 'flex' : 'none';
-  if (aktivOrt && aktivOrt !== 'landkreis-fulda') document.getElementById('aktiver-ort-text').textContent = aktivOrt;
+  if (ortChip) ortChip.classList.add(aktivOrt ? 'aktiv-ort' : 'aktiv');
+  else document.querySelector('#ort-chips .chip').classList.add('aktiv');
   if (aktivKategorie) {
     document.querySelector('#kategorie-chips .chip').classList.remove('aktiv');
     const m = [...document.querySelectorAll('#kategorie-chips .chip')]
       .find(c => c.textContent.trim() === aktivKategorie);
     if (m) m.classList.add('aktiv');
   }
-  document.getElementById('tag-banner').style.display = aktivTag ? 'flex' : 'none';
-  if (aktivTag) document.getElementById('aktiver-tag-text').textContent = aktivTag;
-  artikelAnzeigen();
+  filterLeistAktualisieren(); artikelAnzeigen();
 });
 
 quellenLaden();
