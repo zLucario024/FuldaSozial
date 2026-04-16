@@ -58,7 +58,12 @@
     h1 { font-size: 1.5rem; }
     .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
   }
+  html.dark-mode body { --weiss: #141414; --schwarz: #ececec; --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa; --grau-hell: #202020; --border: #333; --rot-hell: #2c0c10; }
+  html.dark-mode header { background: var(--weiss); border-color: var(--border); }
+  html.dark-mode footer { background: var(--grau-hell); border-color: var(--border); }
+  html.dark-mode .highlight { background: var(--rot-hell); }
 </style>
+<script>if(localStorage.getItem('darkmode')==='1')document.documentElement.classList.add('dark-mode');</script>
 </head>
 <body>
 
