@@ -155,11 +155,7 @@ Fulda Nachrichten">
   .suche-clear-btn:hover { color: var(--schwarz); }
   .suche-clear-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
-  .hero { padding: 3rem 2rem 2rem; border-bottom: 1px solid var(--border); max-width: 1400px; margin: 0 auto; }
-  .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.15; margin-bottom: .75rem; }
-  .hero h1 em { color: var(--rot); font-style: normal; }
-  .hero p { font-size: 1rem; color: var(--grau-mittel); max-width: 540px; line-height: 1.6; }
-  .hero-sub { margin-top: .5rem; font-size: .85rem; color: var(--rot); border-left: 3px solid var(--rot); padding-left: .6rem; }
+  .hero { display: none; }
 
 .karte-bild-wrap { position: relative; }
 .wappen-badge {
@@ -317,9 +313,9 @@ Fulda Nachrichten">
   .lese-link svg { width: 14px; height: 14px; stroke: var(--rot); fill: none; }
   .meld-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .meld-btn:hover { color: var(--rot); }
-  .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+  .meld-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
   .herz-btn, .teilen-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; transition: color .15s; }
-  .herz-btn svg, .teilen-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; transition: fill .15s, stroke .15s; }
+  .herz-btn svg, .teilen-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; transition: fill .15s, stroke .15s; }
   .herz-btn:hover { color: #e05; }
   .herz-btn.aktiv { color: #e05; }
   .herz-btn.aktiv svg { fill: #e05; stroke: #e05; }
@@ -385,10 +381,6 @@ Fulda Nachrichten">
     .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
 
     /* 7. Hero */
-    .hero { padding: 1.5rem 1rem 1.25rem; }
-    .hero h1 { font-size: 1.55rem; }
-    .hero p { font-size: .88rem; }
-    .hero-sub { font-size: .8rem; }
 
     /* 8. "Mehr laden" Button */
     .mehr-btn { width: calc(100% - 2rem); margin-left: 1rem; margin-right: 1rem; box-sizing: border-box; }
@@ -547,11 +539,11 @@ async function artikelTeilen(link, titel, btn) {
   }
   try {
     await navigator.clipboard.writeText(link);
-    const label = btn.childNodes[btn.childNodes.length - 1];
-    const original = label.textContent;
-    label.textContent = ' Kopiert!';
+    const svg = btn.querySelector('svg');
+    const original = svg.innerHTML;
+    svg.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
     btn.classList.add('kopiert');
-    setTimeout(() => { label.textContent = original; btn.classList.remove('kopiert'); }, 2000);
+    setTimeout(() => { svg.innerHTML = original; btn.classList.remove('kopiert'); }, 2000);
   } catch (_) {}
 }
 
@@ -702,6 +694,10 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
   <nav class="nav-menu-panel">
     <button class="nav-menu-close" id="nav-menu-close" onclick="navMenuSchliessen()" aria-label="Menü schließen">✕</button>
+    <a href="ueber.html" class="nav-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+      Über RegioNachrichten
+    </a>
     <a href="impressum.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Impressum
@@ -1330,17 +1326,14 @@ function karteErstellen(artikel, index) {
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <div style="display:flex;align-items:center;gap:.75rem">
-        <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', this)" title="Artikel merken">
+        <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', this)" title="Merken">
           <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          Merken
         </button>
-        <button class="teilen-btn" onclick="artikelTeilen('${artikel.link.replace(/'/g,"\\'")}', '${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', this)" title="Artikel teilen">
+        <button class="teilen-btn" onclick="artikelTeilen('${artikel.link.replace(/'/g,"\\'")}', '${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', this)" title="Teilen">
           <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Teilen
         </button>
-        <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}">
+        <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}" title="Melden">
           <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-          Melden
         </button>
       </div>
     </div>`;

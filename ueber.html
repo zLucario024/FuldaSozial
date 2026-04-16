@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Über RegioNachrichten – RegioNachrichten Fulda</title>
+<link rel="icon" type="image/svg+xml" href="Design/rn_fulda_logo_klein.svg">
+<link rel="icon" type="image/jpeg" sizes="48x48" href="Design/rn_logo_mini.jpg">
+<link rel="apple-touch-icon" sizes="192x192" href="Design/rn_logo_mini.jpg">
+<style>
+  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rot: #c0152a; --rot-hell: #fdf0f2;
+    --schwarz: #111; --grau-dunkel: #333; --grau-mittel: #666;
+    --grau-hell: #f4f4f4; --border: #e0e0e0; --weiss: #fff;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; display: flex; flex-direction: column; }
+
+  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); }
+  .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .logo-text { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+  .logo-text span { color: var(--rot); }
+
+  main { flex: 1; max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; width: 100%; }
+  .zurueck { display: inline-flex; align-items: center; gap: 6px; font-size: .9rem; color: var(--grau-mittel); text-decoration: none; margin-bottom: 2rem; transition: color .15s; }
+  .zurueck:hover { color: var(--rot); }
+  .zurueck svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 900; margin-bottom: .5rem; }
+  h1 em { color: var(--rot); font-style: normal; }
+  .untertitel { font-size: 1.05rem; color: var(--grau-mittel); margin-bottom: 2.5rem; line-height: 1.6; }
+  h2 { font-size: 1rem; font-weight: 600; color: var(--grau-dunkel); margin: 2rem 0 .5rem; text-transform: uppercase; letter-spacing: .04em; }
+  p { font-size: 1rem; line-height: 1.7; color: var(--grau-dunkel); }
+  ul { padding-left: 1.25rem; margin-top: .5rem; }
+  ul li { font-size: 1rem; line-height: 1.7; color: var(--grau-dunkel); }
+  .highlight { background: var(--rot-hell); border-left: 3px solid var(--rot); padding: 1rem 1.25rem; border-radius: 0 6px 6px 0; margin-top: 2rem; font-size: .95rem; color: var(--grau-dunkel); line-height: 1.6; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  a { color: var(--rot); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  footer { border-top: 1px solid var(--border); background: var(--grau-hell); }
+  .footer-inner { max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .85rem; color: var(--grau-mittel); }
+  .footer-inner nav { display: flex; gap: 1.5rem; }
+  .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
+  .footer-inner nav a:hover { color: var(--rot); }
+  @media (max-width: 600px) {
+    main { padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.5rem; }
+    .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+    </div>
+    <div class="logo-text">RegioNachrichten <span>Fulda</span></div>
+  </a>
+</header>
+
+<main>
+  <a href="index.html" class="zurueck">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Zurück zur Startseite
+  </a>
+
+  <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
+  <p class="untertitel">Aktuelle Nachrichten aus Landkreis Fulda, den dazugehörigen Gemeinden und der Stadt – automatisch gesammelt, chronologisch sortiert. Keine Cookies.</p>
+
+  <h2>Was ist RegioNachrichten?</h2>
+  <p>Ob Neuhof, Petersberg, Nüsttal oder die Stadt – auf RegioNachrichten finden Sie die wichtigsten Nachrichten über unsere Heimat. Alle Artikel werden automatisch aus lokalen Quellen gesammelt und nach Region, Kategorie und Thema filterbar aufbereitet.</p>
+
+  <h2>Wofür ist es nützlich?</h2>
+  <ul>
+    <li>Neues über Fulda und den Landkreis lernen</li>
+    <li>Auf dem neusten Stand bleiben</li>
+    <li>Recherchen betreiben und Quellen finden</li>
+    <li>Akurate Filterung für gezielt Interessierte</li>
+    <li>Medienforschung und Quellenvergleich</li>
+    <li>Kulturelle Prozesse in der Region beobachten</li>
+  </ul>
+
+  <div class="highlight">
+    Genießen Sie diese Neuheiten für Fulda – und lassen Sie gerne <a href="index.html">Feedback</a> da!
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2025 RegioNachrichten Fulda</span>
+    <nav>
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
