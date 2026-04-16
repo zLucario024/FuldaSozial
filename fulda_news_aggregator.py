@@ -223,6 +223,43 @@ def feed_verarbeiten(feed, conn):
     cursor.close()
     return neu, duplikate
 
+def deduplizieren(conn):
+    """Findet Artikel mit gleichem Titel + gleicher Quelle und löscht den mit weniger Tags."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT titel, quelle
+        FROM artikel
+        GROUP BY titel, quelle
+        HAVING COUNT(*) > 1
+    """)
+    gruppen = cursor.fetchall()
+
+    geloescht = 0
+    for titel, quelle in gruppen:
+        cursor.execute(
+            "SELECT id, tags FROM artikel WHERE titel = %s AND quelle = %s ORDER BY id",
+            (titel, quelle)
+        )
+        eintraege = cursor.fetchall()
+
+        def tag_anzahl(e):
+            return len([t for t in (e[1] or '').split('·') if t.strip()])
+
+        beste_id = max(eintraege, key=tag_anzahl)[0]
+        for id_, _ in eintraege:
+            if id_ != beste_id:
+                cursor.execute("DELETE FROM artikel WHERE id = %s", (id_,))
+                geloescht += 1
+
+    conn.commit()
+    cursor.close()
+    if geloescht:
+        print(f"  Deduplizierung: {geloescht} Duplikat(e) gelöscht ({len(gruppen)} Gruppe(n))")
+    else:
+        print("  Deduplizierung: Keine Duplikate gefunden")
+    return geloescht
+
+
 def main():
     print("Fulda News Aggregator")
     print(f"Gestartet: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
@@ -237,6 +274,10 @@ def main():
         neu, duplikate = feed_verarbeiten(feed, conn)
         gesamt_neu += neu
         gesamt_duplikate += duplikate
+
+    print(f"\n{'=' * 55}")
+    print("DEDUPLIZIERUNG")
+    deduplizieren(conn)
 
     cursor = conn.cursor()
     print(f"\n{'=' * 55}")

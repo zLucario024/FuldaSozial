@@ -1232,7 +1232,15 @@ async function artikelLaden() {
   try {
     const res = await fetch(url);
     const data = await res.json();
-    alleArtikel = data.artikel || [];
+    const roh = data.artikel || [];
+    const gesehen = new Map();
+    roh.forEach(a => {
+      const key = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      const tagAnzahl = (a.tags || '').split('·').filter(t => t.trim()).length;
+      const bisheriger = gesehen.get(key);
+      if (!bisheriger || tagAnzahl > bisheriger.tagAnzahl) gesehen.set(key, { a, tagAnzahl });
+    });
+    alleArtikel = [...gesehen.values()].map(v => v.a);
     if (ersterLade) { ersterLade = false; filterAusUrlLesen(); }
     artikelAnzeigen();
   } catch(e) {
