@@ -539,6 +539,7 @@ function navMenuSchliessen() {
 
 // ── TEILEN ──
 async function artikelTeilen(link, titel, btn) {
+  if (typeof umami !== 'undefined') umami.track('artikel-geteilt');
   if (navigator.share) {
     try { await navigator.share({ title: titel, url: link }); } catch (_) {}
     return;
@@ -561,6 +562,7 @@ function herzToggle(link, btn) {
   } else {
     gemerkte.add(link);
     btn.classList.add('aktiv');
+    if (typeof umami !== 'undefined') umami.track('artikel-gemerkt');
   }
   localStorage.setItem('gemerkte', JSON.stringify([...gemerkte]));
   if (aktivMeineArtikel) artikelAnzeigen();
@@ -1364,6 +1366,7 @@ function ortWaehlen(btn, ort) {
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
+  if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
@@ -1371,6 +1374,7 @@ function kategorieWaehlen(btn, k) {
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   btn.classList.add('aktiv');
   aktivKategorie = k;
+  if (k && typeof umami !== 'undefined') umami.track('filter-kategorie', { kategorie: k });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
@@ -1378,6 +1382,7 @@ function quelleWaehlen(btn, q) {
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   btn.classList.add('aktiv-dunkel');
   aktivQuelle = q;
+  if (q && typeof umami !== 'undefined') umami.track('filter-quelle', { quelle: q });
   filterLeistAktualisieren(); artikelLaden();
 }
 
