@@ -183,7 +183,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (186 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (193 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://fuldasozial.de/?tag=2.%20Bundesliga</loc>
     <changefreq>daily</changefreq>
@@ -376,6 +376,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Dreieich</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Drogenhandel</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -575,7 +580,17 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Hessentag</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Hessischer%20Rundfunk</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Hofbieber</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -625,6 +640,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Kerzell</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Kirche</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -661,6 +681,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Kommunalwahl%202026</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Kreisfeuerwehrverband</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -800,6 +825,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Petersberg</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Piloten</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -906,6 +936,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Sommersemester</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Speedmarathon</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

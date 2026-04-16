@@ -14,6 +14,7 @@ import re
 import os
 from collections import defaultdict
 from difflib import SequenceMatcher
+from html import unescape as html_unescape
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from dotenv import load_dotenv
@@ -27,6 +28,16 @@ FEEDS = [
     {"name": "Landkreis Fulda", "url": "https://www.landkreis-fulda.de", "rss": "https://www.landkreis-fulda.de/rss-feed", "typ": "Öffentlich-rechtlich", "region": "landkreis-fulda"},
     {"name": "Presseportal Fulda", "url": "https://www.presseportal.de/regional/Fulda", "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2", "typ": "Online-Portal", "region": "landkreis-fulda"},
     {"name": "Osthessen-News", "url": "https://osthessen-news.de", "rss": "https://osthessen-news.de/rss_feed.xml", "typ": "Online-Portal", "region": "osthessen"},
+]
+
+HTML_QUELLEN = [
+    {
+        "name": "Fuldaer Zeitung",
+        "url": "https://www.fuldaerzeitung.de/fulda/",
+        "base_url": "https://www.fuldaerzeitung.de",
+        "typ": "Tageszeitung",
+        "region": "landkreis-fulda",
+    },
 ]
 
 HEADERS = {
@@ -225,6 +236,110 @@ def feed_verarbeiten(feed, conn):
     cursor.close()
     return neu, duplikate
 
+def html_artikel_holen(url, base_url):
+    """Scrapt eine HTML-Listenseite und gibt (titel, link)-Paare zurück."""
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=12)
+        r.raise_for_status()
+    except Exception as e:
+        print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
+        return []
+
+    artikel = []
+    gesehen_links = set()
+
+    for match in re.finditer(r'<a\s([^>]*class="[^"]*id-LinkOverlay-link[^"]*"[^>]*)>', r.text):
+        attrs = match.group(1)
+        href_m = re.search(r'href="([^"]+)"', attrs)
+        title_m = re.search(r'title="([^"]+)"', attrs)
+        if not (href_m and title_m):
+            continue
+        link = href_m.group(1)
+        if link.startswith('//'):
+            link = 'https:' + link
+        elif link.startswith('/'):
+            link = base_url + link
+        if not re.search(r'-\d{5,}\.html$', link):
+            continue
+        if link in gesehen_links:
+            continue
+        gesehen_links.add(link)
+        titel = html_unescape(title_m.group(1)).strip()
+        if titel:
+            artikel.append((titel, link))
+
+    return artikel
+
+
+def html_quelle_verarbeiten(quelle, conn):
+    print(f"\n{'=' * 55}")
+    print(f"Abrufen: {quelle['name']} (HTML)")
+
+    gefundene = html_artikel_holen(quelle["url"], quelle["base_url"])
+    if not gefundene:
+        print("  Keine Artikel gefunden.")
+        return 0, 0
+
+    neu = 0
+    duplikate = 0
+    neue_artikel = []
+    cursor = conn.cursor()
+    jetzt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    for titel, link in gefundene:
+        hash_wert = artikel_hash(link)
+
+        cursor.execute(
+            "SELECT id FROM artikel WHERE titel = %s OR hash = %s",
+            (titel, hash_wert)
+        )
+        if cursor.fetchone():
+            duplikate += 1
+            continue
+
+        try:
+            cursor.execute("SAVEPOINT sp1")
+            cursor.execute("""
+                INSERT INTO artikel
+                (hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                hash_wert, titel, link,
+                quelle["name"], quelle["typ"], quelle["region"],
+                jetzt, jetzt,
+                None, ""
+            ))
+            cursor.execute("RELEASE SAVEPOINT sp1")
+            neue_artikel.append((hash_wert, titel))
+            neu += 1
+        except psycopg2.IntegrityError:
+            cursor.execute("ROLLBACK TO SAVEPOINT sp1")
+            duplikate += 1
+
+    conn.commit()
+
+    if neue_artikel:
+        print(f"  Gefunden: {len(gefundene)} | Neu: {neu} | Duplikate: {duplikate}")
+        print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
+        for i in range(0, len(neue_artikel), 20):
+            batch = neue_artikel[i:i + 20]
+            tags_dict = tags_generieren([t for _, t in batch])
+            for hash_wert, titel in batch:
+                tags = tags_dict.get(titel, "")
+                if tags:
+                    cursor.execute(
+                        "UPDATE artikel SET tags = %s WHERE hash = %s",
+                        (tags, hash_wert)
+                    )
+            conn.commit()
+            print(f"  Tags generiert: {min(i + 20, len(neue_artikel))}/{len(neue_artikel)}")
+    else:
+        print(f"  Gefunden: {len(gefundene)} | Neu: 0 | Duplikate: {duplikate}")
+
+    cursor.close()
+    return neu, duplikate
+
+
 def _tag_anzahl(tags_str):
     return len([t for t in (tags_str or '').split('·') if t.strip()])
 
@@ -292,7 +407,7 @@ def deduplizieren(conn):
                 if len(titel_a) < 12 or len(titel_b) < 12:
                     continue
                 aehnlich = SequenceMatcher(None, titel_a.lower(), titel_b.lower()).ratio()
-                if aehnlich >= 0.85:
+                if aehnlich >= 0.90:
                     fuzzy_paare += 1
                     # Behalte den mit mehr Tags; bei Gleichstand den neueren (höhere id = später gespeichert)
                     if _tag_anzahl(tags_a) >= _tag_anzahl(tags_b):
@@ -331,6 +446,11 @@ def main():
 
     for feed in FEEDS:
         neu, duplikate = feed_verarbeiten(feed, conn)
+        gesamt_neu += neu
+        gesamt_duplikate += duplikate
+
+    for quelle in HTML_QUELLEN:
+        neu, duplikate = html_quelle_verarbeiten(quelle, conn)
         gesamt_neu += neu
         gesamt_duplikate += duplikate
 
