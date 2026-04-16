@@ -18,12 +18,7 @@
     <priority>0.3</priority>
   </url>
 
-  <!-- Ort-Filterseiten -->
-  <url>
-    <loc>https://fuldasozial.de/?ort=landkreis-fulda</loc>
-    <changefreq>hourly</changefreq>
-    <priority>0.9</priority>
-  </url>
+  <!-- Ort-Filterseiten (Landkreis Fulda = Homepage, kein eigener Eintrag nötig) -->
   <url>
     <loc>https://fuldasozial.de/?ort=fulda</loc>
     <changefreq>hourly</changefreq>

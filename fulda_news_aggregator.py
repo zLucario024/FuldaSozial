@@ -300,7 +300,7 @@ def sitemap_generieren(conn):
         ("https://fuldasozial.de",                                  "hourly", "1.0"),
         ("https://fuldasozial.de/impressum.html",                   "yearly", "0.3"),
         ("https://fuldasozial.de/datenschutz.html",                 "yearly", "0.3"),
-        ("https://fuldasozial.de/?ort=landkreis-fulda",             "hourly", "0.9"),
+        # ?ort=landkreis-fulda weggelassen — Homepage ist bereits die Landkreis-Ansicht
         ("https://fuldasozial.de/?ort=fulda",                       "hourly", "0.9"),
         ("https://fuldasozial.de/?ort=h%C3%BCnfeld",                "daily",  "0.7"),
         ("https://fuldasozial.de/?ort=k%C3%BCnzell",                "daily",  "0.7"),
