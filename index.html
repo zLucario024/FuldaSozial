@@ -540,7 +540,8 @@ function navMenuSchliessen() {
 // ── TEILEN ──
 async function artikelTeilen(link, titel, btn) {
   if (typeof umami !== 'undefined') umami.track('artikel-geteilt');
-  if (navigator.share) {
+  const isMobile = window.innerWidth < 769 || 'ontouchstart' in window;
+  if (isMobile && navigator.share) {
     try { await navigator.share({ title: titel, url: link }); } catch (_) {}
     return;
   }
