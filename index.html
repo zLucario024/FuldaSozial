@@ -249,6 +249,7 @@ Fulda Nachrichten">
   text-decoration: none;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
+  cursor: pointer;
   }
   .karte-bild-link:hover .karte-bild svg {
   transform: scale(1.03);
@@ -1008,110 +1009,144 @@ function ortMatch(text, ort) {
 // ── KATEGORIEN ──
 const KATEGORIEN = {
   'Lokale Vorfälle': {
-    farbe: '#c0152a', hell: '#fdf0f2',
+    farbe: '#c53030', hell: '#fff5f5',
     keys: ['vorfall', 'polizei','unfall','brand','einbruch','feuerwehr','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fdf0f2"/>
-      <circle cx="200" cy="80" r="52" fill="none" stroke="#c0152a" stroke-width="3" opacity=".15"/>
-      <polygon points="200,44 228,96 172,96" fill="none" stroke="#c0152a" stroke-width="2.5" stroke-linejoin="round"/>
-      <line x1="200" y1="60" x2="200" y2="78" stroke="#c0152a" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="200" cy="85" r="2" fill="#c0152a"/>
-      <line x1="120" y1="80" x2="145" y2="80" stroke="#c0152a" stroke-width="1.5" opacity=".3"/>
-      <line x1="255" y1="80" x2="280" y2="80" stroke="#c0152a" stroke-width="1.5" opacity=".3"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
+      <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
+      <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
+      <polygon points="200,46 244,114 156,114" fill="none" stroke="#c53030" stroke-width="3.5" stroke-linejoin="round"/>
+      <rect x="195" y="62" width="10" height="27" rx="5" fill="#c53030"/>
+      <circle cx="200" cy="101" r="5.5" fill="#c53030"/>
+      <line x1="108" y1="80" x2="134" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round" opacity=".2"/>
+      <line x1="266" y1="80" x2="292" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round" opacity=".2"/></svg>`
   },
   'Politik & Verwaltung': {
-    farbe: '#1a3a5c', hell: '#eef2f7',
+    farbe: '#1e429f', hell: '#eff6ff',
     keys: ['wahl','politik','föderalismus','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef2f7"/>
-      <rect x="155" y="95" width="90" height="30" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".2"/>
-      <rect x="168" y="72" width="64" height="28" rx="2" fill="none" stroke="#1a3a5c" stroke-width="2" opacity=".25"/>
-      <polygon points="200,40 240,72 160,72" fill="none" stroke="#1a3a5c" stroke-width="2.5" stroke-linejoin="round"/>
-      <line x1="200" y1="40" x2="200" y2="34" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="200" cy="32" r="3" fill="#1a3a5c" opacity=".5"/>
-      <line x1="140" y1="125" x2="260" y2="125" stroke="#1a3a5c" stroke-width="2" stroke-linecap="round" opacity=".3"/>
-      <rect x="172" y="78" width="12" height="17" rx="1" fill="#1a3a5c" opacity=".15"/>
-      <rect x="194" y="78" width="12" height="17" rx="1" fill="#1a3a5c" opacity=".15"/>
-      <rect x="216" y="78" width="12" height="17" rx="1" fill="#1a3a5c" opacity=".15"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eff6ff"/>
+      <rect x="152" y="108" width="96" height="10" rx="2" fill="#1e429f" opacity=".18"/>
+      <rect x="162" y="74" width="76" height="36" rx="1" fill="#1e429f" opacity=".1"/>
+      <rect x="164" y="76" width="72" height="34" fill="none" stroke="#1e429f" stroke-width="2" opacity=".25"/>
+      <rect x="170" y="76" width="8" height="32" rx="2" fill="#1e429f" opacity=".18"/>
+      <rect x="186" y="76" width="8" height="32" rx="2" fill="#1e429f" opacity=".18"/>
+      <rect x="206" y="76" width="8" height="32" rx="2" fill="#1e429f" opacity=".18"/>
+      <rect x="222" y="76" width="8" height="32" rx="2" fill="#1e429f" opacity=".18"/>
+      <polygon points="200,38 248,74 152,74" fill="#1e429f" opacity=".14"/>
+      <polygon points="200,44 242,74 158,74" fill="none" stroke="#1e429f" stroke-width="2.5" stroke-linejoin="round"/>
+      <line x1="200" y1="27" x2="200" y2="44" stroke="#1e429f" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <polygon points="200,26 216,33 200,40" fill="#1e429f" opacity=".4"/>
+      <line x1="132" y1="118" x2="268" y2="118" stroke="#1e429f" stroke-width="2" stroke-linecap="round" opacity=".2"/></svg>`
   },
   'Wirtschaft & Arbeit': {
-    farbe: '#1a5c3a', hell: '#eef7f2',
+    farbe: '#14532d', hell: '#f0fdf4',
     keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef7f2"/>
-      <polyline points="140,110 165,85 185,95 210,65 235,75 260,45" fill="none" stroke="#1a5c3a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="260" cy="45" r="4" fill="#1a5c3a"/>
-      <polyline points="255,45 260,40 265,45" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <line x1="135" y1="118" x2="270" y2="118" stroke="#1a5c3a" stroke-width="1.5" opacity=".2"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0fdf4"/>
+      <line x1="144" y1="44" x2="144" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
+      <line x1="144" y1="118" x2="272" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
+      <rect x="156" y="88" width="26" height="30" rx="3" fill="#14532d" opacity=".2"/>
+      <rect x="192" y="68" width="26" height="50" rx="3" fill="#14532d" opacity=".3"/>
+      <rect x="228" y="50" width="26" height="68" rx="3" fill="#14532d" opacity=".45"/>
+      <polyline points="256,56 268,42 280,56" fill="none" stroke="#14532d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+      <line x1="268" y1="42" x2="268" y2="90" stroke="#14532d" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></svg>`
   },
   'Sport': {
-    farbe: '#5c3a1a', hell: '#f7f2ee',
+    farbe: '#c2410c', hell: '#fff7ed',
     keys: ['sport','leichtathletik', 'fußball','handball','tennis','turnier', 'champions league', 'europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft', 'playoff', 'basketball', 'bvb', 'schwimmen', 'finale', 'eishockey'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f7f2ee"/>
-      <circle cx="200" cy="80" r="44" fill="none" stroke="#5c3a1a" stroke-width="2.5" opacity=".25"/>
-      <path d="M200,36 C215,48 220,62 215,80 C210,98 195,108 200,124" fill="none" stroke="#5c3a1a" stroke-width="1.5" opacity=".3"/>
-      <path d="M200,36 C185,48 180,62 185,80 C190,98 205,108 200,124" fill="none" stroke="#5c3a1a" stroke-width="1.5" opacity=".3"/>
-      <line x1="156" y1="56" x2="244" y2="56" stroke="#5c3a1a" stroke-width="1.5" opacity=".25"/>
-      <line x1="156" y1="104" x2="244" y2="104" stroke="#5c3a1a" stroke-width="1.5" opacity=".25"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff7ed"/>
+      <path d="M174,52 L226,52 L220,88 Q200,100 180,88 Z" fill="#c2410c" opacity=".13"/>
+      <path d="M174,52 L226,52 L220,88 Q200,100 180,88 Z" fill="none" stroke="#c2410c" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M174,58 Q154,58 154,74 Q154,86 172,86" fill="none" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/>
+      <path d="M226,58 Q246,58 246,74 Q246,86 228,86" fill="none" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/>
+      <rect x="196" y="98" width="8" height="16" rx="2" fill="#c2410c" opacity=".35"/>
+      <rect x="178" y="112" width="44" height="8" rx="4" fill="#c2410c" opacity=".3"/>
+      <polygon points="200,64 203,73 213,73 205,79 208,88 200,82 192,88 195,79 187,73 197,73" fill="#c2410c" opacity=".45"/></svg>`
   },
   'Kultur & Freizeit': {
-    farbe: '#5c1a5c', hell: '#f7eef7',
+    farbe: '#6d28d9', hell: '#f5f3ff',
     keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f7eef7"/>
-      <line x1="155" y1="115" x2="245" y2="115" stroke="#5c1a5c" stroke-width="2" stroke-linecap="round" opacity=".3"/>
-      <line x1="155" y1="115" x2="155" y2="55" stroke="#5c1a5c" stroke-width="2" stroke-linecap="round" opacity=".2"/>
-      <line x1="245" y1="115" x2="245" y2="55" stroke="#5c1a5c" stroke-width="2" stroke-linecap="round" opacity=".2"/>
-      <path d="M155,55 Q200,35 245,55" fill="none" stroke="#5c1a5c" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="185" cy="82" r="5" fill="none" stroke="#5c1a5c" stroke-width="2"/>
-      <circle cx="215" cy="82" r="5" fill="none" stroke="#5c1a5c" stroke-width="2"/>
-      <line x1="200" y1="68" x2="200" y2="100" stroke="#5c1a5c" stroke-width="1.5" stroke-linecap="round" opacity=".25"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
+      <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
+      <ellipse cx="222" cy="113" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 222 113)"/>
+      <line x1="195" y1="100" x2="195" y2="54" stroke="#6d28d9" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+      <line x1="235" y1="108" x2="235" y2="62" stroke="#6d28d9" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+      <line x1="195" y1="54" x2="235" y2="62" stroke="#6d28d9" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+      <line x1="148" y1="62" x2="160" y2="62" stroke="#6d28d9" stroke-width="2.5" stroke-linecap="round" opacity=".3"/>
+      <line x1="154" y1="56" x2="154" y2="68" stroke="#6d28d9" stroke-width="2.5" stroke-linecap="round" opacity=".3"/></svg>`
   },
   'Bildung & Familie': {
-    farbe: '#1a4a5c', hell: '#eef5f7',
+    farbe: '#0369a1', hell: '#e0f2fe',
     keys: ['schule','studie','kita','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef5f7"/>
-      <rect x="162" y="65" width="76" height="58" rx="2" fill="none" stroke="#1a4a5c" stroke-width="2" opacity=".2"/>
-      <line x1="175" y1="80" x2="225" y2="80" stroke="#1a4a5c" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
-      <line x1="175" y1="90" x2="225" y2="90" stroke="#1a4a5c" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
-      <line x1="175" y1="100" x2="210" y2="100" stroke="#1a4a5c" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
-      <polygon points="200,38 235,65 165,65" fill="none" stroke="#1a4a5c" stroke-width="2.5" stroke-linejoin="round"/>
-      <line x1="155" y1="123" x2="245" y2="123" stroke="#1a4a5c" stroke-width="2" stroke-linecap="round" opacity=".2"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#e0f2fe"/>
+      <path d="M166,54 Q166,50 170,50 L200,54 L200,114 L166,110 Q162,110 162,106 Z" fill="#0369a1" opacity=".1"/>
+      <path d="M200,54 L170,50 Q162,50 162,58 L162,106 Q162,114 170,114 L200,114" fill="none" stroke="#0369a1" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M200,54 L230,50 Q238,50 238,58 L238,106 Q238,114 230,114 L200,114" fill="#0369a1" opacity=".1"/>
+      <path d="M200,54 L230,50 Q238,50 238,58 L238,106 Q238,114 230,114 L200,114" fill="none" stroke="#0369a1" stroke-width="2.5" stroke-linejoin="round"/>
+      <line x1="200" y1="54" x2="200" y2="114" stroke="#0369a1" stroke-width="2.5" stroke-linecap="round" opacity=".35"/>
+      <line x1="172" y1="70" x2="196" y2="72" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <line x1="172" y1="82" x2="196" y2="84" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <line x1="172" y1="94" x2="192" y2="96" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <line x1="204" y1="72" x2="228" y2="70" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <line x1="204" y1="84" x2="228" y2="82" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <line x1="204" y1="96" x2="224" y2="94" stroke="#0369a1" stroke-width="2" stroke-linecap="round" opacity=".35"/></svg>`
   },
   'Natur & Umwelt': {
-    farbe: '#2d5c1a', hell: '#f0f7ee',
+    farbe: '#166534', hell: '#dcfce7',
     keys: ['wetter','wald','rhön','naturschutz','tier','papagei','spargel', 'katze', 'schlange', 'überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser', 'biber', 'weiher', 'blitzeinschlag', 'blitzeinschläge'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0f7ee"/>
-      <line x1="200" y1="120" x2="200" y2="75" stroke="#2d5c1a" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
-      <ellipse cx="200" cy="58" rx="30" ry="22" fill="none" stroke="#2d5c1a" stroke-width="2.5" opacity=".3"/>
-      <ellipse cx="178" cy="72" rx="22" ry="16" fill="none" stroke="#2d5c1a" stroke-width="2" opacity=".25"/>
-      <ellipse cx="222" cy="72" rx="22" ry="16" fill="none" stroke="#2d5c1a" stroke-width="2" opacity=".25"/>
-      <line x1="160" y1="120" x2="240" y2="120" stroke="#2d5c1a" stroke-width="2" stroke-linecap="round" opacity=".2"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#dcfce7"/>
+      <!-- Trunk -->
+      <path d="M197,148 Q196,130 194,118 Q192,108 200,100 Q208,108 206,118 Q204,130 203,148 Z" fill="#5c3d1a" opacity=".55"/>
+      <!-- Root flares -->
+      <path d="M194,145 Q184,140 180,148" fill="none" stroke="#5c3d1a" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <path d="M203,145 Q213,140 218,148" fill="none" stroke="#5c3d1a" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+      <!-- Main canopy layers – beech has a wide dome crown -->
+      <ellipse cx="200" cy="82" rx="62" ry="46" fill="#15803d" opacity=".18"/>
+      <ellipse cx="200" cy="78" rx="54" ry="42" fill="#16a34a" opacity=".28"/>
+      <!-- Side lobes for natural irregular beech shape -->
+      <ellipse cx="164" cy="88" rx="34" ry="26" fill="#15803d" opacity=".32"/>
+      <ellipse cx="236" cy="88" rx="34" ry="26" fill="#15803d" opacity=".32"/>
+      <!-- Upper dome -->
+      <ellipse cx="200" cy="66" rx="42" ry="34" fill="#22c55e" opacity=".3"/>
+      <ellipse cx="200" cy="62" rx="34" ry="28" fill="#16a34a" opacity=".35"/>
+      <!-- Highlight cluster top -->
+      <ellipse cx="192" cy="52" rx="20" ry="16" fill="#4ade80" opacity=".3"/>
+      <ellipse cx="212" cy="58" rx="18" ry="14" fill="#4ade80" opacity=".22"/>
+      <!-- Ground shadow -->
+      <ellipse cx="200" cy="148" rx="36" ry="5" fill="#15803d" opacity=".15"/></svg>`
   },
   'Verkehr & Bau': {
-    farbe: '#5c4a1a', hell: '#f7f4ee',
+    farbe: '#92400e', hell: '#fef3c7',
     keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof', 'tankstelle', 'flugverkehr', 'flughafen', 'fußgängerzone', 'abriss', 'k72', 'blitzen', 'a7'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f7f4ee"/>
-      <line x1="185" y1="40" x2="185" y2="120" stroke="#5c4a1a" stroke-width="2" stroke-linecap="round" opacity=".2"/>
-      <line x1="215" y1="40" x2="215" y2="120" stroke="#5c4a1a" stroke-width="2" stroke-linecap="round" opacity=".2"/>
-      <line x1="140" y1="120" x2="260" y2="120" stroke="#5c4a1a" stroke-width="2.5" stroke-linecap="round" opacity=".25"/>
-      <line x1="200" y1="55" x2="200" y2="68" stroke="#5c4a1a" stroke-width="3" stroke-linecap="round" opacity=".35"/>
-      <line x1="200" y1="75" x2="200" y2="88" stroke="#5c4a1a" stroke-width="3" stroke-linecap="round" opacity=".35"/>
-      <line x1="200" y1="95" x2="200" y2="108" stroke="#5c4a1a" stroke-width="3" stroke-linecap="round" opacity=".35"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fef3c7"/>
+      <path d="M148,122 L168,46 L232,46 L252,122 Z" fill="#92400e" opacity=".07"/>
+      <line x1="150" y1="122" x2="170" y2="46" stroke="#92400e" stroke-width="2.5" stroke-linecap="round" opacity=".2"/>
+      <line x1="250" y1="122" x2="230" y2="46" stroke="#92400e" stroke-width="2.5" stroke-linecap="round" opacity=".2"/>
+      <line x1="200" y1="54" x2="200" y2="66" stroke="#92400e" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+      <line x1="200" y1="75" x2="200" y2="87" stroke="#92400e" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+      <line x1="200" y1="96" x2="200" y2="108" stroke="#92400e" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+      <rect x="176" y="86" width="48" height="22" rx="5" fill="#92400e" opacity=".18"/>
+      <rect x="180" y="74" width="40" height="15" rx="5" fill="#92400e" opacity=".22"/>
+      <circle cx="184" cy="110" r="7" fill="#92400e" opacity=".28"/>
+      <circle cx="216" cy="110" r="7" fill="#92400e" opacity=".28"/></svg>`
   },
   'Gesundheit': {
-    farbe: '#1a5c5c', hell: '#eef7f7',
+    farbe: '#115e59', hell: '#ccfbf1',
     keys: ['krankenhaus','arzt','pflege','impfung','klinik','gesundheit','patient','medizin','therapie','praxis','notaufnahme','ambulanz','apotheke','diagnose','klinikum', 'rücken', 'chirurgie'],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eef7f7"/>
-      <circle cx="200" cy="80" r="44" fill="none" stroke="#1a5c5c" stroke-width="2" opacity=".15"/>
-      <line x1="200" y1="52" x2="200" y2="108" stroke="#1a5c5c" stroke-width="3" stroke-linecap="round" opacity=".4"/>
-      <line x1="174" y1="80" x2="226" y2="80" stroke="#1a5c5c" stroke-width="3" stroke-linecap="round" opacity=".4"/>
-      <circle cx="200" cy="80" r="28" fill="none" stroke="#1a5c5c" stroke-width="1.5" opacity=".15"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#ccfbf1"/>
+      <path d="M200,108 Q164,90 161,70 Q159,54 170,48 Q182,42 192,54 Q196,59 200,64 Q204,59 208,54 Q218,42 230,48 Q241,54 239,70 Q236,90 200,108 Z" fill="#115e59" opacity=".18"/>
+      <path d="M200,104 Q167,87 164,68 Q162,54 172,48 Q183,43 193,55 Q197,60 200,65 Q203,60 207,55 Q217,43 228,48 Q238,54 236,68 Q233,87 200,104 Z" fill="none" stroke="#115e59" stroke-width="3" stroke-linejoin="round"/>
+      <polyline points="146,76 166,76 173,64 180,90 189,54 195,78 205,78 212,66 220,76 254,76" fill="none" stroke="#115e59" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>`
   },
   'Sonstiges': {
-    farbe: '#444', hell: '#f4f4f4',
+    farbe: '#4b5563', hell: '#f9fafb',
     keys: [],
-    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f4f4f4"/>
-      <circle cx="200" cy="80" r="40" fill="none" stroke="#888" stroke-width="2" opacity=".2"/>
-      <line x1="160" y1="65" x2="240" y2="65" stroke="#888" stroke-width="2" stroke-linecap="round" opacity=".3"/>
-      <line x1="160" y1="80" x2="240" y2="80" stroke="#888" stroke-width="2" stroke-linecap="round" opacity=".3"/>
-      <line x1="160" y1="95" x2="220" y2="95" stroke="#888" stroke-width="2" stroke-linecap="round" opacity=".3"/></svg>`
+    svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f9fafb"/>
+      <circle cx="200" cy="80" r="52" fill="#4b5563" opacity=".05"/>
+      <circle cx="168" cy="80" r="14" fill="#4b5563" opacity=".18"/>
+      <circle cx="168" cy="80" r="9" fill="#4b5563" opacity=".3"/>
+      <circle cx="200" cy="80" r="14" fill="#4b5563" opacity=".18"/>
+      <circle cx="200" cy="80" r="9" fill="#4b5563" opacity=".3"/>
+      <circle cx="232" cy="80" r="14" fill="#4b5563" opacity=".18"/>
+      <circle cx="232" cy="80" r="9" fill="#4b5563" opacity=".3"/></svg>`
   }
 };
 const WAPPEN = {
@@ -1330,9 +1365,9 @@ function karteErstellen(artikel, index) {
 
   div.innerHTML = `
     <div class="karte-bild-wrap">
-      <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+      <div class="karte-bild-link" onclick="kategorieAusKarte('${kategorie.replace(/'/g,"\\'")}')">
         <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div></div>
-      </a>
+      </div>
       ${wappenHTML}
     </div>
     <div class="karte-inhalt">
@@ -1369,6 +1404,17 @@ function karteErstellen(artikel, index) {
   return div;
 }
 // Ort-Tag aus Karte geklickt
+function kategorieAusKarte(kat) {
+  if (aktivKategorie === kat) { aktivKategorie = ''; }
+  else { aktivKategorie = kat; }
+  document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
+  const matching = [...document.querySelectorAll('#kategorie-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes(`'${kat}'`));
+  if (matching && aktivKategorie) matching.classList.add('aktiv');
+  else document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
+  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+}
+
 function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
   if (aktivOrt === ortLower) { ortFilterLeeren(); return; }
