@@ -548,7 +548,7 @@ def deduplizieren(conn):
                 if len(titel_a) < 12 or len(titel_b) < 12:
                     continue
                 aehnlich = SequenceMatcher(None, titel_a.lower(), titel_b.lower()).ratio()
-                if aehnlich >= 0.90:
+                if aehnlich >= 0.95:
                     fuzzy_paare += 1
                     # Behalte den mit mehr Tags; bei Gleichstand den neueren (höhere id = später gespeichert)
                     if _tag_anzahl(tags_a) >= _tag_anzahl(tags_b):
