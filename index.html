@@ -318,11 +318,13 @@ Fulda Nachrichten">
   .meld-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .meld-btn:hover { color: var(--rot); }
   .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
-  .herz-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; transition: color .15s; }
-  .herz-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; transition: fill .15s, stroke .15s; }
+  .herz-btn, .teilen-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; transition: color .15s; }
+  .herz-btn svg, .teilen-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; transition: fill .15s, stroke .15s; }
   .herz-btn:hover { color: #e05; }
   .herz-btn.aktiv { color: #e05; }
   .herz-btn.aktiv svg { fill: #e05; stroke: #e05; }
+  .teilen-btn:hover { color: var(--rot); }
+  .teilen-btn.kopiert { color: #1a9e5c; }
   .chip.aktiv-herz { background: #e05; color: #fff; border-color: #e05; }
   .filter-chip-herz { background: #fdeef3; border-color: #f4a0b5; color: #c0275a; }
   html.dark-mode .filter-chip-herz { background: #3a1020 !important; border-color: #6a2040 !important; color: #f4a0b5 !important; }
@@ -533,6 +535,22 @@ function navMenuOeffnen() {
 function navMenuSchliessen() {
   document.getElementById('nav-menu').classList.remove('aktiv');
   document.body.style.overflow = '';
+}
+
+// ── TEILEN ──
+async function artikelTeilen(link, titel, btn) {
+  if (navigator.share) {
+    try { await navigator.share({ title: titel, url: link }); } catch (_) {}
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(link);
+    const label = btn.childNodes[btn.childNodes.length - 1];
+    const original = label.textContent;
+    label.textContent = ' Kopiert!';
+    btn.classList.add('kopiert');
+    setTimeout(() => { label.textContent = original; btn.classList.remove('kopiert'); }, 2000);
+  } catch (_) {}
 }
 
 // ── MEINE ARTIKEL ──
@@ -1312,6 +1330,10 @@ function karteErstellen(artikel, index) {
         <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', this)" title="Artikel merken">
           <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           Merken
+        </button>
+        <button class="teilen-btn" onclick="artikelTeilen('${artikel.link.replace(/'/g,"\\'")}', '${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', this)" title="Artikel teilen">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Teilen
         </button>
         <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}">
           <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
