@@ -12,6 +12,8 @@ import hashlib
 import anthropic
 import re
 import os
+from collections import defaultdict
+from difflib import SequenceMatcher
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from dotenv import load_dotenv
@@ -223,9 +225,20 @@ def feed_verarbeiten(feed, conn):
     cursor.close()
     return neu, duplikate
 
+def _tag_anzahl(tags_str):
+    return len([t for t in (tags_str or '').split('·') if t.strip()])
+
 def deduplizieren(conn):
-    """Findet Artikel mit gleichem Titel + gleicher Quelle und löscht den mit weniger Tags."""
+    """
+    Zwei Pässe:
+    1. Exakte Duplikate (gleicher Titel + gleiche Quelle) → behalte den mit mehr Tags.
+    2. Ähnliche Titel (≥ 0.85 Ähnlichkeit) gleicher Quelle → behalte den neueren/reicheren
+       (fängt Tippfehler-Korrekturen wie 'Ladesvater' → 'Landesvater' ab).
+    """
     cursor = conn.cursor()
+    geloescht_gesamt = 0
+
+    # ── Pass 1: Exakte Duplikate ─────────────────────────────────────────────
     cursor.execute("""
         SELECT titel, quelle
         FROM artikel
@@ -234,30 +247,76 @@ def deduplizieren(conn):
     """)
     gruppen = cursor.fetchall()
 
-    geloescht = 0
     for titel, quelle in gruppen:
         cursor.execute(
             "SELECT id, tags FROM artikel WHERE titel = %s AND quelle = %s ORDER BY id",
             (titel, quelle)
         )
         eintraege = cursor.fetchall()
-
-        def tag_anzahl(e):
-            return len([t for t in (e[1] or '').split('·') if t.strip()])
-
-        beste_id = max(eintraege, key=tag_anzahl)[0]
+        beste_id = max(eintraege, key=lambda e: _tag_anzahl(e[1]))[0]
         for id_, _ in eintraege:
             if id_ != beste_id:
                 cursor.execute("DELETE FROM artikel WHERE id = %s", (id_,))
-                geloescht += 1
+                geloescht_gesamt += 1
+
+    conn.commit()
+    if gruppen:
+        print(f"  Pass 1 (exakt):  {geloescht_gesamt} Duplikat(e) in {len(gruppen)} Gruppe(n) gelöscht")
+
+    # ── Pass 2: Fuzzy-Duplikate (Tippfehler-Korrekturen) ────────────────────
+    cursor.execute("""
+        SELECT id, titel, tags, gespeichert, quelle
+        FROM artikel
+        ORDER BY quelle, gespeichert DESC
+    """)
+    alle = cursor.fetchall()
+
+    nach_quelle = defaultdict(list)
+    for row in alle:
+        nach_quelle[row[4]].append(row)   # gruppieren nach quelle
+
+    zum_loeschen = set()
+    fuzzy_paare = 0
+
+    for quelle, artikel in nach_quelle.items():
+        for i, (id_a, titel_a, tags_a, gesp_a, _) in enumerate(artikel):
+            if id_a in zum_loeschen:
+                continue
+            for id_b, titel_b, tags_b, gesp_b, _ in artikel[i + 1:]:
+                if id_b in zum_loeschen:
+                    continue
+                # Nur prüfen wenn Titel nicht identisch (exakter Pass hat das schon erledigt)
+                if titel_a == titel_b:
+                    continue
+                # Mindestlänge von 12 Zeichen verhindert Fehlalarme bei kurzen Titeln
+                if len(titel_a) < 12 or len(titel_b) < 12:
+                    continue
+                aehnlich = SequenceMatcher(None, titel_a.lower(), titel_b.lower()).ratio()
+                if aehnlich >= 0.85:
+                    fuzzy_paare += 1
+                    # Behalte den mit mehr Tags; bei Gleichstand den neueren (höhere id = später gespeichert)
+                    if _tag_anzahl(tags_a) >= _tag_anzahl(tags_b):
+                        zum_loeschen.add(id_b)
+                        print(f"  Fuzzy-Duplikat [{quelle}]: '{titel_b}' → gelöscht (ähnl. {aehnlich:.0%})")
+                    else:
+                        zum_loeschen.add(id_a)
+                        print(f"  Fuzzy-Duplikat [{quelle}]: '{titel_a}' → gelöscht (ähnl. {aehnlich:.0%})")
+
+    for id_ in zum_loeschen:
+        cursor.execute("DELETE FROM artikel WHERE id = %s", (id_,))
 
     conn.commit()
     cursor.close()
-    if geloescht:
-        print(f"  Deduplizierung: {geloescht} Duplikat(e) gelöscht ({len(gruppen)} Gruppe(n))")
+
+    geloescht_gesamt += len(zum_loeschen)
+    if zum_loeschen:
+        print(f"  Pass 2 (fuzzy):  {len(zum_loeschen)} Artikel in {fuzzy_paare} Paar(en) gelöscht")
     else:
-        print("  Deduplizierung: Keine Duplikate gefunden")
-    return geloescht
+        print("  Pass 2 (fuzzy):  Keine ähnlichen Duplikate gefunden")
+
+    if geloescht_gesamt == 0:
+        print("  Deduplizierung:  Datenbank ist sauber")
+    return geloescht_gesamt
 
 
 def main():

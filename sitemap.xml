@@ -183,7 +183,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (195 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (186 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://fuldasozial.de/?tag=2.%20Bundesliga</loc>
     <changefreq>daily</changefreq>
@@ -216,11 +216,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Arbeitsunfall</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=Aufstieg</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -281,11 +276,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Berlin</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=Betriebsgeb%C3%A4ude</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -475,11 +465,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fuldasozial.de/?tag=Flucht</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://fuldasozial.de/?tag=Flugausf%C3%A4lle</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -496,11 +481,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Frankfurt</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=Friedberg</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -686,11 +666,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Kreishandwerkerschaft</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=K%C3%B6ln</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -920,11 +895,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fuldasozial.de/?tag=Sch%C3%BCler</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://fuldasozial.de/?tag=Sicherheit</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -936,11 +906,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Sommersemester</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=Sperrung</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1015,11 +980,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fuldasozial.de/?tag=Trainerwechsel</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://fuldasozial.de/?tag=Trump</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -1056,11 +1016,6 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Unternehmen</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://fuldasozial.de/?tag=Veranstaltungen</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
