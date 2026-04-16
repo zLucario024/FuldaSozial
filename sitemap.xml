@@ -183,7 +183,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (204 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (206 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://fuldasozial.de/?tag=2.%20Bundesliga</loc>
     <changefreq>daily</changefreq>
@@ -491,6 +491,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Frankfurt</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Freizeit</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -831,6 +836,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Nachwuchs</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Natur</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

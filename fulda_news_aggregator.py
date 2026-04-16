@@ -47,6 +47,14 @@ HTML_QUELLEN = [
         "region": "osthessen",
         "parser": "osthessen_zeitung",
     },
+    {
+        "name": "Hochschule Fulda",
+        "url": "https://www.hs-fulda.de/unsere-hochschule/alle-meldungen",
+        "base_url": "https://www.hs-fulda.de",
+        "typ": "Hochschule",
+        "region": "landkreis-fulda",
+        "parser": "hs_fulda",
+    },
 ]
 
 HEADERS = {
@@ -138,6 +146,13 @@ Titel:
         print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
         return {}
 
+def _html_fallback_verarbeiten(feed, conn):
+    """Führt HTML-Fallback aus, falls RSS eines Feeds fehlschlägt oder leer ist."""
+    fb = feed["html_fallback"]
+    quelle = {**fb, "name": feed["name"], "typ": feed["typ"], "region": feed["region"]}
+    return html_quelle_verarbeiten(quelle, conn)
+
+
 def feed_verarbeiten(feed, conn):
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {feed['name']}")
@@ -146,16 +161,24 @@ def feed_verarbeiten(feed, conn):
         parsed = feedparser.parse(response.content)
     except Exception as e:
         print(f"  FEHLER: Verbindung fehlgeschlagen ({e})")
+        if feed.get("html_fallback"):
+            print(f"  → HTML-Fallback wird verwendet...")
+            return _html_fallback_verarbeiten(feed, conn)
         return 0, 0
+
+    echte_eintraege = [e for e in parsed.entries if e.get("title", "").strip()]
+    if not echte_eintraege and feed.get("html_fallback"):
+        print(f"  RSS liefert keine verwertbaren Einträge → HTML-Fallback wird verwendet...")
+        return _html_fallback_verarbeiten(feed, conn)
 
     neu = 0
     duplikate = 0
     neue_artikel = []
     cursor = conn.cursor()
 
-    for entry in parsed.entries:
+    for entry in echte_eintraege:
         link         = entry.get("link", "")
-        titel        = entry.get("title", "Kein Titel")
+        titel        = entry.get("title", "").strip()
         datum        = datum_parsen(entry.get("published", ""))
         hash_wert    = artikel_hash(link)
         beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
@@ -326,6 +349,61 @@ def oz_artikel_holen(url, base_url):
     return artikel
 
 
+def hs_fulda_artikel_holen(url, base_url):
+    """Scrapt Hochschule Fulda (TYPO3/tx_news) und gibt (titel, link, datum, beschreibung)-Tupel zurück."""
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=12)
+        r.raise_for_status()
+    except Exception as e:
+        print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
+        return []
+
+    artikel = []
+    gesehen_links = set()
+
+    for teil in r.text.split('class="article')[1:]:
+        titel_m = re.search(r'itemprop="headline"[^>]*>([^<]+)', teil)
+        if not titel_m:
+            continue
+
+        # tx_news wraps the title in an <a> — grab the href closest to the headline
+        link_m = re.search(r'href="(/[^"#]+)"[^>]*>\s*(?:<[^>]+>\s*)*<span[^>]+itemprop="headline"', teil, re.DOTALL)
+        if not link_m:
+            # Fallback: any relative link in the header area of this block
+            link_m = re.search(r'href="(/unsere-hochschule/[^"#]+)"', teil)
+        if not link_m:
+            continue
+
+        link = base_url + link_m.group(1)
+        if link in gesehen_links:
+            continue
+        gesehen_links.add(link)
+
+        titel = html_unescape(titel_m.group(1)).strip()
+
+        # tx_news uses ISO dates: datetime="YYYY-MM-DD"
+        date_m = re.search(r'<time[^>]+datetime="(\d{4}-\d{2}-\d{2})"', teil)
+        if not date_m:
+            # Also handle German format just in case
+            date_m = re.search(r'<time datetime="(\d{2}\.\d{2}\.\d{4})"', teil)
+            fmt = '%d.%m.%Y'
+        else:
+            fmt = '%Y-%m-%d'
+        try:
+            datum = datetime.strptime(date_m.group(1), fmt).strftime('%Y-%m-%d %H:%M:%S') if date_m else None
+        except (ValueError, AttributeError):
+            datum = None
+
+        teaser_m = re.search(r'itemprop="description"[^>]*>(.*?)</(?:span|div|p)>', teil, re.DOTALL)
+        beschreibung = re.sub(r'<[^>]+>', '', teaser_m.group(1)).strip()[:500] if teaser_m else ""
+        beschreibung = html_unescape(beschreibung)
+
+        if titel:
+            artikel.append((titel, link, datum, beschreibung))
+
+    return artikel
+
+
 def html_quelle_verarbeiten(quelle, conn):
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {quelle['name']} (HTML)")
@@ -333,6 +411,8 @@ def html_quelle_verarbeiten(quelle, conn):
     parser = quelle.get("parser", "fuldaer_zeitung")
     if parser == "osthessen_zeitung":
         gefundene = oz_artikel_holen(quelle["url"], quelle["base_url"])
+    elif parser == "hs_fulda":
+        gefundene = hs_fulda_artikel_holen(quelle["url"], quelle["base_url"])
     else:
         gefundene = html_artikel_holen(quelle["url"], quelle["base_url"])
     if not gefundene:
