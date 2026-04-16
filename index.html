@@ -142,6 +142,10 @@ Fulda Nachrichten">
   body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; transition: background .2s, color .2s; }
 
   header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; }
+  .subheader { padding: 2.5rem 2rem 2rem; border-bottom: 1px solid var(--border); max-width: 1400px; margin: 0 auto; width: 100%; }
+  .subheader h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.15; margin-bottom: .75rem; }
+  .subheader h1 em { color: var(--rot); font-style: normal; }
+  .subheader p { font-size: 1rem; color: var(--grau-mittel); max-width: 540px; line-height: 1.6; }
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); flex-shrink: 0; }
   .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .logo-icon svg { width: 20px; height: 20px; fill: white; }
@@ -199,6 +203,8 @@ Fulda Nachrichten">
   .chip.aktiv { background: var(--rot); color: var(--weiss); border-color: var(--rot); }
   .chip.aktiv-dunkel { background: var(--schwarz); color: var(--weiss); border-color: var(--schwarz); }
   .chip.aktiv-ort { background: #1a3a5c; color: var(--weiss); border-color: #1a3a5c; }
+  .zeitraum-toggle { background: none; border: none; cursor: default; padding: 0; width: 100%; text-align: left; }
+  .zeitraum-chevron { display: none; }
   .zeitraum-reihe { display: flex; align-items: flex-end; gap: .75rem; flex-wrap: wrap; }
   .zeitraum-gruppe { display: flex; flex-direction: column; gap: 4px; }
   .zeitraum-gruppe label { font-size: .7rem; font-weight: 600; letter-spacing: .1em; color: var(--grau-mittel); text-transform: uppercase; }
@@ -357,6 +363,7 @@ Fulda Nachrichten">
   @media (max-width: 768px) {
     /* 1. Header */
     header { padding: 0 1rem; gap: 0.75rem; }
+    .subheader { display: none; }
     .suche-wrapper { max-width: none; margin: 0; flex: 1; }
     .feedback-btn, .unterstuetzen-btn { display: none; }
 
@@ -390,6 +397,11 @@ Fulda Nachrichten">
 
     /* Allgemeine Abstände */
     .filter-bereich, .ergebnis-bar { padding-left: 1rem; padding-right: 1rem; }
+    .zeitraum-toggle { cursor: pointer; }
+    .zeitraum-toggle .zeitraum-chevron { display: inline-block; }
+    #zeitraum-reihe { display: none; margin-top: .5rem; }
+    #zeitraum-gruppe.offen #zeitraum-reihe { display: flex; }
+    #zeitraum-gruppe.offen .zeitraum-chevron { transform: rotate(180deg); }
   }
 </style>
 
@@ -518,6 +530,13 @@ function darkmodeToggle() {
     _darkmodeAktivieren();
     localStorage.setItem('darkmode', '1');
   }
+}
+
+function zeitraumToggle() {
+  if (window.innerWidth > 768) return;
+  const gruppe = document.getElementById('zeitraum-gruppe');
+  const offen = gruppe.classList.toggle('offen');
+  gruppe.querySelector('.zeitraum-toggle').setAttribute('aria-expanded', offen);
 }
 
 function navMenuOeffnen() {
@@ -689,6 +708,11 @@ document.addEventListener('DOMContentLoaded', function() {
   </button>
 </header>
 
+<div class="subheader">
+  <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
+  <p>Aktuelle Nachrichten aus Landkreis Fulda, den dazugehörigen Gemeinden und der Stadt – automatisch gesammelt, chronologisch sortiert. Keine Cookies</p>
+</div>
+
 <!-- Navigation Menü -->
 <div id="nav-menu" class="nav-menu">
   <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
@@ -800,12 +824,13 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <!-- ZEITRAUM -->
-  <div class="filter-gruppe">
-    <div class="filter-label">
+  <div class="filter-gruppe" id="zeitraum-gruppe">
+    <button class="filter-label zeitraum-toggle" onclick="zeitraumToggle()" aria-expanded="false">
       <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Zeitraum
-    </div>
-    <div class="zeitraum-reihe">
+      <svg class="zeitraum-chevron" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="margin-left:auto;width:14px;height:14px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="zeitraum-reihe" id="zeitraum-reihe">
       <div class="zeitraum-gruppe">
         <label>Von</label>
         <input type="date" id="datum-von" onchange="artikelAnzeigen()">
