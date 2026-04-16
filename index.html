@@ -251,10 +251,11 @@ Fulda Nachrichten">
   border-radius: 12px 12px 0 0;
   cursor: pointer;
   }
-  .karte-bild-link:hover .karte-bild svg {
-  transform: scale(1.03);
-  transition: transform 0.3s ease;
-  }
+  .karte-bild-link { transition: filter .2s, opacity .2s; }
+  .karte-bild-link:hover { filter: brightness(.93); opacity: .95; }
+  .karte-bild-link:hover .karte-bild svg { transform: scale(1.03); transition: transform .3s ease; }
+  .karte-bild-link .badge { cursor: pointer; transition: filter .15s, transform .15s; }
+  .karte-bild-link .badge:hover { filter: brightness(.85); transform: scale(1.05); }
 
   .karte { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--weiss); display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; animation: einblenden .3s ease both; }
   .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
@@ -1365,9 +1366,9 @@ function karteErstellen(artikel, index) {
 
   div.innerHTML = `
     <div class="karte-bild-wrap">
-      <div class="karte-bild-link" onclick="kategorieAusKarte('${kategorie.replace(/'/g,"\\'")}')">
-        <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}">${kategorie}</div></div>
-      </div>
+      <a href="${artikel.link}" target="_blank" rel="noopener" class="karte-bild-link" onclick="artikelGeoeffnet('${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${(artikel.quelle||'').replace(/'/g,"\\'")}')">
+        <div class="karte-bild">${kat.svg}<div class="badge" style="background:${kat.farbe}" onclick="event.preventDefault();event.stopPropagation();kategorieAusKarte('${kategorie.replace(/'/g,"\\'")}')">↗ ${kategorie}</div></div>
+      </a>
       ${wappenHTML}
     </div>
     <div class="karte-inhalt">
