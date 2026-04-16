@@ -183,7 +183,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (193 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (204 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://fuldasozial.de/?tag=2.%20Bundesliga</loc>
     <changefreq>daily</changefreq>
@@ -420,6 +420,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Eiterfeld</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Energie</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -545,6 +550,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Gro%C3%9Fenl%C3%BCder</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Halbfinale</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -571,6 +581,16 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Hannover%2096</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Henke</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Herleshausen</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -615,6 +635,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Jahresempfang</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=John%20Degenkolb</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -626,6 +651,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Jugendliche</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Kartellamt</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -715,12 +745,27 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Laufsport</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Lauterbach</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Leipold</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Libanon</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Literatur</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -920,7 +965,17 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Scheunenbrand</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Schl%C3%BCchtern</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Sch%C3%BCler</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

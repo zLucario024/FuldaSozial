@@ -37,6 +37,15 @@ HTML_QUELLEN = [
         "base_url": "https://www.fuldaerzeitung.de",
         "typ": "Tageszeitung",
         "region": "landkreis-fulda",
+        "parser": "fuldaer_zeitung",
+    },
+    {
+        "name": "Osthessen-Zeitung",
+        "url": "https://www.osthessen-zeitung.de/lokales/lokales-fd.html",
+        "base_url": "https://www.osthessen-zeitung.de",
+        "typ": "Online-Portal",
+        "region": "osthessen",
+        "parser": "osthessen_zeitung",
     },
 ]
 
@@ -266,7 +275,53 @@ def html_artikel_holen(url, base_url):
         gesehen_links.add(link)
         titel = html_unescape(title_m.group(1)).strip()
         if titel:
-            artikel.append((titel, link))
+            artikel.append((titel, link, None, ""))
+
+    return artikel
+
+
+def oz_artikel_holen(url, base_url):
+    """Scrapt osthessen-zeitung.de (TYPO3/tx_news) und gibt (titel, link, datum, beschreibung)-Tupel zurück."""
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=12)
+        r.raise_for_status()
+    except Exception as e:
+        print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
+        return []
+
+    artikel = []
+    gesehen_links = set()
+
+    for teil in r.text.split('class="article articletype-0"')[1:]:
+        # Anzeigen überspringen
+        cat_m = re.search(r'news-list-category[^>]*>\s*([^<]+)', teil)
+        if cat_m and cat_m.group(1).strip().lower() == 'anzeige':
+            continue
+
+        titel_m = re.search(r'itemprop="headline"[^>]*>([^<]+)', teil)
+        link_m  = re.search(r'href="(einzelansicht/news/[^"]+\.html)"', teil)
+        if not (titel_m and link_m):
+            continue
+
+        link  = base_url + '/' + link_m.group(1)
+        if link in gesehen_links:
+            continue
+        gesehen_links.add(link)
+
+        titel = html_unescape(titel_m.group(1)).strip()
+
+        date_m = re.search(r'<time datetime="(\d{2}\.\d{2}\.\d{4})"', teil)
+        try:
+            datum = datetime.strptime(date_m.group(1), '%d.%m.%Y').strftime('%Y-%m-%d %H:%M:%S') if date_m else None
+        except ValueError:
+            datum = None
+
+        teaser_m = re.search(r'itemprop="description"[^>]*>(.*?)</span>', teil, re.DOTALL)
+        beschreibung = re.sub(r'<[^>]+>', '', teaser_m.group(1)).strip()[:500] if teaser_m else ""
+        beschreibung = html_unescape(beschreibung)
+
+        if titel:
+            artikel.append((titel, link, datum, beschreibung))
 
     return artikel
 
@@ -275,7 +330,11 @@ def html_quelle_verarbeiten(quelle, conn):
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {quelle['name']} (HTML)")
 
-    gefundene = html_artikel_holen(quelle["url"], quelle["base_url"])
+    parser = quelle.get("parser", "fuldaer_zeitung")
+    if parser == "osthessen_zeitung":
+        gefundene = oz_artikel_holen(quelle["url"], quelle["base_url"])
+    else:
+        gefundene = html_artikel_holen(quelle["url"], quelle["base_url"])
     if not gefundene:
         print("  Keine Artikel gefunden.")
         return 0, 0
@@ -286,7 +345,8 @@ def html_quelle_verarbeiten(quelle, conn):
     cursor = conn.cursor()
     jetzt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    for titel, link in gefundene:
+    for titel, link, datum, beschreibung in gefundene:
+        datum = datum or jetzt
         hash_wert = artikel_hash(link)
 
         cursor.execute(
@@ -306,8 +366,8 @@ def html_quelle_verarbeiten(quelle, conn):
             """, (
                 hash_wert, titel, link,
                 quelle["name"], quelle["typ"], quelle["region"],
-                jetzt, jetzt,
-                None, ""
+                datum, jetzt,
+                None, beschreibung
             ))
             cursor.execute("RELEASE SAVEPOINT sp1")
             neue_artikel.append((hash_wert, titel))
@@ -353,10 +413,10 @@ def deduplizieren(conn):
     cursor = conn.cursor()
     geloescht_gesamt = 0
 
-    # ── Pass 1: Exakte Duplikate ─────────────────────────────────────────────
+    # ── Pass 1: Exakte Duplikate (nur unter den 100 neuesten Artikeln) ─────────
     cursor.execute("""
         SELECT titel, quelle
-        FROM artikel
+        FROM (SELECT titel, quelle FROM artikel ORDER BY id DESC LIMIT 100) AS neueste
         GROUP BY titel, quelle
         HAVING COUNT(*) > 1
     """)
@@ -378,11 +438,12 @@ def deduplizieren(conn):
     if gruppen:
         print(f"  Pass 1 (exakt):  {geloescht_gesamt} Duplikat(e) in {len(gruppen)} Gruppe(n) gelöscht")
 
-    # ── Pass 2: Fuzzy-Duplikate (Tippfehler-Korrekturen) ────────────────────
+    # ── Pass 2: Fuzzy-Duplikate (nur unter den 100 neuesten Artikeln) ──────────
     cursor.execute("""
         SELECT id, titel, tags, gespeichert, quelle
         FROM artikel
-        ORDER BY quelle, gespeichert DESC
+        ORDER BY id DESC
+        LIMIT 100
     """)
     alle = cursor.fetchall()
 
