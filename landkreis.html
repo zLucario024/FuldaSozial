@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unser Landkreis – RegioNachrichten Fulda</title>
+<link rel="icon" type="image/svg+xml" href="Design/rn_fulda_logo_klein.svg">
+<link rel="icon" type="image/jpeg" sizes="48x48" href="Design/rn_logo_mini.jpg">
+<link rel="apple-touch-icon" sizes="192x192" href="Design/rn_logo_mini.jpg">
+<style>
+  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rot: #c0152a; --rot-hell: #fdf0f2;
+    --schwarz: #111; --grau-dunkel: #333; --grau-mittel: #666;
+    --grau-hell: #f4f4f4; --border: #e0e0e0; --weiss: #fff;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; display: flex; flex-direction: column; }
+
+  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); }
+  .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .logo-text { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+  .logo-text span { color: var(--rot); }
+
+  main { flex: 1; max-width: 900px; margin: 0 auto; padding: 3rem 2rem 4rem; width: 100%; }
+  .zurueck { display: inline-flex; align-items: center; gap: 6px; font-size: .9rem; color: var(--grau-mittel); text-decoration: none; margin-bottom: 2rem; transition: color .15s; }
+  .zurueck:hover { color: var(--rot); }
+  .zurueck svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 900; margin-bottom: .5rem; }
+  h1 em { color: var(--rot); font-style: normal; }
+  .untertitel { font-size: 1rem; color: var(--grau-mittel); margin-bottom: 3rem; line-height: 1.6; }
+
+  /* Under construction banner */
+  .baustelle { display: flex; align-items: flex-start; gap: 1rem; background: #fffbea; border: 1px solid #f0d060; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 3rem; }
+  .baustelle-icon { font-size: 1.8rem; line-height: 1; flex-shrink: 0; }
+  .baustelle-text h2 { font-size: 1rem; font-weight: 700; color: #7a5c00; margin-bottom: .3rem; }
+  .baustelle-text p { font-size: .9rem; color: #7a5c00; line-height: 1.6; }
+
+  /* Grid of Gemeinden */
+  .gemeinde-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+  .gemeinde-karte { border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; background: var(--weiss); transition: box-shadow .15s; }
+  .gemeinde-karte:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+  .gemeinde-karte.landkreis { border-color: var(--rot); background: var(--rot-hell); grid-column: 1 / -1; }
+  .gemeinde-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; color: var(--schwarz); }
+  .gemeinde-karte.landkreis .gemeinde-name { color: var(--rot); font-size: 1.3rem; }
+  .gemeinde-platzhalter { font-size: .9rem; color: var(--grau-mittel); line-height: 1.6; display: flex; align-items: center; gap: 6px; }
+  .gemeinde-platzhalter::before { content: ''; display: inline-block; width: 28px; height: 3px; background: var(--border); border-radius: 2px; flex-shrink: 0; }
+
+  .section-label { font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--rot); margin-bottom: 1rem; margin-top: 2.5rem; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  a { color: var(--rot); }
+
+  footer { border-top: 1px solid var(--border); background: var(--grau-hell); }
+  .footer-inner { max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .85rem; color: var(--grau-mittel); }
+  .footer-inner nav { display: flex; gap: 1.5rem; }
+  .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
+  .footer-inner nav a:hover { color: var(--rot); }
+
+  /* Dark mode */
+  html.dark-mode body { --weiss: #141414; --schwarz: #ececec; --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa; --grau-hell: #202020; --border: #333; --rot-hell: #2c0c10; }
+  html.dark-mode header { background: var(--weiss); border-color: var(--border); }
+  html.dark-mode footer { background: var(--grau-hell); border-color: var(--border); }
+  html.dark-mode .baustelle { background: #2a2200; border-color: #6a5000; }
+  html.dark-mode .baustelle-text h2,
+  html.dark-mode .baustelle-text p { color: #d4a830; }
+  html.dark-mode .gemeinde-karte { background: var(--weiss); border-color: var(--border); }
+  html.dark-mode .gemeinde-karte.landkreis { background: var(--rot-hell); border-color: var(--rot); }
+
+  @media (max-width: 600px) {
+    main { padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.5rem; }
+    .gemeinde-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
+  }
+</style>
+<script>if(localStorage.getItem('darkmode')==='1')document.documentElement.classList.add('dark-mode');</script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+    </div>
+    <div class="logo-text">RegioNachrichten <span>Fulda</span></div>
+  </a>
+</header>
+
+<main>
+  <a href="index.html" class="zurueck">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Zurück zur Startseite
+  </a>
+
+  <h1>Unser <em>Landkreis</em> Fulda</h1>
+  <p class="untertitel">Informationen über den Landkreis Fulda, seine Städte und Gemeinden.</p>
+
+  <div class="baustelle">
+    <div class="baustelle-icon">🚧</div>
+    <div class="baustelle-text">
+      <h2>Diese Seite ist noch im Aufbau</h2>
+      <p>Wir arbeiten daran, für jede Gemeinde und den Landkreis Fulda ausführliche Beschreibungen, Zahlen und Besonderheiten bereitzustellen. Schau bald wieder vorbei – es lohnt sich!</p>
+    </div>
+  </div>
+
+  <p class="section-label">Landkreis</p>
+  <div class="gemeinde-grid">
+    <div class="gemeinde-karte landkreis">
+      <div class="gemeinde-name">Landkreis Fulda</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+  </div>
+
+  <hr>
+  <p class="section-label">Städte &amp; Gemeinden</p>
+  <div class="gemeinde-grid">
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Stadt Fulda</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Stadt Hünfeld</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Künzell</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Petersberg</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Neuhof</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Eichenzell</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Flieden</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Burghaun</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Großenlüder</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Hilders</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Hofbieber</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Stadt Gersfeld (Rhön)</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Tann (Rhön)</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Eiterfeld</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Rasdorf</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Dipperz</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Ebersburg</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Ehrenberg (Rhön)</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Hosenfeld</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Kalbach</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Nüsttal</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Gemeinde Poppenhausen (Wasserkuppe)</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+    <div class="gemeinde-karte">
+      <div class="gemeinde-name">Bad Salzschlirf</div>
+      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2025 RegioNachrichten Fulda</span>
+    <nav>
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

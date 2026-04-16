@@ -550,7 +550,7 @@ function navMenuSchliessen() {
 
 // ── TEILEN ──
 async function artikelTeilen(link, titel, btn) {
-  if (typeof umami !== 'undefined') umami.track('artikel-geteilt');
+  if (typeof umami !== 'undefined') umami.track('artikel-geteilt', { titel: titel.substring(0, 50), url: link });
   const isMobile = window.innerWidth < 769 || 'ontouchstart' in window;
   if (isMobile && navigator.share) {
     try { await navigator.share({ title: titel, url: link }); } catch (_) {}
@@ -567,14 +567,14 @@ async function artikelTeilen(link, titel, btn) {
 }
 
 // ── MEINE ARTIKEL ──
-function herzToggle(link, btn) {
+function herzToggle(link, titel, btn) {
   if (gemerkte.has(link)) {
     gemerkte.delete(link);
     btn.classList.remove('aktiv');
   } else {
     gemerkte.add(link);
     btn.classList.add('aktiv');
-    if (typeof umami !== 'undefined') umami.track('artikel-gemerkt');
+    if (typeof umami !== 'undefined') umami.track('artikel-gemerkt', { titel: titel.substring(0, 50), url: link });
   }
   localStorage.setItem('gemerkte', JSON.stringify([...gemerkte]));
   if (aktivMeineArtikel) artikelAnzeigen();
@@ -721,6 +721,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <a href="ueber.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
       Über RegioNachrichten
+    </a>
+    <a href="landkreis.html" class="nav-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Unser Landkreis
     </a>
     <a href="impressum.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1351,7 +1355,7 @@ function karteErstellen(artikel, index) {
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <div style="display:flex;align-items:center;gap:.75rem">
-        <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', this)" title="Merken">
+        <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', '${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', this)" title="Merken">
           <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
         <button class="teilen-btn" onclick="artikelTeilen('${artikel.link.replace(/'/g,"\\'")}', '${artikel.titel.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', this)" title="Teilen">
