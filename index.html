@@ -318,6 +318,14 @@ Fulda Nachrichten">
   .meld-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .meld-btn:hover { color: var(--rot); }
   .meld-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+  .herz-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; transition: color .15s; }
+  .herz-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; transition: fill .15s, stroke .15s; }
+  .herz-btn:hover { color: #e05; }
+  .herz-btn.aktiv { color: #e05; }
+  .herz-btn.aktiv svg { fill: #e05; stroke: #e05; }
+  .chip.aktiv-herz { background: #e05; color: #fff; border-color: #e05; }
+  .filter-chip-herz { background: #fdeef3; border-color: #f4a0b5; color: #c0275a; }
+  html.dark-mode .filter-chip-herz { background: #3a1020 !important; border-color: #6a2040 !important; color: #f4a0b5 !important; }
   .feedback-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--weiss); color: var(--grau-dunkel); font-family: var(--font-body); font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
   .feedback-btn:hover { border-color: var(--rot); color: var(--rot); }
   .unterstuetzen-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--grau-hell); color: var(--grau-dunkel); font-family: var(--font-body); font-size: .8rem; font-weight: 600; text-decoration: none; transition: all .2s; white-space: nowrap; }
@@ -335,10 +343,18 @@ Fulda Nachrichten">
   .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
   .footer-inner nav a:hover { color: var(--rot); }
 
-  @media (min-width: 769px) {
-    .hamburger-btn { display: none; }
-    .mobile-menu { display: none !important; }
-  }
+  @media (min-width: 769px) { #darkmode-btn { display: none; } }
+
+  /* Hamburger + Menü (alle Bildschirmgrößen) */
+  .hamburger-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 0; color: var(--grau-dunkel); }
+  .hamburger-btn svg { width: 22px; height: 22px; }
+  .nav-menu { display: none; position: fixed; inset: 0; z-index: 2000; }
+  .nav-menu.aktiv { display: block; }
+  .nav-menu-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .nav-menu-panel { position: absolute; top: 0; right: 0; width: 78%; max-width: 300px; height: 100%; background: var(--weiss); display: flex; flex-direction: column; padding: 1rem; gap: .25rem; box-shadow: -4px 0 24px rgba(0,0,0,0.15); overflow-y: auto; }
+  .nav-menu-close { align-self: flex-end; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--grau-mittel); padding: .25rem .5rem; margin-bottom: .5rem; }
+  .nav-menu-item { display: flex; align-items: center; gap: 12px; padding: .9rem 1rem; border-radius: 8px; font-family: var(--font-body); font-size: .95rem; font-weight: 500; color: var(--schwarz); text-decoration: none; background: none; border: none; cursor: pointer; width: 100%; text-align: left; transition: background .15s; }
+  .nav-menu-item:hover, .nav-menu-item:active { background: var(--grau-hell); }
 
   @media (max-width: 768px) {
     /* 1. Header */
@@ -349,19 +365,6 @@ Fulda Nachrichten">
     /* Logo zweizeilig */
     .logo-text { font-size: 1rem; line-height: 1.15; display: flex; flex-direction: column; }
     .logo-ort { display: block; font-size: .68rem; font-weight: 600; color: var(--grau-mittel); letter-spacing: .04em; }
-
-    /* Hamburger */
-    .hamburger-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 0; color: var(--grau-dunkel); }
-    .hamburger-btn svg { width: 22px; height: 22px; }
-
-    /* Mobile Menü */
-    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 2000; }
-    .mobile-menu.aktiv { display: block; }
-    .mobile-menu-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-    .mobile-menu-panel { position: absolute; top: 0; right: 0; width: 78%; max-width: 300px; height: 100%; background: var(--weiss); display: flex; flex-direction: column; padding: 1rem; gap: .25rem; box-shadow: -4px 0 24px rgba(0,0,0,0.15); overflow-y: auto; }
-    .mobile-menu-close { align-self: flex-end; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--grau-mittel); padding: .25rem .5rem; margin-bottom: .5rem; }
-    .mobile-menu-item { display: flex; align-items: center; gap: 12px; padding: .9rem 1rem; border-radius: 8px; font-family: var(--font-body); font-size: .95rem; font-weight: 500; color: var(--schwarz); text-decoration: none; background: none; border: none; cursor: pointer; width: 100%; text-align: left; transition: background .15s; }
-    .mobile-menu-item:hover, .mobile-menu-item:active { background: var(--grau-hell); }
 
     /* 2. Filter-Chips: horizontal scroll */
     .chip-reihe { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
@@ -523,13 +526,41 @@ function darkmodeToggle() {
   }
 }
 
-function mobilMenuOeffnen() {
-  document.getElementById('mobile-menu').classList.add('aktiv');
+function navMenuOeffnen() {
+  document.getElementById('nav-menu').classList.add('aktiv');
   document.body.style.overflow = 'hidden';
 }
-function mobilMenuSchliessen() {
-  document.getElementById('mobile-menu').classList.remove('aktiv');
+function navMenuSchliessen() {
+  document.getElementById('nav-menu').classList.remove('aktiv');
   document.body.style.overflow = '';
+}
+
+// ── MEINE ARTIKEL ──
+function herzToggle(link, btn) {
+  if (gemerkte.has(link)) {
+    gemerkte.delete(link);
+    btn.classList.remove('aktiv');
+  } else {
+    gemerkte.add(link);
+    btn.classList.add('aktiv');
+  }
+  localStorage.setItem('gemerkte', JSON.stringify([...gemerkte]));
+  if (aktivMeineArtikel) artikelAnzeigen();
+}
+
+function meineArtikelToggle(chip) {
+  aktivMeineArtikel = !aktivMeineArtikel;
+  chip.classList.toggle('aktiv-herz', aktivMeineArtikel);
+  filterLeistAktualisieren();
+  artikelAnzeigen();
+}
+
+function meineArtikelFilterLeeren() {
+  aktivMeineArtikel = false;
+  const chip = document.getElementById('meine-artikel-chip');
+  if (chip) chip.classList.remove('aktiv-herz');
+  filterLeistAktualisieren();
+  artikelAnzeigen();
 }
 
 // Modal schließen bei Klick außerhalb + Meld-Button via Event Delegation
@@ -542,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target === this) feedbackModalSchliessen();
   });
 
-  document.getElementById('mobile-menu-overlay').addEventListener('click', mobilMenuSchliessen);
+  document.getElementById('nav-menu-overlay').addEventListener('click', navMenuSchliessen);
 
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.meld-btn');
@@ -640,34 +671,26 @@ document.addEventListener('DOMContentLoaded', function() {
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" style="width:14px;height:14px;stroke:currentColor;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     Feedback geben
   </button>
-  <button class="hamburger-btn" id="hamburger-btn" onclick="mobilMenuOeffnen()" aria-label="Menü öffnen">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="navMenuOeffnen()" aria-label="Menü öffnen">
     <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 </header>
 
-<!-- Mobile Menü -->
-<div id="mobile-menu" class="mobile-menu">
-  <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
-  <nav class="mobile-menu-panel">
-    <button class="mobile-menu-close" id="mobile-menu-close" onclick="mobilMenuSchliessen()" aria-label="Menü schließen">✕</button>
-    <button class="mobile-menu-item" onclick="mobilMenuSchliessen(); feedbackModalOeffnen()">
-      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Feedback geben
-    </button>
-    <a href="https://ko-fi.com/regionachrichtenfulda" target="_blank" rel="noopener" class="mobile-menu-item">
-      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      Unterstütze uns
-    </a>
-    <a href="impressum.html" class="mobile-menu-item">
+<!-- Navigation Menü -->
+<div id="nav-menu" class="nav-menu">
+  <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
+  <nav class="nav-menu-panel">
+    <button class="nav-menu-close" id="nav-menu-close" onclick="navMenuSchliessen()" aria-label="Menü schließen">✕</button>
+    <a href="impressum.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Impressum
     </a>
-    <a href="datenschutz.html" class="mobile-menu-item">
+    <a href="datenschutz.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Datenschutz
     </a>
     <hr style="border:none;border-top:1px solid var(--border);margin:.5rem 0">
-    <button id="darkmode-btn" class="mobile-menu-item" onclick="darkmodeToggle()">
+    <button id="darkmode-btn" class="nav-menu-item" onclick="darkmodeToggle()">
       <svg id="darkmode-icon" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <span id="darkmode-label">Dark Mode</span>
     </button>
@@ -688,6 +711,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <!-- REGION / ORT -->
   <div class="filter-gruppe">
+    <div class="chip-reihe" style="margin-bottom:.5rem">
+      <button class="chip" id="meine-artikel-chip" onclick="meineArtikelToggle(this)">
+        <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Meine Artikel
+      </button>
+    </div>
     <div class="filter-label">
       <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
       Ort / Region
@@ -792,7 +821,8 @@ document.addEventListener('DOMContentLoaded', function() {
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
 const PRO_SEITE = 50;
-let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '';
+let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
+let gemerkte = new Set(JSON.parse(localStorage.getItem('gemerkte') || '[]'));
 
 const ORT_ANZEIGE = {
   'landkreis-fulda':'Landkreis Fulda','fulda':'Stadt Fulda','hessen':'Hessen',
@@ -809,6 +839,8 @@ const ORT_ANZEIGE = {
 function filterLeistAktualisieren() {
   const leiste = document.getElementById('aktive-filter-leiste');
   const chips = [];
+  if (aktivMeineArtikel)
+    chips.push(`<span class="filter-chip filter-chip-herz"><span class="filter-chip-label">♥</span> Meine Artikel <button onclick="meineArtikelFilterLeeren()" title="Entfernen">✕</button></span>`);
   if (aktivOrt && aktivOrt !== 'landkreis-fulda')
     chips.push(`<span class="filter-chip filter-chip-ort"><span class="filter-chip-label">Ort:</span> ${ORT_ANZEIGE[aktivOrt]||aktivOrt} <button onclick="ortFilterLeeren()" title="Entfernen">✕</button></span>`);
   if (aktivKategorie)
@@ -1146,6 +1178,7 @@ function gefilterteArtikel() {
         if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
       }
     }
+    if (aktivMeineArtikel && !gemerkte.has(a.link)) return false;
     if (aktivKategorie && kategorieBestimmen(a.titel, a.tags) !== aktivKategorie) return false;
     if (aktivTag && !text.includes(aktivTag.toLowerCase())) return false;
     const von = document.getElementById('datum-von').value;
@@ -1275,10 +1308,16 @@ function karteErstellen(artikel, index) {
         Ganzen Artikel lesen
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}">
-        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-        Melden
-      </button>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <button class="herz-btn${gemerkte.has(artikel.link) ? ' aktiv' : ''}" onclick="herzToggle('${artikel.link.replace(/'/g,"\\'")}', this)" title="Artikel merken">
+          <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Merken
+        </button>
+        <button class="meld-btn" data-titel="${artikel.titel.replace(/"/g,'&quot;')}" data-link="${artikel.link.replace(/"/g,'&quot;')}" data-quelle="${(artikel.quelle||'').replace(/"/g,'&quot;')}">
+          <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          Melden
+        </button>
+      </div>
     </div>`;
   return div;
 }
@@ -1364,7 +1403,9 @@ function datumFilterLeeren() {
 }
 
 function alleFilterZurueck() {
-  aktivOrt = 'landkreis-fulda'; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = '';
+  aktivOrt = 'landkreis-fulda'; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = ''; aktivMeineArtikel = false;
+  const maChip = document.getElementById('meine-artikel-chip');
+  if (maChip) maChip.classList.remove('aktiv-herz');
   document.getElementById('suche').value = '';
   document.getElementById('suche-clear').style.display = 'none';
   document.getElementById('datum-von').value = '';
