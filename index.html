@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div class="chip-reihe" id="kategorie-chips">
       <button class="chip aktiv" onclick="kategorieWaehlen(this, '')">Alle</button>
-      <button class="chip chip-kat" data-kat="Lokale Vorfälle" onclick="kategorieWaehlen(this, 'Lokale Vorfälle')">Lokale Vorfälle</button>
+      <button class="chip chip-kat" data-kat="Vorfälle" onclick="kategorieWaehlen(this, 'Vorfälle')">Vorfälle</button>
       <button class="chip chip-kat" data-kat="Politik & Verwaltung" onclick="kategorieWaehlen(this, 'Politik & Verwaltung')">Politik & Verwaltung</button>
       <button class="chip chip-kat" data-kat="Wirtschaft & Arbeit" onclick="kategorieWaehlen(this, 'Wirtschaft & Arbeit')">Wirtschaft & Arbeit</button>
       <button class="chip chip-kat" data-kat="Sport" onclick="kategorieWaehlen(this, 'Sport')">Sport</button>
@@ -964,7 +964,7 @@ const ORTSTEILE_MAPPING = {
   'johannesberg':'fulda','kämmerzell':'fulda','kohlhaus':'fulda',
   'lehnerz':'fulda','malkes':'fulda','neuenberg':'fulda','niesig':'fulda',
   'roßberg':'fulda','sickels':'fulda','süßenbach':'fulda',
-  'uffhausen':'fulda','ziehers':'fulda', 'hochschule fulda' : 'fulda',
+  'uffhausen':'fulda','ziehers':'fulda', 'hochschule fulda' : 'fulda', 'weimarer tunnel' : 'fulda',
   // Gemeinde Künzell
   'bachrain':'künzell','dirlos':'künzell','engelhelms':'künzell',
   'haunes':'künzell','pilgerzell':'künzell',
@@ -1044,10 +1044,10 @@ function ortMatch(text, ort) {
 
 // ── KATEGORIEN ──
 const KATEGORIEN = {
-  'Lokale Vorfälle': {
+  'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
     strong: ['polizei','unfall','vorfall','brand','feuerwehr','blaulicht','mord','schüsse','schießerei'],
-    keys: ['vorfall', 'polizei','unfall','brand','einbruch','feuerwehr','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht'],
+    keys: ['vorfall', 'polizei','unfall','brand','einbruch','feuerwehr','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1059,8 +1059,8 @@ const KATEGORIEN = {
   },
   'Politik & Verwaltung': {
     farbe: '#1e429f', hell: '#eff6ff',
-    strong: ['politik','wahl','verwaltung','bundestag','partei','minister','kanzler','koalition'],
-    keys: ['wahl','politik','föderalismus','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz'],
+    strong: ['politik','wahl','verwaltung','bundestag','partei','minister','kanzler','koalition', 'waffenruhe'],
+    keys: ['wahl','politik','föderalismus','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz', 'sicherheit'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eff6ff"/>
       <rect x="152" y="108" width="96" height="10" rx="2" fill="#1e429f" opacity=".18"/>
       <rect x="162" y="74" width="76" height="36" rx="1" fill="#1e429f" opacity=".1"/>
@@ -1077,8 +1077,8 @@ const KATEGORIEN = {
   },
   'Wirtschaft & Arbeit': {
     farbe: '#14532d', hell: '#f0fdf4',
-    strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos'],
-    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune'],
+    strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos', 'kreishandwerkschaft'],
+    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune', 'tegut'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0fdf4"/>
       <line x1="144" y1="44" x2="144" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
       <line x1="144" y1="118" x2="272" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
@@ -1104,7 +1104,7 @@ const KATEGORIEN = {
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
     strong: ['kultur','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst'],
-    keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition'],
+    keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
       <ellipse cx="222" cy="113" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 222 113)"/>
@@ -1117,7 +1117,7 @@ const KATEGORIEN = {
   'Bildung & Familie': {
     farbe: '#0369a1', hell: '#e0f2fe',
     strong: ['bildung','schule','studium','universität','abitur','ausbildung'],
-    keys: ['schule','studie','kita','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise'],
+    keys: ['schule','studie','kita','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise', 'beratung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#e0f2fe"/>
       <path d="M166,54 Q166,50 170,50 L200,54 L200,114 L166,110 Q162,110 162,106 Z" fill="#0369a1" opacity=".1"/>
       <path d="M200,54 L170,50 Q162,50 162,58 L162,106 Q162,114 170,114 L200,114" fill="none" stroke="#0369a1" stroke-width="2.5" stroke-linejoin="round"/>
@@ -1159,7 +1159,7 @@ const KATEGORIEN = {
   'Verkehr & Bau': {
     farbe: '#92400e', hell: '#fef3c7',
     strong: ['verkehr','baustelle','sperrung','autobahn','öpnv','stau'],
-    keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof', 'tankstelle', 'flugverkehr', 'flughafen', 'fußgängerzone', 'abriss', 'k72', 'blitzen', 'a7'],
+    keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof', 'tankstelle', 'flugverkehr', 'flughafen', 'fußgängerzone', 'abriss', 'k72', 'blitzen', 'a7', 'lufthansa', 'mobilfunk'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fef3c7"/>
       <path d="M148,122 L168,46 L232,46 L252,122 Z" fill="#92400e" opacity=".07"/>
       <line x1="150" y1="122" x2="170" y2="46" stroke="#92400e" stroke-width="2.5" stroke-linecap="round" opacity=".2"/>

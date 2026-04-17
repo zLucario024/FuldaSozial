@@ -722,7 +722,7 @@ def sitemap_generieren(conn):
         ("https://fuldasozial.de/?ort=poppenhausen",                "daily",  "0.7"),
         ("https://fuldasozial.de/?ort=bad%20salzschlirf",           "daily",  "0.7"),
         ("https://fuldasozial.de/?ort=hessen",                      "hourly", "0.6"),
-        ("https://fuldasozial.de/?kategorie=Lokale%20Vorf%C3%A4lle","hourly", "0.8"),
+        ("https://fuldasozial.de/?kategorie=Vorf%C3%A4lle","hourly", "0.8"),
         ("https://fuldasozial.de/?kategorie=Politik%20%26%20Verwaltung", "daily", "0.7"),
         ("https://fuldasozial.de/?kategorie=Wirtschaft%20%26%20Arbeit",  "daily", "0.7"),
         ("https://fuldasozial.de/?kategorie=Sport",                 "daily",  "0.7"),
