@@ -781,9 +781,12 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div class="chip-reihe" id="ort-chips">
       <button class="chip" onclick="ortWaehlen(this, '')">Alle</button>
-      <button class="chip aktiv-ort" onclick="ortWaehlen(this, 'landkreis-fulda')">Landkreis Fulda</button>
       <button class="chip" onclick="ortWaehlen(this, 'hessen')">Hessen</button>
+      <button class="chip aktiv-ort" onclick="ortWaehlen(this, 'landkreis-fulda')">Landkreis Fulda</button>
       <button class="chip" onclick="ortWaehlen(this, 'fulda')">Stadt Fulda</button>
+      <button class="chip" id="gemeinden-btn" onclick="ortWaehlen(this, 'gemeinden')">Gemeinden <span id="gemeinden-chevron" style="font-size:.7em;transition:transform .2s;display:inline-block">▼</span></button>
+    </div>
+    <div class="chip-reihe" id="gemeinden-chips" style="display:none; padding-top:.3rem; padding-left:.5rem; border-left: 2px solid var(--border);">
       <button class="chip" onclick="ortWaehlen(this, 'hünfeld')">Hünfeld</button>
       <button class="chip" onclick="ortWaehlen(this, 'künzell')">Künzell</button>
       <button class="chip" onclick="ortWaehlen(this, 'petersberg')">Petersberg</button>
@@ -885,7 +888,7 @@ let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTa
 let gemerkte = new Set(JSON.parse(localStorage.getItem('gemerkte') || '[]'));
 
 const ORT_ANZEIGE = {
-  'landkreis-fulda':'Landkreis Fulda','fulda':'Stadt Fulda','hessen':'Hessen',
+  'landkreis-fulda':'Landkreis Fulda','fulda':'Stadt Fulda','hessen':'Hessen','gemeinden':'Gemeinden',
   'hünfeld':'Hünfeld','künzell':'Künzell','petersberg':'Petersberg',
   'neuhof':'Neuhof','eichenzell':'Eichenzell','flieden':'Flieden',
   'burghaun':'Burghaun','großenlüder':'Großenlüder','hilders':'Hilders',
@@ -1291,6 +1294,16 @@ function gefilterteArtikel() {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
         if (hatLandkreisOrt) return false;
+      } else if (aktivOrt === 'gemeinden') {
+        // Alle Gemeinden aus WAPPEN außer Stadt Fulda + ihre Ortsteile
+        const gemeindeListe = Object.keys(WAPPEN)
+          .filter(k => k !== 'Fulda' && k !== 'Landkreis Fulda')
+          .map(k => k.toLowerCase());
+        const hatGemeinde = gemeindeListe.some(o => ortMatch(text, o))
+          || Object.entries(GEMEINDE_ORTSTEILE)
+              .filter(([g]) => gemeindeListe.includes(g))
+              .some(([, ortsteile]) => ortsteile.some(o => ortMatch(text, o)));
+        if (!hatGemeinde) return false;
       } else {
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
         if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
@@ -1469,9 +1482,22 @@ function tagFiltern(tag) {
 }
 
 function ortWaehlen(btn, ort) {
-  document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+  // Gemeinden-Button nochmal klicken → zurück zu Landkreis Fulda
+  if (ort === 'gemeinden' && aktivOrt === 'gemeinden') {
+    const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
+      .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
+    ortWaehlen(lkChip, 'landkreis-fulda');
+    return;
+  }
+  document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
+  // Gemeinden-Liste ein-/ausklappen
+  const gemChips = document.getElementById('gemeinden-chips');
+  const chevron  = document.getElementById('gemeinden-chevron');
+  const offen    = (ort === 'gemeinden');
+  if (gemChips) gemChips.style.display = offen ? 'flex' : 'none';
+  if (chevron)  chevron.style.transform = offen ? 'rotate(180deg)' : '';
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
@@ -1543,10 +1569,14 @@ function alleFilterZurueck() {
   document.getElementById('suche-clear').style.display = 'none';
   document.getElementById('datum-von').value = '';
   document.getElementById('datum-bis').value = '';
-  document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+  document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
   if (lkChip) lkChip.classList.add('aktiv-ort');
+  const gemChips = document.getElementById('gemeinden-chips');
+  const chevron  = document.getElementById('gemeinden-chevron');
+  if (gemChips) gemChips.style.display = 'none';
+  if (chevron)  chevron.style.transform = '';
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
