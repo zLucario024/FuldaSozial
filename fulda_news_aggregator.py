@@ -61,6 +61,15 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
+HTML_HEADERS = {
+    **HEADERS,
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+    "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "de-DE,de;q=0.9",
+}
+
 # Quellen, deren RSS-Beschreibung Sidebar-/Infobox-Inhalte enthält → Meta-Tag direkt vom Artikel holen
 QUELLEN_META_DESC = {'osthessen-news.de'}
 
@@ -271,7 +280,7 @@ def feed_verarbeiten(feed, conn):
 def html_artikel_holen(url, base_url):
     """Scrapt eine HTML-Listenseite und gibt (titel, link)-Paare zurück."""
     try:
-        r = requests.get(url, headers=HEADERS, timeout=12)
+        r = requests.get(url, headers=HTML_HEADERS, timeout=12)
         r.raise_for_status()
     except Exception as e:
         print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
@@ -306,7 +315,7 @@ def html_artikel_holen(url, base_url):
 def oz_artikel_holen(url, base_url):
     """Scrapt osthessen-zeitung.de (TYPO3/tx_news) und gibt (titel, link, datum, beschreibung)-Tupel zurück."""
     try:
-        r = requests.get(url, headers=HEADERS, timeout=12)
+        r = requests.get(url, headers=HTML_HEADERS, timeout=12)
         r.raise_for_status()
     except Exception as e:
         print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
@@ -350,10 +359,13 @@ def oz_artikel_holen(url, base_url):
 
 
 def _hs_fulda_slug(titel):
-    """Baut den TYPO3-URL-Slug aus einem Titel: Kleinschreibung, Leerzeichen → Bindestrich."""
+    """Baut den TYPO3-URL-Slug aus einem Titel: Kleinschreibung, Umlaute transliterieren, Leerzeichen → Bindestrich."""
     slug = titel.lower().strip()
+    # TYPO3 transliteriert deutsche Umlaute
+    for src, dst in [('ä','ae'),('ö','oe'),('ü','ue'),('ß','ss')]:
+        slug = slug.replace(src, dst)
     slug = re.sub(r'[\s/\\:,;!?\'"()[\]{}]+', '-', slug)
-    slug = re.sub(r'[^\w\-]', '', slug, flags=re.UNICODE)
+    slug = re.sub(r'[^\w\-]', '', slug)
     slug = re.sub(r'-+', '-', slug).strip('-')
     return slug
 
@@ -361,7 +373,7 @@ def _hs_fulda_slug(titel):
 def hs_fulda_artikel_holen(url, base_url):
     """Scrapt Hochschule Fulda Meldungen."""
     try:
-        r = requests.get(url, headers=HEADERS, timeout=12)
+        r = requests.get(url, headers=HTML_HEADERS, timeout=12)
         r.raise_for_status()
     except Exception as e:
         print(f"  FEHLER: HTML-Seite nicht erreichbar ({e})")
