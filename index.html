@@ -1033,10 +1033,13 @@ for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".
 function ortMatch(text, ort) {
-  const idx = text.indexOf(ort);
-  if (idx < 0) return false;
-  const nach = text[idx + ort.length];
-  return !nach || !/[a-zäöüß]/.test(nach);
+  let idx = 0;
+  while ((idx = text.indexOf(ort, idx)) >= 0) {
+    const nach = text[idx + ort.length];
+    if (!nach || !/[a-zäöüß]/.test(nach)) return true;
+    idx += 1;
+  }
+  return false;
 }
 
 // ── KATEGORIEN ──
@@ -1100,7 +1103,7 @@ const KATEGORIEN = {
   },
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
-    strong: ['kultur','konzert', 'music','festival','ausstellung','theater','museum','kunst'],
+    strong: ['kultur','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst'],
     keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
