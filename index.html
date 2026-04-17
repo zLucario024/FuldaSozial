@@ -544,12 +544,29 @@ function zeitraumToggle() {
   const gruppe = document.getElementById('zeitraum-gruppe');
   const offen = gruppe.classList.toggle('offen');
   gruppe.querySelector('.zeitraum-toggle').setAttribute('aria-expanded', offen);
+  localStorage.setItem('zeitraum-offen', offen ? '1' : '');
 }
 
 function quelleToggle() {
   const gruppe = document.getElementById('quelle-gruppe');
   const offen = gruppe.classList.toggle('offen');
   gruppe.querySelector('.quelle-toggle').setAttribute('aria-expanded', offen);
+  localStorage.setItem('quelle-offen', offen ? '1' : '');
+}
+
+function _sectionOeffnen(id, toggleSelector) {
+  const gruppe = document.getElementById(id);
+  if (!gruppe) return;
+  gruppe.classList.add('offen');
+  gruppe.querySelector(toggleSelector)?.setAttribute('aria-expanded', 'true');
+}
+
+function _gemeindenToggle(offen) {
+  const gemChips = document.getElementById('gemeinden-chips');
+  const chevron  = document.getElementById('gemeinden-chevron');
+  if (gemChips) gemChips.style.display = offen ? 'flex' : 'none';
+  if (chevron)  chevron.style.transform = offen ? 'rotate(180deg)' : '';
+  localStorage.setItem('gemeinden-offen', offen ? '1' : '');
 }
 
 function navMenuOeffnen() {
@@ -1083,7 +1100,7 @@ const KATEGORIEN = {
   },
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
-    strong: ['kultur','konzert','festival','ausstellung','theater','museum','kunst'],
+    strong: ['kultur','konzert', 'music','festival','ausstellung','theater','museum','kunst'],
     keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
@@ -1372,8 +1389,8 @@ function karteErstellen(artikel, index) {
   }
 
   // Wappen-Badge ermitteln
-  // Priorität: Tags (KI-kuratiert, zuverlässig für Regionen).
-  // Fallback: Titel + Beschreibung, nur wenn Tags keine Region enthalten.
+  // Tag "Landkreis Fulda" hat absoluten Vorrang vor allen anderen Regionen.
+  // Fallback: Tags scannen → Titel + Beschreibung.
   let wappenHTML = '';
   {
     function gemeindenAusScan(text) {
@@ -1391,19 +1408,24 @@ function karteErstellen(artikel, index) {
       return gefunden;
     }
 
-    // 1. Tags als primäre Quelle
-    const tagText = (artikel.tags || '').toLowerCase();
-    let gefunden = gemeindenAusScan(tagText);
+    const tagListe = (artikel.tags || '').split(/,|·/).map(t => t.trim().toLowerCase());
+    let wappenKey = null;
 
-    // 2. Nur wenn Tags keine Region liefern: Titel + Beschreibung hinzuziehen
-    if (gefunden.size === 0) {
-      const fallbackText = ((artikel.titel || '') + ' ' + (artikel.beschreibung || '')).toLowerCase();
-      gefunden = gemeindenAusScan(fallbackText);
+    if (tagListe.includes('landkreis fulda')) {
+      // Expliziter Tag überschreibt jede andere Region
+      wappenKey = 'Landkreis Fulda';
+    } else {
+      // Tags als primäre Quelle
+      let gefunden = gemeindenAusScan((artikel.tags || '').toLowerCase());
+      // Fallback: Titel + Beschreibung
+      if (gefunden.size === 0) {
+        gefunden = gemeindenAusScan(((artikel.titel || '') + ' ' + (artikel.beschreibung || '')).toLowerCase());
+      }
+      wappenKey = gefunden.size > 1  ? 'Landkreis Fulda'
+                : gefunden.size === 1 ? [...gefunden][0]
+                : null;
     }
 
-    const wappenKey = gefunden.size > 1  ? 'Landkreis Fulda'
-                    : gefunden.size === 1 ? [...gefunden][0]
-                    : null;
     if (wappenKey) {
       const filterOrt = wappenKey === 'Landkreis Fulda' ? 'landkreis-fulda' : wappenKey;
       wappenHTML = `<div class="wappen-badge" onclick="ortAusTag('${filterOrt.replace(/'/g,"\\'")}', this)" title="${wappenKey}">
@@ -1482,22 +1504,28 @@ function tagFiltern(tag) {
 }
 
 function ortWaehlen(btn, ort) {
-  // Gemeinden-Button nochmal klicken → zurück zu Landkreis Fulda
+  // Gemeinden-Button nochmal klicken → zurück zu Landkreis Fulda + Liste schließen
   if (ort === 'gemeinden' && aktivOrt === 'gemeinden') {
+    _gemeindenToggle(false);
     const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
       .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
-    ortWaehlen(lkChip, 'landkreis-fulda');
+    if (lkChip) {
+      document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+      lkChip.classList.add('aktiv-ort');
+      aktivOrt = 'landkreis-fulda';
+      if (typeof umami !== 'undefined') umami.track('filter-ort', { ort: 'landkreis-fulda' });
+      urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+    }
     return;
   }
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
-  // Gemeinden-Liste ein-/ausklappen
-  const gemChips = document.getElementById('gemeinden-chips');
-  const chevron  = document.getElementById('gemeinden-chevron');
-  const offen    = (ort === 'gemeinden');
-  if (gemChips) gemChips.style.display = offen ? 'flex' : 'none';
-  if (chevron)  chevron.style.transform = offen ? 'rotate(180deg)' : '';
+  // Gemeinden-Liste: nur Top-Level-Buttons ändern den Zustand
+  // Klick auf einen Gemeinde-Chip lässt die Liste unberührt
+  if (!btn.closest('#gemeinden-chips')) {
+    _gemeindenToggle(ort === 'gemeinden');
+  }
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
@@ -1573,10 +1601,7 @@ function alleFilterZurueck() {
   const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
   if (lkChip) lkChip.classList.add('aktiv-ort');
-  const gemChips = document.getElementById('gemeinden-chips');
-  const chevron  = document.getElementById('gemeinden-chevron');
-  if (gemChips) gemChips.style.display = 'none';
-  if (chevron)  chevron.style.transform = '';
+  _gemeindenToggle(false);
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
@@ -1598,11 +1623,12 @@ function urlAktualisieren(replace = false) {
   const params = new URLSearchParams();
   if (aktivOrt && aktivOrt !== 'landkreis-fulda') params.set('ort', aktivOrt);
   if (aktivKategorie) params.set('kategorie', aktivKategorie);
+  if (aktivQuelle)    params.set('quelle', aktivQuelle);
   if (aktivTag)       params.set('tag', aktivTag);
   if (suchbegriff)    params.set('suche', suchbegriff);
   const query = params.toString();
   const neueUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
-  const state = { ort: aktivOrt, kategorie: aktivKategorie, tag: aktivTag, suche: suchbegriff };
+  const state = { ort: aktivOrt, kategorie: aktivKategorie, quelle: aktivQuelle, tag: aktivTag, suche: suchbegriff };
   history[replace ? 'replaceState' : 'pushState'](state, '', neueUrl);
 
   // Dynamischer Seitentitel für besseres SEO-Indexing
@@ -1621,14 +1647,22 @@ function urlAktualisieren(replace = false) {
 
 function filterAusUrlLesen() {
   const params = new URLSearchParams(window.location.search);
+
   if (params.has('ort')) {
     aktivOrt = params.get('ort');
-    document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
-    const match = [...document.querySelectorAll('#ort-chips .chip')]
+    // Search both top-level and Gemeinden chips
+    document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+    const match = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
       .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
-    if (match) match.classList.add('aktiv-ort');
-    else document.querySelector('#ort-chips .chip').classList.add('aktiv');
+    if (match) {
+      match.classList.add('aktiv-ort');
+      // If the active chip is inside the Gemeinden list, open it
+      if (match.closest('#gemeinden-chips')) _gemeindenToggle(true);
+    } else {
+      document.querySelector('#ort-chips .chip').classList.add('aktiv');
+    }
   }
+
   if (params.has('kategorie')) {
     aktivKategorie = params.get('kategorie');
     document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
@@ -1636,6 +1670,16 @@ function filterAusUrlLesen() {
       .find(c => c.textContent.trim() === aktivKategorie);
     if (match) match.classList.add('aktiv');
   }
+
+  if (params.has('quelle')) {
+    aktivQuelle = params.get('quelle');
+    // quellenLaden() has already completed by this point, so apply chip highlight directly
+    document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
+    const quelleMatch = [...document.querySelectorAll('#quelle-chips .chip')]
+      .find(c => c.textContent.trim() === aktivQuelle);
+    if (quelleMatch) quelleMatch.classList.add('aktiv-dunkel');
+  }
+
   if (params.has('tag'))   aktivTag = params.get('tag');
   if (params.has('suche')) { suchbegriff = params.get('suche'); document.getElementById('suche').value = suchbegriff; }
   filterLeistAktualisieren();
@@ -1645,6 +1689,7 @@ window.addEventListener('popstate', function(e) {
   const s = e.state || {};
   aktivOrt       = s.ort !== undefined ? s.ort : 'landkreis-fulda';
   aktivKategorie = s.kategorie || '';
+  aktivQuelle    = s.quelle || '';
   aktivTag       = s.tag || '';
   suchbegriff    = s.suche || '';
   document.getElementById('suche').value = suchbegriff;
@@ -1661,6 +1706,11 @@ window.addEventListener('popstate', function(e) {
       .find(c => c.textContent.trim() === aktivKategorie);
     if (m) m.classList.add('aktiv');
   }
+  document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
+  const quelleChip = aktivQuelle
+    ? [...document.querySelectorAll('#quelle-chips .chip')].find(c => c.textContent.trim() === aktivQuelle)
+    : document.querySelector('#quelle-chips .chip');
+  if (quelleChip) quelleChip.classList.add('aktiv-dunkel');
   filterLeistAktualisieren(); artikelAnzeigen();
 });
 
@@ -1671,6 +1721,13 @@ document.querySelectorAll('#kategorie-chips .chip-kat').forEach(btn => {
   btn.style.setProperty('--kat-hell', kat.hell);
   btn.style.setProperty('--kat-farbe', kat.farbe);
 });
+
+// Klapp-Zustand der Filter-Sektionen aus localStorage wiederherstellen
+if (localStorage.getItem('zeitraum-offen'))  _sectionOeffnen('zeitraum-gruppe', '.zeitraum-toggle');
+if (localStorage.getItem('quelle-offen'))    _sectionOeffnen('quelle-gruppe',   '.quelle-toggle');
+if (localStorage.getItem('gemeinden-offen')) _gemeindenToggle(true);
+// Quelle-Sektion auch öffnen, wenn ein Quellenfilter per URL aktiv ist
+if (new URLSearchParams(window.location.search).has('quelle')) _sectionOeffnen('quelle-gruppe', '.quelle-toggle');
 
 quellenLaden();
 artikelLaden();
