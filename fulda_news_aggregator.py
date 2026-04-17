@@ -349,8 +349,17 @@ def oz_artikel_holen(url, base_url):
     return artikel
 
 
+def _hs_fulda_slug(titel):
+    """Baut den TYPO3-URL-Slug aus einem Titel: Kleinschreibung, Leerzeichen → Bindestrich."""
+    slug = titel.lower().strip()
+    slug = re.sub(r'[\s/\\:,;!?\'"()[\]{}]+', '-', slug)
+    slug = re.sub(r'[^\w\-]', '', slug, flags=re.UNICODE)
+    slug = re.sub(r'-+', '-', slug).strip('-')
+    return slug
+
+
 def hs_fulda_artikel_holen(url, base_url):
-    """Scrapt Hochschule Fulda (TYPO3/tx_news) und gibt (titel, link, datum, beschreibung)-Tupel zurück."""
+    """Scrapt Hochschule Fulda Meldungen."""
     try:
         r = requests.get(url, headers=HEADERS, timeout=12)
         r.raise_for_status()
@@ -359,47 +368,38 @@ def hs_fulda_artikel_holen(url, base_url):
         return []
 
     artikel = []
-    gesehen_links = set()
+    gesehen = set()
+    detail_base = "/unsere-hochschule/alle-meldungen/meldungsdetails/detail/"
 
-    for teil in r.text.split('class="article')[1:]:
-        titel_m = re.search(r'itemprop="headline"[^>]*>([^<]+)', teil)
-        if not titel_m:
-            continue
+    # Ansatz 1: Detail-Links direkt im HTML suchen
+    for match in re.finditer(
+        r'href="(' + re.escape(detail_base) + r'[^"]+)"[^>]*>\s*([^<]{5,150})',
+        r.text
+    ):
+        link  = base_url + match.group(1)
+        titel = html_unescape(match.group(2)).strip()
+        if link not in gesehen and titel:
+            gesehen.add(link)
+            nach = r.text[match.end():match.end() + 600]
+            teaser_m = re.search(r'<p[^>]*>([^<]+)</p>', nach)
+            beschreibung = html_unescape(teaser_m.group(1)).strip()[:500] if teaser_m else ""
+            artikel.append((titel, link, None, beschreibung))
 
-        # tx_news wraps the title in an <a> — grab the href closest to the headline
-        link_m = re.search(r'href="(/[^"#]+)"[^>]*>\s*(?:<[^>]+>\s*)*<span[^>]+itemprop="headline"', teil, re.DOTALL)
-        if not link_m:
-            # Fallback: any relative link in the header area of this block
-            link_m = re.search(r'href="(/unsere-hochschule/[^"#]+)"', teil)
-        if not link_m:
-            continue
-
-        link = base_url + link_m.group(1)
-        if link in gesehen_links:
-            continue
-        gesehen_links.add(link)
-
-        titel = html_unescape(titel_m.group(1)).strip()
-
-        # tx_news uses ISO dates: datetime="YYYY-MM-DD"
-        date_m = re.search(r'<time[^>]+datetime="(\d{4}-\d{2}-\d{2})"', teil)
-        if not date_m:
-            # Also handle German format just in case
-            date_m = re.search(r'<time datetime="(\d{2}\.\d{2}\.\d{4})"', teil)
-            fmt = '%d.%m.%Y'
-        else:
-            fmt = '%Y-%m-%d'
-        try:
-            datum = datetime.strptime(date_m.group(1), fmt).strftime('%Y-%m-%d %H:%M:%S') if date_m else None
-        except (ValueError, AttributeError):
-            datum = None
-
-        teaser_m = re.search(r'itemprop="description"[^>]*>(.*?)</(?:span|div|p)>', teil, re.DOTALL)
-        beschreibung = re.sub(r'<[^>]+>', '', teaser_m.group(1)).strip()[:500] if teaser_m else ""
-        beschreibung = html_unescape(beschreibung)
-
-        if titel:
-            artikel.append((titel, link, datum, beschreibung))
+    # Ansatz 2: Falls keine Links im HTML – Titel aus h3 lesen, Slug generieren
+    if not artikel:
+        for match in re.finditer(r'<h3[^>]*>(.*?)</h3>', r.text, re.DOTALL):
+            titel = html_unescape(re.sub(r'<[^>]+>', ' ', match.group(1)))
+            titel = re.sub(r'\s+', ' ', titel).strip()
+            if len(titel) < 8:
+                continue
+            slug = _hs_fulda_slug(titel)
+            link = base_url + detail_base + slug
+            if link not in gesehen:
+                gesehen.add(link)
+                nach = r.text[match.end():match.end() + 600]
+                teaser_m = re.search(r'<p[^>]*>([^<]+)</p>', nach)
+                beschreibung = html_unescape(teaser_m.group(1)).strip()[:500] if teaser_m else ""
+                artikel.append((titel, link, None, beschreibung))
 
     return artikel
 
