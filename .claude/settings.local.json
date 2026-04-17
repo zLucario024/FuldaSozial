@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:www.hs-fulda.de)"
+      "WebFetch(domain:www.hs-fulda.de)",
+      "WebFetch(domain:www.marktkorb.de)"
     ]
   }
 }

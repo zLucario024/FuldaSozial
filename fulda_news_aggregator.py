@@ -28,6 +28,7 @@ FEEDS = [
     {"name": "Landkreis Fulda", "url": "https://www.landkreis-fulda.de", "rss": "https://www.landkreis-fulda.de/rss-feed", "typ": "Öffentlich-rechtlich", "region": "landkreis-fulda"},
     {"name": "Presseportal Fulda", "url": "https://www.presseportal.de/regional/Fulda", "rss": "https://www.presseportal.de/rss/polizei/r/Fulda.rss2", "typ": "Online-Portal", "region": "landkreis-fulda"},
     {"name": "Osthessen-News", "url": "https://osthessen-news.de", "rss": "https://osthessen-news.de/rss_feed.xml", "typ": "Online-Portal", "region": "osthessen"},
+    {"name": "Marktkorb", "url": "https://www.marktkorb.de", "rss": "https://www.marktkorb.de/feed/", "typ": "Wochenblatt", "region": "landkreis-fulda"},
 ]
 
 HTML_QUELLEN = [
