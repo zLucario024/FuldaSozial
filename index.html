@@ -203,6 +203,9 @@ Fulda Nachrichten">
   .chip.aktiv { background: var(--rot); color: var(--weiss); border-color: var(--rot); }
   .chip.aktiv-dunkel { background: var(--schwarz); color: var(--weiss); border-color: var(--schwarz); }
   .chip.aktiv-ort { background: #1a3a5c; color: var(--weiss); border-color: #1a3a5c; }
+  .chip-kat { background: var(--kat-hell); color: var(--kat-farbe); border-color: var(--kat-farbe); opacity: 0.85; }
+  .chip-kat:hover { background: var(--kat-hell); color: var(--kat-farbe); border-color: var(--kat-farbe); opacity: 1; }
+  .chip-kat.aktiv { background: var(--kat-farbe); color: #fff; border-color: var(--kat-farbe); opacity: 1; }
   .zeitraum-toggle { background: none; border: none; cursor: pointer; padding: 0; width: 100%; text-align: left; }
   .zeitraum-chevron { display: inline-block; transition: transform .2s; }
   .zeitraum-reihe { display: none; margin-top: .5rem; align-items: flex-end; gap: .75rem; flex-wrap: wrap; }
@@ -814,15 +817,15 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div class="chip-reihe" id="kategorie-chips">
       <button class="chip aktiv" onclick="kategorieWaehlen(this, '')">Alle</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Lokale Vorfälle')">Lokale Vorfälle</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Politik & Verwaltung')">Politik & Verwaltung</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Wirtschaft & Arbeit')">Wirtschaft & Arbeit</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Sport')">Sport</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Kultur & Freizeit')">Kultur & Freizeit</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Bildung & Familie')">Bildung & Familie</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Natur & Umwelt')">Natur & Umwelt</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Verkehr & Bau')">Verkehr & Bau</button>
-      <button class="chip" onclick="kategorieWaehlen(this, 'Gesundheit')">Gesundheit</button>
+      <button class="chip chip-kat" data-kat="Lokale Vorfälle" onclick="kategorieWaehlen(this, 'Lokale Vorfälle')">Lokale Vorfälle</button>
+      <button class="chip chip-kat" data-kat="Politik & Verwaltung" onclick="kategorieWaehlen(this, 'Politik & Verwaltung')">Politik & Verwaltung</button>
+      <button class="chip chip-kat" data-kat="Wirtschaft & Arbeit" onclick="kategorieWaehlen(this, 'Wirtschaft & Arbeit')">Wirtschaft & Arbeit</button>
+      <button class="chip chip-kat" data-kat="Sport" onclick="kategorieWaehlen(this, 'Sport')">Sport</button>
+      <button class="chip chip-kat" data-kat="Kultur & Freizeit" onclick="kategorieWaehlen(this, 'Kultur & Freizeit')">Kultur & Freizeit</button>
+      <button class="chip chip-kat" data-kat="Bildung & Familie" onclick="kategorieWaehlen(this, 'Bildung & Familie')">Bildung & Familie</button>
+      <button class="chip chip-kat" data-kat="Natur & Umwelt" onclick="kategorieWaehlen(this, 'Natur & Umwelt')">Natur & Umwelt</button>
+      <button class="chip chip-kat" data-kat="Verkehr & Bau" onclick="kategorieWaehlen(this, 'Verkehr & Bau')">Verkehr & Bau</button>
+      <button class="chip chip-kat" data-kat="Gesundheit" onclick="kategorieWaehlen(this, 'Gesundheit')">Gesundheit</button>
     </div>
   </div>
 
@@ -1629,6 +1632,14 @@ window.addEventListener('popstate', function(e) {
     if (m) m.classList.add('aktiv');
   }
   filterLeistAktualisieren(); artikelAnzeigen();
+});
+
+// Kategorie-Chips mit den Farben aus KATEGORIEN einfärben
+document.querySelectorAll('#kategorie-chips .chip-kat').forEach(btn => {
+  const kat = KATEGORIEN[btn.dataset.kat];
+  if (!kat) return;
+  btn.style.setProperty('--kat-hell', kat.hell);
+  btn.style.setProperty('--kat-farbe', kat.farbe);
 });
 
 quellenLaden();
