@@ -952,7 +952,7 @@ const ORTE_LANDKREIS = [
   'fulda','hünfeld','künzell','petersberg','neuhof','eichenzell','flieden',
   'burghaun','großenlüder','hilders','hofbieber','gersfeld','tann','eiterfeld',
   'rasdorf','dipperz','ebersburg','ehrenberg','hosenfeld','kalbach','nüsttal',
-  'poppenhausen','bad salzschlirf','rhön','wasserkuppe','fuldaer','osthessen'
+  'poppenhausen','bad salzschlirf','rhön','wasserkuppe','fuldaer','osthessen', 'region fulda'
 ];
 
 // ── ORTSTEILE / STADTTEILE → GEMEINDE ──
@@ -1414,7 +1414,7 @@ function karteErstellen(artikel, index) {
     const tagListe = (artikel.tags || '').split(/,|·/).map(t => t.trim().toLowerCase());
     let wappenKey = null;
 
-    if (tagListe.includes('landkreis fulda')) {
+    if (tagListe.includes('landkreis fulda') || tagListe.includes('region fulda')) {
       // Expliziter Tag überschreibt jede andere Region
       wappenKey = 'Landkreis Fulda';
     } else {
