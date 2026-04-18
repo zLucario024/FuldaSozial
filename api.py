@@ -154,6 +154,9 @@ def _aggregator_ausfuehren():
     agg.datenbank_einrichten(conn)
     for feed in agg.FEEDS:
         agg.feed_verarbeiten(feed, conn)
+    for quelle in agg.HTML_QUELLEN:
+        agg.html_quelle_verarbeiten(quelle, conn)
+    agg.deduplizieren(conn)
     agg.sitemap_generieren(conn)
     conn.close()
 

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:www.hs-fulda.de)",
-      "WebFetch(domain:www.marktkorb.de)"
+      "WebFetch(domain:www.marktkorb.de)",
+      "Bash(schtasks /query /fo LIST)",
+      "Bash(schtasks /query /fo LIST /v)",
+      "Bash(schtasks /query /fo CSV)",
+      "Bash(powershell -Command \"Get-ScheduledTask | Select-Object TaskName | Format-Table\")"
     ]
   }
 }
