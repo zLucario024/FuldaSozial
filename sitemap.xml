@@ -138,7 +138,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fuldasozial.de/?kategorie=Lokale%20Vorf%C3%A4lle</loc>
+    <loc>https://fuldasozial.de/?kategorie=Vorf%C3%A4lle</loc>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -183,7 +183,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (249 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (265 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://fuldasozial.de/?tag=2.%20Bundesliga</loc>
     <changefreq>daily</changefreq>
@@ -191,6 +191,16 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=A4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=A66</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=A7</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -315,12 +325,22 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Blitzer</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Blitzermarathon</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Brand</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Buckelwal</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -500,6 +520,16 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Europaminister%20Pentz</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=FDP</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Feuerwehr</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -521,6 +551,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Flugbegleiter</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Flugverkehr</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -580,6 +615,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Gelnhausen</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Gemeinde</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -591,6 +631,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Gesundheit</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Gesundheitsreform</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -805,6 +850,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Kriminalpolizei</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=K%C3%BCnzell</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -880,6 +930,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Main-Kinzig-Kreis</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Marburg</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -941,6 +996,16 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=M%C3%BCnster</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Nachhaltigkeit</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Nachhaltigkeitspreis</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1190,6 +1255,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=Stefan%20Bu%C3%9F</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=Steinau%20an%20der%20Stra%C3%9Fe</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -1285,6 +1355,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://fuldasozial.de/?tag=T%C3%BCrkei</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://fuldasozial.de/?tag=USA</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -1316,6 +1391,11 @@
   </url>
   <url>
     <loc>https://fuldasozial.de/?tag=Unternehmen</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://fuldasozial.de/?tag=Verdi</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

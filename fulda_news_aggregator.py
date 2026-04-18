@@ -153,11 +153,10 @@ def tags_generieren(titel_liste, beschreibung_liste=None):
         f"{i+1}. {titel}" + (f"\n   Kontext: {beschreibung_liste[i]}" if beschreibung_liste[i] else "")
         for i, titel in enumerate(titel_liste)
     )
-    prompt = f"""Du bist ein Redakteur für regionale Nachrichten aus dem Landkreis Fulda in Hessen.
-Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
+    prompt = f"""Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
 Fokus auf: Ort, Thema, beteiligte Personen oder Institutionen.
 Trenne die Tags mit " · ".
-Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung.
+Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung, keine Erklärungen.
 
 Titel:
 {titel_text}"""
@@ -168,6 +167,8 @@ Titel:
             messages=[{"role": "user", "content": prompt}]
         )
         zeilen = [z.strip() for z in message.content[0].text.strip().split("\n") if z.strip()]
+        # Discard lines that look like prose (refusals/explanations) instead of tag lists
+        zeilen = [z for z in zeilen if len(z) <= 120 and ('·' in z or len(z.split()) <= 5)]
         return {titel: zeilen[i] for i, titel in enumerate(titel_liste) if i < len(zeilen)}
     except Exception as e:
         print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
