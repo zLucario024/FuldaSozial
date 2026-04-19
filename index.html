@@ -645,6 +645,36 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeI=" crossorigin=""></script>
+<!-- Leaflet CSS overrides -->
+<style>
+  .filter-hoofdspalte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.2rem; }
+  .filter-hauptspalte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.2rem; }
+  #karte-spalte { display: none; }
+  #leaflet-karte-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+  #leaflet-karte { height: 240px; width: 220px; background: #f0ece6; }
+  @media (min-width: 860px) {
+    .filter-bereich { flex-direction: row; align-items: flex-start; gap: 1.5rem; }
+    #karte-spalte { display: flex; }
+  }
+  #karte-vergrossern-btn { position: absolute; top: 5px; right: 5px; z-index: 999; background: rgba(255,255,255,.85); border: 1px solid var(--border); border-radius: 5px; padding: 3px 6px; font-size: 13px; cursor: pointer; line-height: 1; }
+  #karte-vergrossern-btn:hover { background: #fff; }
+  .karte-marker { background: rgba(255,255,255,.88); border: 1px solid rgba(0,0,0,.22); border-radius: 5px; padding: 2px 6px; font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; line-height: 1.4; backdrop-filter: blur(2px); transition: background .12s, color .12s, border-color .12s; transform: translate(-50%, -50%); }
+  .karte-marker:hover { background: var(--rot); color: #fff; border-color: var(--rot); }
+  .karte-marker-aktiv { background: #1a3a5c !important; color: #fff !important; border-color: #1a3a5c !important; }
+  .karte-marker-gross { font-size: 12px; padding: 3px 9px; font-weight: 700; }
+  #karte-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 10000; align-items: center; justify-content: center; }
+  #karte-modal.offen { display: flex; }
+  #karte-modal-inner { background: #fff; border-radius: 14px; overflow: hidden; width: 96vw; height: 90vh; position: relative; display: flex; flex-direction: column; }
+  #karte-modal-header { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+  #karte-modal-header span { font-weight: 600; font-size: 14px; }
+  #karte-modal-schliessen { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1; }
+  #leaflet-karte-modal { flex: 1; }
+  .leaflet-container { font-family: var(--font-body, system-ui); }
+  .leaflet-tooltip-gemeinde { background: rgba(0,0,0,.72); color: #fff; border: none; border-radius: 5px; font-size: 12px; font-weight: 600; padding: 3px 8px; box-shadow: none; }
+</style>
 </head>
 
 
@@ -783,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </section>
 
 <div class="filter-bereich">
-
+  <div class="filter-hauptspalte">
   <!-- REGION / ORT -->
   <div class="filter-gruppe">
     <div class="chip-reihe" style="margin-bottom:.5rem">
@@ -880,6 +910,17 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="btn-reset" onclick="alleFilterZurueck()">Alle Filter zurücksetzen</button>
     </div>
   </div>
+  </div><!-- filter-hauptspalte -->
+
+  <!-- LEAFLET KARTE -->
+  <div style="flex-shrink:0;display:flex;flex-direction:column;gap:4px;align-self:flex-start;position:sticky;top:70px" id="karte-spalte">
+    <div id="leaflet-karte-wrap">
+      <div id="leaflet-karte"></div>
+      <button id="karte-vergrossern-btn" onclick="karteModalOeffnen()">⤢</button>
+    </div>
+    <p style="font-size:10px;color:var(--grau-mittel);text-align:center;margin:0">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:inherit">OpenStreetMap</a>-Mitwirkende</p>
+  </div>
+
 </div>
 
 <!-- AKTIVE FILTER LEISTE -->
@@ -1047,7 +1088,7 @@ const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
     strong: ['polizei','unfall','vorfall','brand','blaulicht','mord','schießerei'],
-    keys: ['vorfall', 'polizei','unfall','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse'],
+    keys: ['vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1734,6 +1775,116 @@ if (new URLSearchParams(window.location.search).has('quelle')) _sectionOeffnen('
 
 quellenLaden();
 artikelLaden();
+
+// ── LEAFLET KARTE ──
+// Centroids hardcoded — no external API needed
+const KARTE_GEMEINDEN = [
+  { label: 'Fulda',           ort: 'fulda',           lat: 50.5528, lon: 9.6775, gross: true },
+  { label: 'Hünfeld',         ort: 'hünfeld',         lat: 50.6767, lon: 9.7658 },
+  { label: 'Künzell',         ort: 'künzell',         lat: 50.5269, lon: 9.6658 },
+  { label: 'Petersberg',      ort: 'petersberg',      lat: 50.5558, lon: 9.7531 },
+  { label: 'Neuhof',          ort: 'neuhof',          lat: 50.4564, lon: 9.6100 },
+  { label: 'Eichenzell',      ort: 'eichenzell',      lat: 50.4794, lon: 9.6919 },
+  { label: 'Flieden',         ort: 'flieden',         lat: 50.4194, lon: 9.5717 },
+  { label: 'Burghaun',        ort: 'burghaun',        lat: 50.6492, lon: 9.6306 },
+  { label: 'Großenlüder',     ort: 'großenlüder',     lat: 50.5742, lon: 9.5214 },
+  { label: 'Hilders',         ort: 'hilders',         lat: 50.4756, lon: 9.9381 },
+  { label: 'Hofbieber',       ort: 'hofbieber',       lat: 50.5000, lon: 9.8400 },
+  { label: 'Gersfeld',        ort: 'gersfeld',        lat: 50.4411, lon: 9.9167 },
+  { label: 'Tann',            ort: 'tann',            lat: 50.6300, lon: 10.020 },
+  { label: 'Eiterfeld',       ort: 'eiterfeld',       lat: 50.7167, lon: 9.8500 },
+  { label: 'Rasdorf',         ort: 'rasdorf',         lat: 50.7289, lon: 9.9483 },
+  { label: 'Dipperz',         ort: 'dipperz',         lat: 50.5039, lon: 9.7119 },
+  { label: 'Ebersburg',       ort: 'ebersburg',       lat: 50.4667, lon: 9.8167 },
+  { label: 'Ehrenberg',       ort: 'ehrenberg',       lat: 50.5056, lon: 10.008 },
+  { label: 'Hosenfeld',       ort: 'hosenfeld',       lat: 50.5869, lon: 9.5453 },
+  { label: 'Kalbach',         ort: 'kalbach',         lat: 50.4111, lon: 9.6611 },
+  { label: 'Nüsttal',         ort: 'nüsttal',         lat: 50.6375, lon: 9.8769 },
+  { label: 'Poppenhausen',    ort: 'poppenhausen',    lat: 50.4658, lon: 9.8861 },
+  { label: 'Bad Salzschlirf', ort: 'bad salzschlirf', lat: 50.5619, lon: 9.3514 },
+];
+
+let leafletKarteKlein = null;
+let leafletKarteGross = null;
+let karteMarkerKlein = [];
+let karteMarkerGross = [];
+
+function karteMarkerErstellen(cfg) {
+  const aktiv = aktivOrt === cfg.ort;
+  const html = `<div class="karte-marker${aktiv ? ' karte-marker-aktiv' : ''}${cfg.gross ? ' karte-marker-gross' : ''}">${cfg.label}</div>`;
+  return L.marker([cfg.lat, cfg.lon], {
+    icon: L.divIcon({ className: '', html, iconAnchor: [0, 0] }),
+    interactive: true,
+  });
+}
+
+function karteKlicken(ort) {
+  const chip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes(`'${ort}'`));
+  if (chip) ortWaehlen(chip, ort);
+  else { aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); }
+  karteAktivSynchro();
+}
+
+function karteAktivSynchro() {
+  [...karteMarkerKlein, ...karteMarkerGross].forEach(({ marker, cfg }) => {
+    const aktiv = aktivOrt === cfg.ort;
+    const html = `<div class="karte-marker${aktiv ? ' karte-marker-aktiv' : ''}${cfg.gross ? ' karte-marker-gross' : ''}">${cfg.label}</div>`;
+    marker.setIcon(L.divIcon({ className: '', html, iconAnchor: [0, 0] }));
+  });
+}
+
+function karteInitialisieren(containerId) {
+  const map = L.map(containerId, {
+    zoomControl: containerId !== 'leaflet-karte',
+    scrollWheelZoom: containerId !== 'leaflet-karte',
+    attributionControl: true,
+    dragging: containerId !== 'leaflet-karte',
+  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 14,
+  }).addTo(map);
+  return map;
+}
+
+function karteMitMarkern(map, markerListe) {
+  KARTE_GEMEINDEN.forEach(cfg => {
+    const marker = karteMarkerErstellen(cfg);
+    marker.on('click', () => karteKlicken(cfg.ort));
+    marker.addTo(map);
+    markerListe.push({ marker, cfg });
+  });
+  map.fitBounds(
+    KARTE_GEMEINDEN.map(g => [g.lat, g.lon]),
+    { padding: [16, 16] }
+  );
+}
+
+function karteAufbauen() {
+  if (!document.getElementById('leaflet-karte') || leafletKarteKlein) return;
+  leafletKarteKlein = karteInitialisieren('leaflet-karte');
+  karteMitMarkern(leafletKarteKlein, karteMarkerKlein);
+  setTimeout(() => leafletKarteKlein.invalidateSize(), 100);
+}
+
+function karteModalOeffnen() {
+  document.getElementById('karte-modal').classList.add('offen');
+  if (!leafletKarteGross) {
+    leafletKarteGross = karteInitialisieren('leaflet-karte-modal');
+    karteMitMarkern(leafletKarteGross, karteMarkerGross);
+  } else {
+    leafletKarteGross.invalidateSize();
+  }
+}
+
+function karteModalSchliessen(e) {
+  if (e && e.target !== document.getElementById('karte-modal')) return;
+  document.getElementById('karte-modal').classList.remove('offen');
+}
+
+// Leaflet needs a visible, sized container — wait until after paint
+requestAnimationFrame(() => setTimeout(karteAufbauen, 50));
 </script>
 
 <footer>
@@ -1745,6 +1896,17 @@ artikelLaden();
     </nav>
   </div>
 </footer>
+
+<!-- KARTE MODAL -->
+<div id="karte-modal" onclick="karteModalSchliessen(event)">
+  <div id="karte-modal-inner">
+    <div id="karte-modal-header">
+      <span>Landkreis Fulda – Gemeindekarte</span>
+      <button id="karte-modal-schliessen" onclick="karteModalSchliessen()">✕</button>
+    </div>
+    <div id="leaflet-karte-modal"></div>
+  </div>
+</div>
 
 </body>
 </html>
