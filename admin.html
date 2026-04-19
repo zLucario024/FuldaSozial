@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – RegioNachrichten Fulda</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f4f5f7; color: #1a1a1a; font-size: 14px; }
+
+  /* ── Login ── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: #f4f5f7;
+  }
+  .login-box {
+    background: #fff; border-radius: 12px; padding: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08); width: 360px; text-align: center;
+  }
+  .login-box h1 { font-size: 20px; margin-bottom: 8px; }
+  .login-box p  { color: #666; margin-bottom: 24px; font-size: 13px; }
+  .login-box input {
+    width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: 14px; margin-bottom: 12px;
+  }
+  .login-box button {
+    width: 100%; padding: 10px; background: #c0152a; color: #fff;
+    border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600;
+  }
+  .login-box button:hover { background: #a01020; }
+  .login-error { color: #c0152a; font-size: 13px; margin-top: 8px; }
+
+  /* ── App shell ── */
+  #app { display: none; }
+  header {
+    background: #fff; border-bottom: 1px solid #e5e7eb;
+    padding: 0 24px; display: flex; align-items: center; gap: 16px; height: 54px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 16px; font-weight: 700; flex: 1; }
+  header span { font-size: 12px; color: #888; }
+  .btn {
+    padding: 6px 14px; border-radius: 7px; font-size: 13px; cursor: pointer;
+    border: 1px solid transparent; font-weight: 500;
+  }
+  .btn-primary   { background: #c0152a; color: #fff; border-color: #c0152a; }
+  .btn-primary:hover { background: #a01020; }
+  .btn-ghost     { background: transparent; color: #555; border-color: #ddd; }
+  .btn-ghost:hover { background: #f0f0f0; }
+  .btn-danger    { background: #fff; color: #c0152a; border-color: #f5c6cb; }
+  .btn-danger:hover { background: #fff0f0; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    padding: 14px 24px; display: flex; gap: 10px; align-items: center;
+    background: #fff; border-bottom: 1px solid #e5e7eb; flex-wrap: wrap;
+  }
+  .toolbar input[type=text] {
+    flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid #ddd;
+    border-radius: 7px; font-size: 13px;
+  }
+  .toolbar select {
+    padding: 7px 10px; border: 1px solid #ddd; border-radius: 7px;
+    font-size: 13px; background: #fff;
+  }
+  #status-bar {
+    padding: 6px 24px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+    font-size: 12px; color: #666; display: flex; align-items: center; gap: 8px;
+  }
+  #status-bar .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; padding: 0 24px 40px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th {
+    text-align: left; padding: 9px 10px; font-size: 12px; font-weight: 600;
+    color: #555; border-bottom: 2px solid #e5e7eb; white-space: nowrap;
+    position: sticky; top: 54px; background: #f4f5f7; z-index: 10;
+  }
+  td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  tr:hover td { background: #fafafa; }
+
+  .col-id     { width: 56px; color: #aaa; font-size: 12px; }
+  .col-datum  { width: 110px; color: #888; font-size: 12px; white-space: nowrap; }
+  .col-quelle { width: 140px; }
+  .col-titel  { width: 260px; }
+  .col-tags   { min-width: 220px; }
+  .col-aktionen { width: 110px; white-space: nowrap; }
+
+  .quelle-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 4px;
+    background: #eff6ff; color: #1e429f; font-size: 11px; font-weight: 500;
+  }
+
+  /* editable fields */
+  .editable {
+    width: 100%; padding: 5px 7px; border: 1px solid transparent;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+    background: transparent; resize: vertical; line-height: 1.4;
+    transition: border-color .15s, background .15s;
+  }
+  .editable:focus {
+    outline: none; border-color: #c0152a; background: #fff;
+    box-shadow: 0 0 0 2px rgba(192,21,42,.1);
+  }
+  .editable.changed { border-color: #f59e0b; background: #fffbeb; }
+  .editable.saved   { border-color: #22c55e; background: #f0fdf4; }
+
+  .tags-input { min-height: 36px; }
+
+  .row-actions { display: flex; gap: 6px; }
+  .save-btn {
+    padding: 4px 10px; font-size: 12px; border-radius: 5px;
+    border: 1px solid #22c55e; background: #f0fdf4; color: #16a34a;
+    cursor: pointer; font-weight: 500; display: none;
+  }
+  .save-btn:hover { background: #dcfce7; }
+  .save-btn.visible { display: inline-block; }
+  .del-btn {
+    padding: 4px 8px; font-size: 12px; border-radius: 5px;
+    border: 1px solid #f5c6cb; background: #fff; color: #c0152a;
+    cursor: pointer;
+  }
+  .del-btn:hover { background: #fff0f0; }
+
+  .link-btn {
+    padding: 4px 8px; font-size: 12px; border-radius: 5px;
+    border: 1px solid #ddd; background: #fff; color: #555;
+    cursor: pointer; text-decoration: none; display: inline-block;
+  }
+  .link-btn:hover { background: #f0f0f0; }
+
+  /* toast */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1a1a1a; color: #fff; padding: 10px 18px;
+    border-radius: 8px; font-size: 13px; opacity: 0;
+    transition: opacity .2s; pointer-events: none; z-index: 9999;
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { background: #c0152a; }
+
+  /* aggregator panel */
+  .agg-panel {
+    margin: 0 24px 0; padding: 12px 16px; background: #fff;
+    border: 1px solid #e5e7eb; border-radius: 10px; margin-top: 16px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .agg-panel span { font-size: 13px; color: #555; flex: 1; }
+  #agg-status { font-size: 12px; color: #888; }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid #ddd; border-top-color: #c0152a;
+    border-radius: 50%; animation: spin .6s linear infinite;
+    vertical-align: middle; margin-right: 4px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty { text-align: center; padding: 60px 20px; color: #aaa; }
+</style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Admin-Zugang</h1>
+    <p>RegioNachrichten Fulda – Artikelverwaltung</p>
+    <input type="password" id="key-input" placeholder="Aggregator-Key eingeben" />
+    <button onclick="login()">Anmelden</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── App ── -->
+<div id="app">
+  <header>
+    <h1>📋 Artikelverwaltung</h1>
+    <span id="header-count"></span>
+    <button class="btn btn-ghost" onclick="logout()">Abmelden</button>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="suche" placeholder="Titel, Tags oder Quelle suchen…" oninput="filterAnwenden()" />
+    <select id="filter-quelle" onchange="filterAnwenden()">
+      <option value="">Alle Quellen</option>
+    </select>
+    <select id="filter-tage" onchange="laden()">
+      <option value="14">Letzte 14 Tage</option>
+      <option value="30" selected>Letzte 30 Tage</option>
+      <option value="60">Letzte 60 Tage</option>
+      <option value="180">Letzte 180 Tage</option>
+    </select>
+    <button class="btn btn-ghost" onclick="laden()">↻ Neu laden</button>
+  </div>
+
+  <div id="status-bar">
+    <span class="dot"></span>
+    <span id="status-text">Verbunden</span>
+  </div>
+
+  <div style="padding: 0 24px">
+    <div class="agg-panel">
+      <span>Aggregator manuell starten (RSS + HTML-Quellen neu abrufen)</span>
+      <span id="agg-status"></span>
+      <button class="btn btn-primary" onclick="aggregatorStarten()">▶ Aggregator starten</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="artikel-tabelle">
+      <thead>
+        <tr>
+          <th class="col-id">ID</th>
+          <th class="col-datum">Datum</th>
+          <th class="col-quelle">Quelle</th>
+          <th class="col-titel">Titel</th>
+          <th class="col-tags">Tags <span style="font-weight:400;color:#aaa">(· getrennt)</span></th>
+          <th class="col-aktionen">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody id="tabelle-body"></tbody>
+    </table>
+    <div id="leer-hinweis" class="empty" style="display:none">Keine Artikel gefunden.</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:8000';
+let alleArtikel = [];
+let gefilterteArtikel = [];
+let apiKey = '';
+
+// ── Auth ──
+function login() {
+  const k = document.getElementById('key-input').value.trim();
+  if (!k) return;
+  apiKey = k;
+  fetch(`${API}/statistik`)
+    .then(r => {
+      if (!r.ok) throw new Error();
+      // Verify key works by hitting a protected endpoint
+      return fetch(`${API}/artikel?limit=1`);
+    })
+    .then(() => {
+      localStorage.setItem('admin_key', apiKey);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      laden();
+    })
+    .catch(() => {
+      document.getElementById('login-error').textContent = 'API nicht erreichbar. Läuft uvicorn?';
+    });
+}
+
+function logout() {
+  localStorage.removeItem('admin_key');
+  location.reload();
+}
+
+// Auto-login from localStorage
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('admin_key');
+  if (saved) {
+    apiKey = saved;
+    document.getElementById('key-input').value = saved;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    laden();
+  }
+  document.getElementById('key-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+});
+
+// ── Daten laden ──
+function laden() {
+  const tage = document.getElementById('filter-tage').value;
+  document.getElementById('status-text').textContent = 'Lade…';
+  fetch(`${API}/artikel?tage=${tage}&limit=3000`)
+    .then(r => r.json())
+    .then(data => {
+      alleArtikel = data.artikel.sort((a, b) => b.datum.localeCompare(a.datum));
+      document.getElementById('status-text').textContent = `${alleArtikel.length} Artikel geladen`;
+      quellenBefuellen();
+      filterAnwenden();
+    })
+    .catch(() => {
+      document.getElementById('status-text').textContent = '⚠ API nicht erreichbar';
+    });
+}
+
+function quellenBefuellen() {
+  const sel = document.getElementById('filter-quelle');
+  const aktuell = sel.value;
+  const quellen = [...new Set(alleArtikel.map(a => a.quelle))].sort();
+  sel.innerHTML = '<option value="">Alle Quellen</option>' +
+    quellen.map(q => `<option value="${q}"${q===aktuell?' selected':''}>${q}</option>`).join('');
+}
+
+function filterAnwenden() {
+  const suche = document.getElementById('suche').value.toLowerCase();
+  const quelle = document.getElementById('filter-quelle').value;
+  gefilterteArtikel = alleArtikel.filter(a => {
+    if (quelle && a.quelle !== quelle) return false;
+    if (suche) {
+      const haystack = ((a.titel||'') + ' ' + (a.tags||'') + ' ' + (a.quelle||'')).toLowerCase();
+      if (!haystack.includes(suche)) return false;
+    }
+    return true;
+  });
+  tabelleRendern();
+}
+
+// ── Tabelle rendern ──
+function tabelleRendern() {
+  const tbody = document.getElementById('tabelle-body');
+  document.getElementById('header-count').textContent = `${gefilterteArtikel.length} Artikel`;
+  document.getElementById('leer-hinweis').style.display = gefilterteArtikel.length ? 'none' : 'block';
+
+  tbody.innerHTML = '';
+  gefilterteArtikel.forEach(a => {
+    const datum = (a.datum || '').slice(0, 10);
+    const tr = document.createElement('tr');
+    tr.dataset.id = a.id;
+    tr.innerHTML = `
+      <td class="col-id">${a.id}</td>
+      <td class="col-datum">${datum}</td>
+      <td class="col-quelle"><span class="quelle-badge">${esc(a.quelle||'')}</span></td>
+      <td class="col-titel">
+        <textarea class="editable titel-field" rows="2" data-field="titel" data-original="${esc(a.titel||'')}">${esc(a.titel||'')}</textarea>
+      </td>
+      <td class="col-tags">
+        <textarea class="editable tags-input tags-field" rows="2" data-field="tags" data-original="${esc(a.tags||'')}">${esc(a.tags||'')}</textarea>
+      </td>
+      <td class="col-aktionen">
+        <div class="row-actions">
+          <button class="save-btn" onclick="speichern(this, ${a.id})">Speichern</button>
+          <a class="link-btn" href="${esc(a.link||'')}" target="_blank" title="Artikel öffnen">↗</a>
+          <button class="del-btn" onclick="loeschen(this, ${a.id})" title="Artikel löschen">🗑</button>
+        </div>
+      </td>
+    `;
+    // Show save button on change
+    tr.querySelectorAll('.editable').forEach(field => {
+      field.addEventListener('input', () => {
+        const changed = field.value !== field.dataset.original;
+        field.classList.toggle('changed', changed);
+        const saveBtn = tr.querySelector('.save-btn');
+        const anyChanged = [...tr.querySelectorAll('.editable')].some(f => f.value !== f.dataset.original);
+        saveBtn.classList.toggle('visible', anyChanged);
+      });
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Speichern ──
+async function speichern(btn, id) {
+  const tr = btn.closest('tr');
+  const daten = {};
+  tr.querySelectorAll('.editable').forEach(f => {
+    if (f.value !== f.dataset.original) daten[f.dataset.field] = f.value;
+  });
+  if (!Object.keys(daten).length) return;
+
+  btn.textContent = '…';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(`${API}/artikel/${id}?key=${encodeURIComponent(apiKey)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten)
+    });
+    if (!r.ok) throw new Error(await r.text());
+
+    // Update originals and style
+    tr.querySelectorAll('.editable').forEach(f => {
+      f.dataset.original = f.value;
+      f.classList.remove('changed');
+      f.classList.add('saved');
+      setTimeout(() => f.classList.remove('saved'), 1500);
+    });
+    btn.classList.remove('visible');
+
+    // Update local cache
+    const artikel = alleArtikel.find(a => a.id === id);
+    if (artikel) Object.assign(artikel, daten);
+
+    toast('Gespeichert ✓');
+  } catch(e) {
+    toast('Fehler beim Speichern', true);
+    console.error(e);
+  } finally {
+    btn.textContent = 'Speichern';
+    btn.disabled = false;
+  }
+}
+
+// ── Löschen ──
+async function loeschen(btn, id) {
+  if (!confirm('Artikel wirklich löschen?')) return;
+  try {
+    const r = await fetch(`${API}/artikel/${id}?key=${encodeURIComponent(apiKey)}`, {
+      method: 'DELETE'
+    });
+    if (!r.ok) throw new Error();
+    btn.closest('tr').remove();
+    alleArtikel = alleArtikel.filter(a => a.id !== id);
+    toast('Artikel gelöscht');
+  } catch {
+    toast('Fehler beim Löschen', true);
+  }
+}
+
+// ── Aggregator ──
+async function aggregatorStarten() {
+  const s = document.getElementById('agg-status');
+  s.innerHTML = '<span class="spinner"></span> Läuft…';
+  try {
+    const r = await fetch(`${API}/aggregator-starten?key=${encodeURIComponent(apiKey)}`);
+    if (!r.ok) throw new Error();
+    s.textContent = 'Gestartet – läuft im Hintergrund';
+    toast('Aggregator gestartet ✓');
+    setTimeout(() => { s.textContent = ''; laden(); }, 8000);
+  } catch {
+    s.textContent = 'Fehler';
+    toast('Aggregator-Fehler', true);
+  }
+}
+
+// ── Toast ──
+function toast(msg, error = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (error ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = '', 2500);
+}
+</script>
+</body>
+</html>

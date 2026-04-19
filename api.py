@@ -161,6 +161,37 @@ def _aggregator_ausfuehren():
     conn.close()
 
 
+@app.patch("/artikel/{artikel_id}")
+def artikel_bearbeiten(artikel_id: int, key: str, daten: dict):
+    if key != os.getenv("AGGREGATOR_KEY"):
+        raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
+    erlaubte_felder = {"titel", "tags", "beschreibung"}
+    felder = {k: v for k, v in daten.items() if k in erlaubte_felder}
+    if not felder:
+        raise HTTPException(status_code=400, detail="Keine gültigen Felder")
+    set_clause = ", ".join(f"{k} = %s" for k in felder)
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE artikel SET {set_clause} WHERE id = %s", [*felder.values(), artikel_id])
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.delete("/artikel/{artikel_id}")
+def artikel_loeschen(artikel_id: int, key: str):
+    if key != os.getenv("AGGREGATOR_KEY"):
+        raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM artikel WHERE id = %s", (artikel_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "gelöscht"}
+
+
 @app.get("/aggregator-starten")
 def aggregator_starten(key: str, background_tasks: BackgroundTasks):
     if key != os.getenv("AGGREGATOR_KEY"):
