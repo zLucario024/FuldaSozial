@@ -1,0 +1,161 @@
+<div style="position:relative;display:inline-block;width:100%;max-width:680px">
+<div id="map-wrap" style="position:relative;width:100%;padding-bottom:104.9%;overflow:hidden;border-radius:8px">
+<canvas id="bg-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
+<svg id="overlay" viewBox="0 0 680 714" style="position:absolute;top:0;left:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    .gem{fill:rgba(180,160,140,0);stroke:#555;stroke-width:1;cursor:pointer;transition:fill .15s,stroke .15s}
+    .gem:hover{fill:rgba(192,21,42,0.35);stroke:#c0152a;stroke-width:1.5}
+    .gem.aktiv{fill:rgba(192,21,42,0.45);stroke:#c0152a;stroke-width:2}
+    .lbl{pointer-events:none;text-anchor:middle;dominant-baseline:central;font-family:Georgia,serif;font-weight:700;fill:#1a1a1a;paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+    .lbl.aktiv{fill:#fff;stroke:#c0152a;stroke-width:2}
+    .fs13{font-size:13px}
+    .fs11{font-size:11px}
+    .fs9{font-size:9px}
+  </style>
+</defs>
+
+<!-- idx 0: Hünfeld -->
+<polygon class="gem" id="g-huenfeld" onclick="klick('Hünfeld',this)" points="438,150 432,169 424,175 423,185 419,188 415,200 419,205 416,213 419,224 411,234 415,244 392,263 382,277 382,286 392,296 392,302 369,308 362,325 355,325 345,314 328,307 325,300 327,284 325,279 316,278 296,284 290,289 274,282 254,285 233,283 223,248 235,225 240,208 252,208 262,215 279,214 299,227 302,218 320,213 344,192 347,183 340,172 346,158 353,152 355,146 376,137 384,125 393,124 394,132 401,132 416,145 432,146"/>
+<text class="lbl fs13" id="l-huenfeld" x="351" y="225">Hünfeld</text>
+
+<!-- idx 1: Fulda -->
+<polygon class="gem" id="g-fulda" onclick="klick('Fulda',this)" points="286,289 287,295 279,302 289,305 293,318 312,317 318,323 312,334 300,341 300,351 292,375 284,385 294,398 301,400 291,410 289,421 302,425 307,437 297,443 293,457 279,463 276,469 268,462 252,471 242,465 231,469 217,466 215,457 189,459 186,450 200,442 203,434 194,429 176,428 174,421 180,410 171,395 178,388 200,383 208,378 206,324 203,315 231,284 253,286 272,282"/>
+<text class="lbl fs13" id="l-fulda" x="252" y="390">Fulda</text>
+
+<!-- idx 2: Neuhof -->
+<polygon class="gem" id="g-neuhof" onclick="klick('Neuhof',this)" points="290,549 268,567 272,555 266,547 256,543 253,519 248,522 245,533 231,540 228,545 231,554 224,561 224,567 215,572 215,577 210,577 206,570 196,575 186,565 184,559 183,563 178,565 147,557 144,561 144,568 140,570 127,552 130,544 118,539 109,543 100,542 99,549 83,568 64,546 63,538 57,537 62,516 71,513 74,508 80,507 92,512 96,506 107,508 116,501 137,503 143,499 144,492 135,471 159,467 174,458 178,452 185,450 189,459 213,457 218,466 249,468 254,482 248,487 253,494 245,496 254,508 265,509 278,518 279,526 288,531"/>
+<text class="lbl fs13" id="l-neuhof" x="180" y="516">Neuhof</text>
+
+<!-- idx 3: Gersfeld -->
+<polygon class="gem" id="g-gersfeld" onclick="klick('Gersfeld',this)" points="566,520 567,533 526,578 493,593 463,614 452,610 442,616 431,616 417,606 410,607 406,600 396,597 389,588 392,576 410,565 410,561 399,556 392,547 388,537 392,530 405,528 415,531 429,520 438,520 443,531 449,531 448,512 460,512 477,503 494,506 504,489 502,476 507,468 528,468 532,472 533,484 541,489 550,503"/>
+<text class="lbl fs11" id="l-gersfeld" x="458" y="558">Gersfeld</text>
+
+<!-- idx 4: Großenlüder -->
+<polygon class="gem" id="g-grossenlueder" onclick="klick('Großenlüder',this)" points="152,284 157,297 187,312 202,314 206,325 207,377 201,383 176,388 170,394 179,408 173,421 176,429 192,429 202,434 201,440 181,451 158,444 154,439 137,435 125,443 124,439 130,426 121,425 118,417 91,390 91,378 82,368 82,350 94,323"/>
+<text class="lbl fs11" id="l-grossenlueder" x="152" y="374">Großen-<tspan x="152" dy="11">lüder</tspan></text>
+
+<!-- idx 5: Eiterfeld -->
+<polygon class="gem" id="g-eiterfeld" onclick="klick('Eiterfeld',this)" points="307,84 312,76 319,75 318,57 332,55 337,47 347,47 352,36 359,33 360,40 385,43 412,54 431,55 453,51 458,65 485,82 493,94 501,100 490,111 463,116 456,121 448,134 448,138 453,141 440,149 413,143 401,132 394,131 394,123 382,125 375,137 354,145 348,126 341,123 340,117 331,117 317,110 318,98"/>
+<text class="lbl fs11" id="l-eiterfeld" x="391" y="96">Eiterfeld</text>
+
+<!-- idx 6: Hofbieber -->
+<polygon class="gem" id="g-hofbieber" onclick="klick('Hofbieber',this)" points="525,282 528,290 526,321 517,321 509,325 507,335 512,342 511,351 504,354 500,351 488,351 489,367 474,377 472,395 452,399 432,397 431,404 424,407 392,389 379,371 362,374 360,367 354,363 357,349 357,341 352,337 354,328 364,324 371,307 392,303 415,307 426,301 438,304 451,299 460,310 479,310 488,304 487,291 500,277 509,281"/>
+<text class="lbl fs11" id="l-hofbieber" x="448" y="337">Hofbieber</text>
+
+<!-- idx 7: Hilders -->
+<polygon class="gem" id="g-hilders" onclick="klick('Hilders',this)" points="612,327 610,354 617,377 614,397 605,416 588,401 580,398 570,410 565,432 559,438 542,426 534,429 520,442 494,446 481,440 491,416 481,399 474,394 474,378 490,367 490,351 499,351 504,355 512,350 513,342 508,334 511,324 524,322 534,338 555,343 555,335 550,328 552,322 566,326 569,332 574,321 596,317 604,317"/>
+<text class="lbl fs11" id="l-hilders" x="548" y="378">Hilders</text>
+
+<!-- idx 8: Kalbach -->
+<polygon class="gem" id="g-kalbach" onclick="klick('Kalbach',this)" points="252,521 255,542 272,554 266,567 270,568 280,557 286,563 286,568 279,576 290,577 284,583 286,591 291,586 296,586 300,596 303,597 307,591 318,590 327,583 342,588 345,611 343,630 332,669 323,678 286,674 276,658 253,655 224,630 225,622 220,613 222,598 215,595 216,574 223,570 224,561 233,552 229,546 231,541 245,533"/>
+<text class="lbl fs11" id="l-kalbach" x="280" y="622">Kalbach</text>
+
+<!-- idx 9: Burghaun -->
+<polygon class="gem" id="g-burghaun" onclick="klick('Burghaun',this)" points="347,126 354,146 340,166 340,176 346,183 346,188 319,213 302,218 298,227 280,214 261,214 254,208 238,208 232,204 224,192 208,158 210,141 219,132 230,142 238,142 246,153 257,157 274,144 281,123 292,128 312,119 317,111 330,117 339,117 340,123"/>
+<text class="lbl fs11" id="l-burghaun" x="283" y="170">Burghaun</text>
+
+<!-- idx 10: Tann -->
+<polygon class="gem" id="g-tann" onclick="klick('Tann',this)" points="612,227 626,248 642,289 639,293 626,290 612,296 601,307 603,317 573,321 569,330 565,324 550,322 549,329 554,335 553,342 536,338 527,325 529,291 525,281 534,271 534,260 524,249 522,237 564,220"/>
+<text class="lbl fs11" id="l-tann" x="578" y="278">Tann</text>
+
+<!-- idx 11: Hosenfeld -->
+<polygon class="gem" id="g-hosenfeld" onclick="klick('Hosenfeld',this)" points="176,451 174,457 159,466 135,471 135,478 143,491 143,498 135,503 116,500 105,508 97,506 90,511 77,507 65,515 55,511 43,514 36,503 40,485 55,457 56,435 64,423 68,411 90,391 96,393 119,419 119,425 128,427 123,443 127,444 137,436 153,439 155,443 172,447"/>
+<text class="lbl fs11" id="l-hosenfeld" x="100" y="465">Hosenfeld</text>
+
+<!-- idx 12: Eichenzell -->
+<polygon class="gem" id="g-eichenzell" onclick="klick('Eichenzell',this)" points="294,455 307,457 314,463 328,459 334,469 342,478 349,479 349,484 363,493 373,506 351,519 335,541 342,556 333,569 342,588 325,583 316,590 307,591 302,597 297,585 291,585 287,590 284,584 291,576 281,575 287,568 281,556 291,545 288,531 279,524 279,519 268,510 254,507 246,498 254,493 249,488 255,483 253,471 267,463 277,470 281,463"/>
+<text class="lbl fs11" id="l-eichenzell" x="308" y="525">Eichenzell</text>
+
+<!-- idx 13: Flieden -->
+<polygon class="gem" id="g-flieden" onclick="klick('Flieden',this)" points="83,570 99,550 100,543 111,543 116,539 129,545 126,552 139,570 144,570 144,563 149,558 178,565 184,562 196,575 201,570 206,571 209,577 217,578 214,596 222,599 220,614 225,623 224,629 207,632 196,637 178,639 164,646 102,607 88,587"/>
+<text class="lbl fs11" id="l-flieden" x="158" y="597">Flieden</text>
+
+<!-- idx 14: Poppenhausen -->
+<polygon class="gem" id="g-poppenhausen" onclick="klick('Poppenhausen',this)" points="475,395 481,399 490,416 481,441 494,446 518,443 523,453 511,468 504,469 501,476 504,487 493,505 477,502 461,512 446,512 449,519 449,530 445,531 439,520 428,519 428,500 422,487 411,482 408,476 419,469 415,461 428,454 433,448 427,436 433,433 449,434 452,430 453,421 439,411 438,399"/>
+<text class="lbl fs9" id="l-poppenhausen" x="462" y="458">Poppen-<tspan x="462" dy="10">hausen</tspan></text>
+
+<!-- idx 15: Nüsttal -->
+<polygon class="gem" id="g-nuesttal" onclick="klick('Nüsttal',this)" points="431,171 449,188 450,193 447,199 451,215 456,222 462,224 457,255 459,275 484,271 499,276 498,280 487,289 485,296 488,303 482,309 461,310 451,298 438,304 426,301 415,307 394,303 392,294 383,285 383,277 389,266 416,245 412,234 419,225 416,219 419,204 415,199 424,185 424,176"/>
+<text class="lbl fs9" id="l-nuesttal" x="440" y="252">Nüsttal</text>
+
+<!-- idx 16: Ebersburg -->
+<polygon class="gem" id="g-ebersburg" onclick="klick('Ebersburg',this)" points="368,473 375,478 408,476 410,483 422,489 428,500 428,520 422,527 414,531 396,527 387,536 394,552 409,561 408,566 392,575 392,582 387,587 360,586 352,582 343,584 333,568 343,556 336,542 343,529 360,513 375,508 363,492 350,484 351,479 359,479"/>
+<text class="lbl fs9" id="l-ebersburg" x="382" y="526">Ebers-<tspan x="382" dy="10">burg</tspan></text>
+
+<!-- idx 17: Ehrenberg -->
+<polygon class="gem" id="g-ehrenberg" onclick="klick('Ehrenberg',this)" points="581,399 605,417 601,428 603,475 601,485 592,503 569,529 566,518 534,483 533,472 527,467 513,466 524,453 519,443 535,429 543,426 559,439 566,432 570,411"/>
+<text class="lbl fs9" id="l-ehrenberg" x="564" y="462">Ehren-<tspan x="564" dy="10">berg</tspan></text>
+
+<!-- idx 18: Petersberg -->
+<polygon class="gem" id="g-petersberg" onclick="klick('Petersberg',this)" points="297,284 317,278 326,280 325,302 330,310 347,317 355,326 352,337 357,347 354,363 359,367 363,381 378,395 362,403 334,407 325,393 312,399 297,398 285,386 292,377 301,351 300,342 311,336 318,325 312,316 295,318 290,305 281,303 288,291"/>
+<text class="lbl fs9" id="l-petersberg" x="323" y="336">Peters-<tspan x="323" dy="10">berg</tspan></text>
+
+<!-- idx 19: Künzell -->
+<polygon class="gem" id="g-kuenzell" onclick="klick('Künzell',this)" points="290,413 303,399 312,400 324,394 330,397 330,403 334,407 363,403 363,409 355,420 355,426 362,435 357,446 364,450 368,457 383,455 389,445 399,446 415,461 418,469 408,475 380,478 369,472 360,478 344,478 327,459 314,462 305,456 294,454 297,444 307,437 302,424 289,420"/>
+<text class="lbl fs9" id="l-kuenzell" x="348" y="438">Künzell</text>
+
+<!-- idx 20: Rasdorf -->
+<polygon class="gem" id="g-rasdorf" onclick="klick('Rasdorf',this)" points="505,100 510,116 509,129 502,146 485,174 488,185 486,196 463,215 461,222 458,222 451,214 448,202 449,188 432,171 433,162 438,150 453,142 454,139 450,139 449,134 456,122 465,116 491,111 502,99"/>
+<text class="lbl fs9" id="l-rasdorf" x="472" y="162">Rasdorf</text>
+
+<!-- idx 21: Dipperz -->
+<polygon class="gem" id="g-dipperz" onclick="klick('Dipperz',this)" points="362,374 378,371 391,388 424,407 430,407 432,399 438,397 439,413 449,418 451,430 448,434 427,435 428,443 433,448 416,459 410,457 399,446 389,444 382,455 369,457 358,445 363,435 355,422 363,411 364,404 378,395 364,382"/>
+<text class="lbl fs9" id="l-dipperz" x="403" y="421">Dipperz</text>
+
+<!-- idx 22: Bad Salzschlirf -->
+<polygon class="gem" id="g-bad-salzschlirf" onclick="klick('Bad Salzschlirf',this)" points="74,243 77,239 87,242 110,272 140,271 153,283 96,321 95,309 76,287 75,278 82,252"/>
+<text class="lbl fs9" id="l-bad-salzschlirf" x="108" y="280">Bad<tspan x="108" dy="10">Salzschl.</tspan></text>
+
+</svg>
+</div>
+
+<div id="status-bar" style="margin-top:8px;display:flex;align-items:center;gap:10px;font-family:sans-serif;font-size:13px;color:var(--color-text-secondary,#666)">
+  <span id="status-text">Gemeinde anklicken zum Filtern</span>
+  <button id="reset-btn" onclick="resetFilter()" style="display:none;padding:4px 12px;background:#c0152a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500">× Zurücksetzen</button>
+</div>
+
+<script>
+(function(){
+  var canvas = document.getElementById('bg-canvas');
+  var ctx = canvas.getContext('2d');
+  var img = new Image();
+  img.onload = function(){
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    ctx.drawImage(img, 0, 0);
+  };
+  img.src = 'karte-landkreis.png';
+
+  var aktiv = null;
+
+  window.klick = function(name, el){
+    if(aktiv){
+      var prev = document.querySelector('.gem.aktiv');
+      var prevL = document.querySelector('.lbl.aktiv');
+      if(prev) prev.classList.remove('aktiv');
+      if(prevL) prevL.classList.remove('aktiv');
+    }
+    el.classList.add('aktiv');
+    var lid = 'l-' + el.id.replace('g-','');
+    var lbl = document.getElementById(lid);
+    if(lbl) lbl.classList.add('aktiv');
+    aktiv = name;
+    document.getElementById('status-text').textContent = '📍 ' + name;
+    document.getElementById('reset-btn').style.display = 'inline-block';
+    if(typeof filterSetzen === 'function') filterSetzen('ort', name);
+  };
+
+  window.resetFilter = function(){
+    var prev = document.querySelector('.gem.aktiv');
+    var prevL = document.querySelector('.lbl.aktiv');
+    if(prev) prev.classList.remove('aktiv');
+    if(prevL) prevL.classList.remove('aktiv');
+    aktiv = null;
+    document.getElementById('status-text').textContent = 'Gemeinde anklicken zum Filtern';
+    document.getElementById('reset-btn').style.display = 'none';
+    if(typeof filterSetzen === 'function') filterSetzen('ort', '');
+  };
+})();
+</script>
+</div>
