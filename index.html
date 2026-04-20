@@ -779,6 +779,9 @@ document.addEventListener('DOMContentLoaded', function() {
           .lbl{pointer-events:none;text-anchor:middle;dominant-baseline:central;font-family:Georgia,serif;font-weight:700;fill:#1a1a1a;paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round}
           .lbl.aktiv{fill:#fff;stroke:#c0152a;stroke-width:2}
           .fs13{font-size:13px}.fs11{font-size:11px}.fs9{font-size:9px}
+          .k-badge{text-anchor:middle;dominant-baseline:central;font-family:system-ui,sans-serif;font-size:8px;font-weight:700;fill:#c0152a;paint-order:stroke;stroke:#fff;stroke-width:2.5;stroke-linejoin:round;pointer-events:none}
+          .gem.hat-neu{fill:rgba(192,21,42,0.13)}
+          .gem.hat-neu:hover{fill:rgba(192,21,42,0.38)}
         </style></defs>
         <polygon class="gem" id="g-huenfeld" onclick="karteKlick('hünfeld',this)" points="438,150 432,169 424,175 423,185 419,188 415,200 419,205 416,213 419,224 411,234 415,244 392,263 382,277 382,286 392,296 392,302 369,308 362,325 355,325 345,314 328,307 325,300 327,284 325,279 316,278 296,284 290,289 274,282 254,285 233,283 223,248 235,225 240,208 252,208 262,215 279,214 299,227 302,218 320,213 344,192 347,183 340,172 346,158 353,152 355,146 376,137 384,125 393,124 394,132 401,132 416,145 432,146"/>
         <text class="lbl fs13" id="l-huenfeld" x="351" y="225">Hünfeld</text>
@@ -1448,6 +1451,7 @@ function artikelAnzeigen() {
   gefiltert.slice(0, PRO_SEITE).forEach((a, i) => grid.appendChild(karteErstellen(a, i)));
   gezeigt = Math.min(PRO_SEITE, gefiltert.length);
   document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
+  karteZahlenAktualisieren();
 }
 
 function mehrLaden() {
@@ -1653,6 +1657,7 @@ function karteAktivSynchro() {
     document.getElementById('karte-status-text').textContent = 'Gemeinde anklicken';
     document.getElementById('karte-reset-btn').style.display = 'none';
   }
+  karteZahlenAktualisieren();
 }
 
 function karteKlick(ort, el) {
@@ -1668,6 +1673,60 @@ function karteReset() {
   if (lkChip) ortWaehlen(lkChip, 'landkreis-fulda');
 }
 
+function karteZahlenAktualisieren() {
+  const overlay = document.getElementById('karte-overlay');
+  if (!overlay) return;
+  overlay.querySelectorAll('.k-badge').forEach(b => b.remove());
+  overlay.querySelectorAll('.gem.hat-neu').forEach(g => g.classList.remove('hat-neu'));
+  const jetzt = Date.now();
+  const NS = 'http://www.w3.org/2000/svg';
+  const gross = document.getElementById('karte-panel').classList.contains('gross');
+  const FONT = gross ? 26 : 8;
+  const ICON = gross ? 34 : 11;
+  const YOFF = gross ? 20 : 7;
+  for (const [ort, svgId] of Object.entries(KARTE_ORT_ID)) {
+    const anzahl = alleArtikel.filter(a => {
+      const d = new Date((a.datum || '').replace(' ', 'T'));
+      if ((jetzt - d) >= 86400000) return false;
+      const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
+      const ortsteile = GEMEINDE_ORTSTEILE[ort] || [];
+      return ortMatch(text, ort) || ortsteile.some(o => ortMatch(text, o));
+    }).length;
+    if (anzahl === 0) continue;
+    const lbl = document.getElementById('l-' + svgId);
+    const gem = document.getElementById('g-' + svgId);
+    if (gem) gem.classList.add('hat-neu');
+    if (!lbl) continue;
+    try {
+      const bb = lbl.getBBox();
+      const cx = bb.x + bb.width / 2;
+      const by = bb.y + bb.height + YOFF;
+      // Text badge
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('class', 'k-badge');
+      t.setAttribute('font-size', FONT);
+      t.setAttribute('stroke-width', gross ? 4 : 2.5);
+      t.setAttribute('x', cx);
+      t.setAttribute('y', by);
+      t.textContent = '+' + anzahl + ' neu';
+      overlay.appendChild(t);
+      // Wappen left of text
+      const wappenKey = Object.keys(WAPPEN).find(k => k.toLowerCase() === ort);
+      if (wappenKey) {
+        const tbb = t.getBBox();
+        const img = document.createElementNS(NS, 'image');
+        img.setAttribute('class', 'k-badge');
+        img.setAttribute('href', `Design/Wappen/${wappenKey}.png`);
+        img.setAttribute('x', tbb.x - ICON - 3);
+        img.setAttribute('y', by - ICON / 2);
+        img.setAttribute('width', ICON);
+        img.setAttribute('height', ICON);
+        overlay.appendChild(img);
+      }
+    } catch(e) {}
+  }
+}
+
 function karteToggle() {
   const panel = document.getElementById('karte-panel');
   const btn = document.getElementById('karte-toggle-btn');
@@ -1675,6 +1734,7 @@ function karteToggle() {
   const gross = panel.classList.toggle('gross');
   btn.textContent = gross ? '− Verkleinern' : '+ Vergrößern';
   info.style.display = gross ? 'block' : 'none';
+  if (gross) karteZahlenAktualisieren();
 }
 
 (function karteInit() {
