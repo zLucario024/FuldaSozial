@@ -651,12 +651,11 @@ document.addEventListener('DOMContentLoaded', function() {
   .filter-hoofdspalte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.2rem; }
   .filter-hauptspalte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.2rem; }
   #karte-spalte { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-self: flex-start; width: 170px; }
-  #karte-svg-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); position: relative; background: #eee9df; cursor: pointer; }
+  #karte-svg-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); position: relative; background: #fff; cursor: pointer; }
   #karte-vergrossern-btn { position: absolute; top: 5px; right: 5px; z-index: 9; background: rgba(255,255,255,.85); border: 1px solid var(--border); border-radius: 5px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; }
   #karte-vergrossern-btn:hover { background: #fff; }
-  .lk-outline { fill: #ddd5c3; stroke: #b0a490; stroke-width: 1.5; stroke-linejoin: round; }
   .kg-dot { fill: var(--rot, #cc2229); transition: fill .12s; }
-  .kg-txt { font-family: system-ui, sans-serif; font-size: 8px; fill: #333; paint-order: stroke fill; stroke: rgba(221,213,195,.95); stroke-width: 3; stroke-linejoin: round; pointer-events: none; }
+  .kg-txt { font-family: system-ui, sans-serif; font-size: 8px; fill: #333; paint-order: stroke fill; stroke: rgba(255,255,255,.9); stroke-width: 3; stroke-linejoin: round; pointer-events: none; }
   .kg-label { cursor: pointer; }
   .kg-label:hover .kg-dot { fill: #a01920; }
   .kg-label:hover .kg-txt { fill: var(--rot, #cc2229); }
@@ -1813,12 +1812,9 @@ function karteSvgErstellen() {
       `<text class="kg-txt" x="${tx}" y="${ty}" text-anchor="${anchor}">${label}</text>` +
       `</g>`;
   }).join('');
-  // Boundary retraced from AI-generated reference map (clockwise, viewBox 240×290)
-  // Burghaun NW protrusion, Eiterfeld top-center, Rasdorf top-right, Tann east, saddle at y77
-  const outline = `M59 91 L59 63 L68 42 L83 35 L99 42 L108 56 L111 77 L121 56 L133 35 L146 14 L158 5 L171 5 L187 19 L193 35 L190 42 L202 35 L211 14 L220 21 L220 42 L212 70 L207 77 L212 84 L221 84 L229 91 L232 112 L229 133 L226 161 L229 189 L229 210 L226 231 L217 245 L204 259 L195 259 L186 252 L176 245 L167 252 L161 245 L149 238 L143 245 L131 238 L127 252 L121 252 L115 259 L106 273 L97 280 L84 280 L69 273 L60 259 L47 238 L38 210 L35 175 L38 150 L44 129 L50 112Z`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 290" width="100%" height="100%">` +
-    `<rect width="240" height="290" fill="#f0ece6"/>` +
-    `<path class="lk-outline" d="${outline}"/>` +
+    `<rect width="240" height="290" fill="#fff"/>` +
+    `<image href="Design/karte_lk.png" x="0" y="0" width="240" height="290" preserveAspectRatio="xMidYMid meet"/>` +
     markerElems +
     `</svg>`;
 }
