@@ -651,14 +651,19 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- Karte -->
 <style>
-  #karte-panel { flex-shrink: 0; width: 140px; transition: width .3s ease; }
-  #karte-panel.gross { width: 520px; }
+  #karte-panel { flex-shrink: 0; }
+  #karte-map-col { width: 140px; transition: width .3s ease; }
+  #karte-panel.gross #karte-map-col { width: 520px; }
   #karte-wrap { position: relative; width: 100%; padding-bottom: 104.9%; border-radius: 8px; overflow: hidden; }
   #karte-wrap canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-wrap svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-status { margin-top: 5px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--grau-mittel); flex-wrap: wrap; }
   #karte-reset-btn { display: none; padding: 1px 8px; background: var(--rot); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 500; }
   #karte-toggle-btn { padding: 1px 8px; background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 10px; color: var(--grau-mittel); }
+  #karte-info { display: none; margin-top: 1rem; background: #f2f2f2; border-radius: 8px; padding: 12px 14px; }
+  #karte-info p { margin: 0 0 10px; font-size: 12px; color: var(--grau-dunkel); line-height: 1.6; }
+  #karte-info button { padding: 3px 14px; background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--grau-mittel); }
+  #karte-info button:hover { border-color: var(--rot); color: var(--rot); }
 </style>
 </head>
 
@@ -757,8 +762,13 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="subheader">
     <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
     <p>Aktuelle Nachrichten aus Landkreis Fulda, den dazugehörigen Gemeinden und der Stadt – automatisch gesammelt, chronologisch sortiert. Keine Cookies</p>
+    <div id="karte-info">
+      <p>Auf dieser Karte können Sie die Gemeinde auswählen, für die Sie sich interessieren.</p>
+      <button onclick="karteReset()">Filter zurücksetzen</button>
+    </div>
   </div>
   <div id="karte-panel">
+    <div id="karte-map-col">
     <div id="karte-wrap">
       <canvas id="karte-canvas"></canvas>
       <svg id="karte-overlay" viewBox="0 0 680 714" xmlns="http://www.w3.org/2000/svg">
@@ -822,9 +832,9 @@ document.addEventListener('DOMContentLoaded', function() {
       <button id="karte-toggle-btn" onclick="karteToggle()">&#43; Vergrößern</button>
       <button id="karte-reset-btn" onclick="karteReset()">× Zurück</button>
     </div>
+    </div>
   </div>
 </div>
-
 <!-- Navigation Menü -->
 <div id="nav-menu" class="nav-menu">
   <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
@@ -1661,8 +1671,10 @@ function karteReset() {
 function karteToggle() {
   const panel = document.getElementById('karte-panel');
   const btn = document.getElementById('karte-toggle-btn');
+  const info = document.getElementById('karte-info');
   const gross = panel.classList.toggle('gross');
   btn.textContent = gross ? '− Verkleinern' : '+ Vergrößern';
+  info.style.display = gross ? 'block' : 'none';
 }
 
 (function karteInit() {
