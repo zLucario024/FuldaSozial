@@ -196,6 +196,9 @@ Fulda Nachrichten">
 
   .filter-bereich { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.2rem; }
   .filter-gruppe { display: flex; flex-direction: column; gap: .6rem; }
+  #kategorie-gruppe { margin-top: .8rem; }
+  #quelle-gruppe { margin-top: .8rem; }
+  #zeitraum-gruppe { margin-top: .8rem; }
   .filter-label { font-size: .7rem; font-weight: 600; letter-spacing: .12em; color: var(--rot); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
   .filter-label svg { width: 13px; height: 13px; stroke: var(--rot); fill: none; }
   .chip-reihe { display: flex; flex-wrap: wrap; gap: .4rem; }
@@ -646,42 +649,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-<!-- Karte -->
-<style>
-  #karte-spalte { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-self: flex-start; width: 170px; }
-  #karte-img-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); position: relative; background: #eee9df; }
-  #karte-img { width: 100%; height: auto; display: block; }
-  #karte-btns { position: absolute; inset: 0; }
-  .karte-btn {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    background: rgba(255,255,255,0.82);
-    border: 1px solid rgba(0,0,0,0.18);
-    border-radius: 4px;
-    padding: 1px 5px;
-    font-size: 9px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    line-height: 1.5;
-    transition: background .12s, color .12s, border-color .12s;
-    font-family: system-ui, sans-serif;
-  }
-  .karte-btn:hover { background: var(--rot, #cc2229); color: #fff; border-color: var(--rot, #cc2229); }
-  .karte-btn.aktiv { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
-  .karte-btn--stadt { font-size: 11px; padding: 2px 7px; }
-  #karte-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 10000; align-items: center; justify-content: center; }
-  #karte-modal.offen { display: flex; }
-  #karte-modal-inner { background: #fff; border-radius: 14px; overflow: hidden; width: 92vw; max-width: 500px; max-height: 90vh; position: relative; display: flex; flex-direction: column; }
-  #karte-modal-header { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  #karte-modal-header span { font-weight: 600; font-size: 14px; }
-  #karte-modal-schliessen { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1; }
-  #karte-modal-body { position: relative; flex: 1; overflow: hidden; }
-  #karte-modal-body img { width: 100%; height: auto; display: block; }
-  #karte-modal-btns { position: absolute; inset: 0; }
-  #karte-modal-btns .karte-btn { font-size: 11px; padding: 2px 7px; }
-  #karte-modal-btns .karte-btn--stadt { font-size: 13px; padding: 3px 10px; }
-</style>
 </head>
 
 
@@ -780,13 +747,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <h1>Ihre Nachrichten aus <em>Fulda</em> und der Region</h1>
     <p>Aktuelle Nachrichten aus Landkreis Fulda, den dazugehörigen Gemeinden und der Stadt – automatisch gesammelt, chronologisch sortiert. Keine Cookies</p>
   </div>
-  <div id="karte-spalte">
-    <div id="karte-img-wrap">
-      <img id="karte-img" src="Design/karte_lk.png" alt="Landkreis Fulda" draggable="false">
-      <div id="karte-btns"></div>
-      <button id="karte-vergrossern-btn" onclick="karteModalOeffnen()" style="position:absolute;top:5px;right:5px;z-index:9;background:rgba(255,255,255,.85);border:1px solid var(--border);border-radius:5px;padding:2px 5px;font-size:12px;cursor:pointer;line-height:1;">⤢</button>
-    </div>
-  </div>
 </div>
 
 <!-- Navigation Menü -->
@@ -876,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <!-- KATEGORIE -->
-  <div class="filter-gruppe">
+  <div class="filter-gruppe" id="kategorie-gruppe">
     <div class="filter-label">
       <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
       Kategorie
@@ -1783,79 +1743,6 @@ if (new URLSearchParams(window.location.search).has('quelle')) _sectionOeffnen('
 quellenLaden();
 artikelLaden();
 
-// ── BILD-KARTE ──
-// Koordinaten in % (left, top) relativ zum Kartenbild 240×290
-const KARTE_GEMEINDEN = [
-  { ort: 'fulda',           label: 'Fulda',           left: 49.6, top: 56.6, stadt: true  },
-  { ort: 'hünfeld',         label: 'Hünfeld',          left: 60.8, top: 26.6              },
-  { ort: 'künzell',         label: 'Künzell',          left: 48.3, top: 62.8              },
-  { ort: 'petersberg',      label: 'Petersberg',       left: 59.2, top: 55.9              },
-  { ort: 'neuhof',          label: 'Neuhof',           left: 41.3, top: 80.0              },
-  { ort: 'eichenzell',      label: 'Eichenzell',       left: 51.7, top: 74.1              },
-  { ort: 'flieden',         label: 'Flieden',          left: 36.3, top: 88.6              },
-  { ort: 'burghaun',        label: 'Burghaun',         left: 43.8, top: 33.4              },
-  { ort: 'großenlüder',     label: 'Gr.Lüder',         left: 30.0, top: 51.4              },
-  { ort: 'hilders',         label: 'Hilders',          left: 82.5, top: 75.2              },
-  { ort: 'hofbieber',       label: 'Hofbieber',        left: 70.0, top: 69.3              },
-  { ort: 'gersfeld',        label: 'Gersfeld',         left: 80.0, top: 83.4              },
-  { ort: 'tann',            label: 'Tann',             left: 92.9, top: 37.9              },
-  { ort: 'eiterfeld',       label: 'Eiterfeld',        left: 71.3, top: 16.9              },
-  { ort: 'rasdorf',         label: 'Rasdorf',          left: 83.8, top: 14.1              },
-  { ort: 'dipperz',         label: 'Dipperz',          left: 54.2, top: 68.3              },
-  { ort: 'ebersburg',       label: 'Ebersburg',        left: 67.1, top: 77.2              },
-  { ort: 'ehrenberg',       label: 'Ehrenberg',        left: 91.3, top: 67.9              },
-  { ort: 'hosenfeld',       label: 'Hosenfeld',        left: 32.9, top: 48.3              },
-  { ort: 'kalbach',         label: 'Kalbach',          left: 47.5, top: 90.7              },
-  { ort: 'nüsttal',         label: 'Nüsttal',          left: 75.0, top: 36.2              },
-  { ort: 'poppenhausen',    label: 'Poppenhausen',     left: 75.8, top: 77.6              },
-  { ort: 'bad salzschlirf', label: 'B.Salzschlirf',    left:  8.8, top: 54.5              },
-];
-
-function karteBtnErstellen(cfg, containerId) {
-  const btn = document.createElement('button');
-  btn.className = 'karte-btn' + (cfg.stadt ? ' karte-btn--stadt' : '') + (aktivOrt === cfg.ort ? ' aktiv' : '');
-  btn.textContent = cfg.label;
-  btn.style.left = cfg.left + '%';
-  btn.style.top  = cfg.top  + '%';
-  btn.dataset.ort = cfg.ort;
-  btn.addEventListener('click', () => karteKlicken(cfg.ort));
-  return btn;
-}
-
-function karteAufbauen() {
-  const wrap = document.getElementById('karte-btns');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  KARTE_GEMEINDEN.forEach(cfg => wrap.appendChild(karteBtnErstellen(cfg, 'karte-btns')));
-}
-
-function karteKlicken(ort) {
-  const chip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
-    .find(c => (c.getAttribute('onclick') || '').includes(`'${ort}'`));
-  if (chip) ortWaehlen(chip, ort);
-  else { aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); }
-  karteAktivSynchro();
-}
-
-function karteAktivSynchro() {
-  document.querySelectorAll('.karte-btn').forEach(btn => {
-    btn.classList.toggle('aktiv', btn.dataset.ort === aktivOrt);
-  });
-}
-
-function karteModalOeffnen() {
-  document.getElementById('karte-modal').classList.add('offen');
-  const wrap = document.getElementById('karte-modal-btns');
-  wrap.innerHTML = '';
-  KARTE_GEMEINDEN.forEach(cfg => wrap.appendChild(karteBtnErstellen(cfg, 'karte-modal-btns')));
-}
-
-function karteModalSchliessen(e) {
-  if (e && e.target !== document.getElementById('karte-modal')) return;
-  document.getElementById('karte-modal').classList.remove('offen');
-}
-
-karteAufbauen();
 </script>
 
 <footer>
@@ -1868,19 +1755,6 @@ karteAufbauen();
   </div>
 </footer>
 
-<!-- KARTE MODAL -->
-<div id="karte-modal" onclick="karteModalSchliessen(event)">
-  <div id="karte-modal-inner">
-    <div id="karte-modal-header">
-      <span>Landkreis Fulda – Gemeindekarte</span>
-      <button id="karte-modal-schliessen" onclick="karteModalSchliessen()">✕</button>
-    </div>
-    <div id="karte-modal-body">
-      <img src="Design/karte_lk.png" alt="Landkreis Fulda" draggable="false">
-      <div id="karte-modal-btns"></div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
