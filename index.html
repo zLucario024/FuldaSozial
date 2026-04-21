@@ -692,6 +692,22 @@ document.addEventListener('DOMContentLoaded', function() {
     #karte-mobil-sheet { border-radius:14px; max-width:560px; max-height:82vh; transform:scale(.93); opacity:0; transition:transform .25s ease,opacity .25s ease; }
     #karte-mobil-modal.aktiv #karte-mobil-sheet { transform:scale(1); opacity:1; }
   }
+  /* Stadtteile drill-down */
+  #fulda-canvas { display:none; }
+  #fulda-overlay { display:none; width:100%; height:100%; position:absolute; top:0; left:0; }
+  #karte-panel.fulda-drill #karte-canvas { display:none; }
+  #karte-panel.fulda-drill #karte-overlay { display:none; }
+  #karte-panel.fulda-drill #fulda-canvas { display:block; }
+  #karte-panel.fulda-drill #fulda-overlay { display:block; }
+  #karte-back-btn { display:none; padding:1px 8px; background:none; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:10px; color:var(--grau-mittel); }
+  #karte-back-btn:hover { border-color:var(--rot); color:var(--rot); }
+  #karte-panel.fulda-drill #karte-back-btn { display:inline-flex; align-items:center; gap:3px; }
+  #karte-panel.gross #g-fulda { cursor:pointer; }
+  #fulda-prompt { display:none; position:absolute; left:35%; top:52%; transform:translate(-50%,10px); background:var(--weiss); border:1px solid var(--border); border-radius:10px; box-shadow:0 3px 16px rgba(0,0,0,0.18); padding:6px 8px; z-index:20; white-space:nowrap; }
+  #fulda-prompt button { background:var(--rot); color:#fff; border:none; border-radius:7px; padding:5px 12px; cursor:pointer; font-size:11px; font-weight:700; font-family:var(--font-body); display:flex; align-items:center; gap:5px; }
+  #fulda-prompt button:hover { opacity:.88; }
+  #fulda-prompt::after { content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--border); }
+  #fulda-prompt::before { content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--weiss); z-index:1; }
 </style>
 </head>
 
@@ -813,6 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="karte-map-col">
     <div id="karte-wrap">
       <canvas id="karte-canvas"></canvas>
+      <canvas id="fulda-canvas"></canvas>
       <svg id="karte-overlay" viewBox="0 0 680 714" xmlns="http://www.w3.org/2000/svg">
         <defs><style>
           .gem{fill:rgba(180,160,140,0);stroke:#555;stroke-width:1;cursor:pointer;transition:fill .15s,stroke .15s}
@@ -872,9 +889,97 @@ document.addEventListener('DOMContentLoaded', function() {
         <polygon class="gem" id="g-bad-salzschlirf" onclick="karteKlick('bad salzschlirf',this)" points="74,243 77,239 87,242 110,272 140,271 153,283 96,321 95,309 76,287 75,278 82,252"/>
         <text class="lbl fs9" id="l-bad-salzschlirf" x="108" y="280">Bad<tspan x="108" dy="10">Salzschl.</tspan></text>
       </svg>
+      <svg id="fulda-overlay" viewBox="0 0 680 745" xmlns="http://www.w3.org/2000/svg">
+        <defs><style>
+          .gem{fill:rgba(180,160,140,0);stroke:#555;stroke-width:0.8;cursor:pointer;transition:fill .15s,stroke .15s}
+          .gem:hover{fill:rgba(192,21,42,0.35);stroke:#c0152a;stroke-width:1.5}
+          .gem.aktiv{fill:rgba(192,21,42,0.45);stroke:#c0152a;stroke-width:2}
+          .lbl{pointer-events:none;text-anchor:middle;dominant-baseline:central;font-family:Georgia,serif;font-weight:700;fill:#1a1a1a;paint-order:stroke;stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+          .lbl.aktiv{fill:#fff;stroke:#c0152a;stroke-width:2}
+          .fs12{font-size:12px}.fs10{font-size:10px}.fs8{font-size:8px}
+          .k-badge{text-anchor:middle;dominant-baseline:central;font-family:system-ui,sans-serif;font-size:8px;font-weight:700;fill:#c0152a;paint-order:stroke;stroke:#fff;stroke-width:2.5;stroke-linejoin:round;pointer-events:none}
+          .gem.hat-neu{fill:var(--neu-fill,rgba(192,21,42,0.13))}
+          .gem.hat-neu:hover{fill:var(--neu-hover,rgba(192,21,42,0.38))}
+        </style></defs>
+        <polygon class="gem" id="g-kämmerzell" onclick="stadtteileKlick('kämmerzell',this)" points="422,7 426,35 446,88 439,154 340,226 265,231 251,223 232,205 220,176 263,155 292,148 337,41 345,12"/>
+        <text class="lbl fs12" id="l-kämmerzell" x="329" y="130">Kämmerzell</text>
+        <polygon class="gem" id="g-maberzell" onclick="stadtteileKlick('maberzell',this)" points="214,178 220,184 229,208 247,226 259,233 274,234 267,246 272,260 271,294 273,320 277,327 286,330 298,356 299,366 310,376 298,401 297,415 282,415 280,423 265,438 256,441 231,442 204,433 184,420 180,409 156,394 169,379 170,367 164,363 177,350 179,336 176,333 183,319 182,277 176,271 181,258 169,250 174,240 172,228 183,211 179,188"/>
+        <text class="lbl fs12" id="l-maberzell" x="225" y="320">Maberzell</text>
+        <polygon class="gem" id="g-dietershan" onclick="stadtteileKlick('dietershan',this)" points="426,7 451,6 455,14 486,33 497,47 511,56 507,67 508,97 511,102 520,100 522,116 537,127 539,132 549,132 556,126 580,138 567,184 557,199 555,222 541,246 537,266 473,214 459,199 447,178 441,145 449,111 449,84 429,32"/>
+        <text class="lbl fs10" id="l-dietershan" x="502" y="120">Dietershan</text>
+        <polygon class="gem" id="g-niesig" onclick="stadtteileKlick('niesig',this)" points="439,159 443,178 451,194 471,220 489,234 484,273 483,292 479,290 479,298 471,308 460,333 445,331 427,336 423,342 408,328 411,323 408,300 401,297 393,303 383,290 383,285 380,287 363,263 344,263 342,246 335,231 354,224 363,215 375,208 383,198 409,183 425,168 428,170 428,167"/>
+        <text class="lbl fs10" id="l-niesig" x="418" y="258">Niesig</text>
+        <polygon class="gem" id="g-lüdermünd" onclick="stadtteileKlick('lüdermünd',this)" points="340,10 335,36 305,109 296,123 290,143 281,148 258,153 222,172 177,183 178,173 188,156 186,149 176,144 180,132 180,119 190,117 191,102 199,90 199,81 210,77 219,81 225,77 226,69 233,63 264,47 277,46 300,13"/>
+        <text class="lbl fs10" id="l-lüdermünd" x="234" y="104">Lüdermünd</text>
+        <polygon class="gem" id="g-bronnzell" onclick="stadtteileKlick('bronnzell',this)" points="529,675 523,685 493,682 492,699 487,699 474,690 461,685 455,736 447,741 441,736 441,729 433,728 426,721 419,704 409,696 404,696 396,720 378,719 369,739 355,739 358,721 350,711 356,704 359,688 393,659 391,638 381,626 388,618 418,605 423,607 424,625 443,628 447,621 454,624 463,634 468,637 468,654 483,656 513,647 523,673"/>
+        <text class="lbl fs10" id="l-bronnzell" x="433" y="685">Bronnzell</text>
+        <polygon class="gem" id="g-westend" onclick="stadtteileKlick('westend',this)" points="286,418 315,419 357,409 369,419 377,434 377,455 384,473 393,472 412,479 397,493 393,538 372,543 356,554 348,539 348,530 337,528 345,522 348,514 342,511 342,507 324,488 357,487 357,478 351,481 312,478 313,487 322,488 309,498 264,502 275,487 281,486 276,474 281,466 270,450 262,453 257,445 269,441 282,428"/>
+        <text class="lbl fs10" id="l-westend" x="330" y="468">Westend</text>
+        <polygon class="gem" id="g-südend" onclick="stadtteileKlick('südend',this)" points="513,509 506,517 506,535 481,574 458,573 447,557 422,563 428,578 412,579 409,563 415,548 406,543 404,537 397,536 400,496 415,479 419,480 423,493 427,494 433,482 440,479 440,472 447,469 479,479 494,488 502,501"/>
+        <text class="lbl fs10" id="l-südend" x="448" y="530">Südend</text>
+        <polygon class="gem" id="g-zirkenbach" onclick="stadtteileKlick('zirkenbach',this)" points="257,572 274,586 294,592 279,609 275,620 266,621 265,629 272,630 273,634 262,639 263,645 272,661 281,658 282,665 271,677 242,726 235,723 228,708 215,696 201,688 192,689 193,685 202,680 202,674 193,674 187,669 185,662 190,651 220,610 217,599 247,582"/>
+        <text class="lbl fs8" id="l-zirkenbach" x="237" y="640">Zirken-<tspan x="237" dy="10">bach</tspan></text>
+        <polygon class="gem" id="g-haimbach" onclick="stadtteileKlick('haimbach',this)" points="193,432 228,445 252,445 259,457 268,455 276,466 272,469 276,482 264,492 260,503 266,507 277,506 277,513 247,544 233,521 211,521 201,505 188,507 167,495 167,460 176,455"/>
+        <text class="lbl fs8" id="l-haimbach" x="227" y="484">Haimbach</text>
+        <polygon class="gem" id="g-harmerz" onclick="stadtteileKlick('harmerz',this)" points="388,639 389,658 356,682 353,701 339,719 323,720 313,710 279,725 263,722 254,728 249,727 274,680 285,669 285,661 292,656 313,653 324,642 327,629 342,624 361,634 373,626"/>
+        <text class="lbl fs8" id="l-harmerz" x="318" y="682">Harmerz</text>
+        <polygon class="gem" id="g-edelzell" onclick="stadtteileKlick('edelzell',this)" points="536,547 553,564 547,576 574,594 572,609 561,622 523,622 515,626 515,635 508,645 494,646 480,653 472,651 473,634 464,630 454,619 468,597 476,597 476,589 508,541 519,551"/>
+        <text class="lbl fs8" id="l-edelzell" x="511" y="602">Edelzell</text>
+        <polygon class="gem" id="g-maikes" onclick="stadtteileKlick('maikes',this)" points="130,388 141,410 144,434 128,434 105,427 99,435 99,443 70,441 70,450 105,450 105,446 108,447 104,461 105,485 98,501 79,502 69,490 68,479 59,466 52,469 30,455 57,407 68,409 71,404 81,406 87,401 95,402 103,392 118,392"/>
+        <text class="lbl fs8" id="l-maikes" x="88" y="447">Maikes</text>
+        <polygon class="gem" id="g-niederrode" onclick="stadtteileKlick('niederrode',this)" points="231,525 254,569 199,609 181,613 180,608 185,605 185,601 180,597 183,589 177,583 163,584 161,575 152,572 168,541 185,541 185,534 175,528 180,518 199,525"/>
+        <text class="lbl fs8" id="l-niederrode" x="190" y="566">Nieder-<tspan x="190" dy="10">rode</tspan></text>
+        <polygon class="gem" id="g-aschenberg" onclick="stadtteileKlick('aschenberg',this)" points="345,266 360,266 390,306 402,301 407,306 407,322 404,326 406,332 388,339 380,359 364,368 327,348 316,338 303,319 313,316 322,306 345,311"/>
+        <text class="lbl fs8" id="l-aschenberg" x="362" y="320">Aschen-<tspan x="362" dy="10">berg</tspan></text>
+        <polygon class="gem" id="g-gläserzell" onclick="stadtteileKlick('gläserzell',this)" points="330,231 339,249 343,307 319,303 305,315 299,312 279,323 273,287 276,259 271,247 281,232"/>
+        <text class="lbl fs8" id="l-gläserzell" x="306" y="275">Gläser-<tspan x="306" dy="10">zell</tspan></text>
+        <polygon class="gem" id="g-horas" onclick="stadtteileKlick('horas',this)" points="300,415 302,402 314,373 302,362 302,355 287,324 298,318 318,346 347,363 320,362 320,371 324,368 324,371 337,371 337,367 338,371 348,372 351,365 356,370 368,371 383,363 392,341 409,336 417,343 404,367 396,376 396,380 380,378 380,387 385,383 385,391 391,393 391,396 385,394 383,399 362,397 345,410 316,415"/>
+        <text class="lbl fs8" id="l-horas" x="350" y="378">Horas</text>
+        <polygon class="gem" id="g-sickels" onclick="stadtteileKlick('sickels',this)" points="247,549 265,536 279,518 289,532 300,539 319,531 344,534 353,559 324,595 316,588 289,588 275,582 257,567"/>
+        <text class="lbl fs8" id="l-sickels" x="299" y="556">Sickels</text>
+        <polygon class="gem" id="g-lehnerz" onclick="stadtteileKlick('lehnerz',this)" points="493,236 537,272 532,287 532,319 521,336 524,349 521,352 510,346 500,348 495,345 492,348 492,340 462,337 472,314 484,298 521,298 519,290 487,290"/>
+        <text class="lbl fs8" id="l-lehnerz" x="506" y="305">Lehnerz</text>
+        <polygon class="gem" id="g-oberrode" onclick="stadtteileKlick('oberrode',this)" points="147,500 148,514 138,533 135,531 119,541 72,540 73,549 92,549 96,545 97,549 100,546 102,549 110,549 92,565 82,583 71,579 64,586 55,570 41,556 41,549 63,538 65,540 60,519 79,506 114,508 127,501"/>
+        <text class="lbl fs8" id="l-oberrode" x="88" y="536">Oberrode</text>
+        <polygon class="gem" id="g-innenstadt" onclick="stadtteileKlick('innenstadt',this)" points="381,433 409,423 412,427 417,427 423,423 445,423 469,453 473,462 473,474 447,465 439,466 425,489 421,476 386,468 381,454"/>
+        <text class="lbl fs8" id="l-innenstadt" x="425" y="450">Innen-<tspan x="425" dy="10">stadt</tspan></text>
+        <polygon class="gem" id="g-besges" onclick="stadtteileKlick('besges',this)" points="107,431 126,437 128,442 143,452 163,453 163,496 127,498 112,504 102,502 108,487 108,461 112,443 102,439"/>
+        <text class="lbl fs8" id="l-besges" x="133" y="467">Besges</text>
+        <polygon class="gem" id="g-istergiesel" onclick="stadtteileKlick('istergiesel',this)" points="215,604 216,607 187,648 183,669 168,671 162,677 151,677 143,673 133,673 134,666 127,665 95,674 90,679 94,672 129,648 144,649 150,646 151,650 180,648 180,640 140,640 178,616 199,613 209,605 214,607 212,604"/>
+        <text class="lbl fs8" id="l-istergiesel" x="157" y="648">Ister-<tspan x="157" dy="10">giesel</tspan></text>
+        <polygon class="gem" id="g-ziehers-nord" onclick="stadtteileKlick('ziehers-nord',this)" points="487,343 489,346 484,365 463,364 464,373 483,373 481,395 471,393 457,396 456,393 449,393 449,402 479,402 483,399 486,407 498,418 487,418 462,435 441,408 440,390 460,342 470,340 476,346"/>
+        <text class="lbl fs8" id="l-ziehers-nord" x="468" y="388">Z-Nord</text>
+        <polygon class="gem" id="g-johannesberg" onclick="stadtteileKlick('johannesberg',this)" points="417,584 417,601 385,615 377,624 371,623 359,630 344,621 324,626 324,602 335,588 401,590 402,586 404,592 409,592 410,583"/>
+        <text class="lbl fs8" id="l-johannesberg" x="371" y="606">Johannes-<tspan x="371" dy="10">berg</tspan></text>
+        <polygon class="gem" id="g-ostend" onclick="stadtteileKlick('ostend',this)" points="508,414 520,431 517,439 507,437 507,446 503,447 481,445 478,453 510,455 517,472 516,477 520,477 529,492 527,502 520,509 517,507 518,503 515,504 505,498 498,486 477,474 476,459 464,439 489,421 505,421"/>
+        <text class="lbl fs8" id="l-ostend" x="503" y="462">Ostend</text>
+        <polygon class="gem" id="g-frauenberg" onclick="stadtteileKlick('frauenberg',this)" points="442,419 420,420 415,423 413,420 403,418 399,423 380,429 374,418 360,405 366,399 382,402 388,399 394,400 396,391 391,387 431,386 436,390 436,407"/>
+        <text class="lbl fs8" id="l-frauenberg" x="405" y="406">Frauenberg</text>
+        <polygon class="gem" id="g-kohlhaus" onclick="stadtteileKlick('kohlhaus',this)" points="411,550 405,562 409,583 349,581 343,583 340,580 359,557 375,546 401,541 404,547"/>
+        <text class="lbl fs8" id="l-kohlhaus" x="378" y="563">Kohlhaus</text>
+        <polygon class="gem" id="g-fulda-galerie" onclick="stadtteileKlick('fulda-galerie',this)" points="479,578 468,591 428,588 428,597 463,598 450,616 445,615 441,624 427,621 420,589 422,583 431,581 427,565 447,561 455,577 467,575"/>
+        <text class="lbl fs8" id="l-fulda-galerie" x="447" y="593">F-Galerie</text>
+        <polygon class="gem" id="g-ziehers-süd" onclick="stadtteileKlick('ziehers-süd',this)" points="510,442 521,446 548,441 556,447 585,445 589,447 588,457 580,465 575,458 570,458 564,466 556,470 527,470 526,467 517,466 513,455 515,445 511,447"/>
+        <text class="lbl fs8" id="l-ziehers-süd" x="549" y="455">Z-Süd</text>
+        <polygon class="gem" id="g-nordend" onclick="stadtteileKlick('nordend',this)" points="456,339 439,381 417,378 401,379 421,346 426,346 431,339 446,335"/>
+        <text class="lbl fs8" id="l-nordend" x="432" y="358">Nordend</text>
+        <polygon class="gem" id="g-rodges" onclick="stadtteileKlick('rodges',this)" points="145,415 161,415 163,418 177,416 188,429 176,443 172,454 167,455 166,449 148,450 132,439 149,435"/>
+        <text class="lbl fs8" id="l-rodges" x="161" y="435">Rodges</text>
+        <polygon class="gem" id="g-bernhards" onclick="stadtteileKlick('bernhards',this)" points="580,138 605,128 640,148 650,168 638,188 618,188 603,175 580,162"/>
+        <text class="lbl fs8" id="l-bernhards" x="616" y="158">Bernhards</text>
+        <polygon class="gem" id="g-mittelrode" onclick="stadtteileKlick('mittelrode',this)" points="163,496 185,498 201,505 199,525 180,518 175,528 185,534 185,541 168,541 152,572 144,556 147,538 148,514 147,500 163,498"/>
+        <text class="lbl fs8" id="l-mittelrode" x="170" y="518">Mittel-<tspan x="170" dy="10">rode</tspan></text>
+      </svg>
+      <div id="fulda-prompt">
+        <button onclick="fuldaDrilldown()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          Stadtteile öffnen
+        </button>
+      </div>
     </div>
     <div id="karte-status">
       <span id="karte-status-text"></span>
+      <button id="karte-back-btn" onclick="fuldaZurueck()">← Landkreis</button>
       <button id="karte-toggle-btn" onclick="karteToggle()">&#43; Vergrößern</button>
       <button id="karte-reset-btn" onclick="karteReset()">× Zurück</button>
     </div>
@@ -943,8 +1048,44 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="chip" onclick="ortWaehlen(this, '')">Alle</button>
       <button class="chip" onclick="ortWaehlen(this, 'hessen')">Hessen</button>
       <button class="chip aktiv-ort" onclick="ortWaehlen(this, 'landkreis-fulda')">Landkreis Fulda</button>
-      <button class="chip" onclick="ortWaehlen(this, 'fulda')">Stadt Fulda</button>
+      <button class="chip" id="stadtteile-btn" onclick="stadtteileToggle(this)">Stadt Fulda <span id="stadtteile-chevron" style="font-size:.7em;transition:transform .2s;display:inline-block">▼</span></button>
       <button class="chip" id="gemeinden-btn" onclick="ortWaehlen(this, 'gemeinden')">Gemeinden <span id="gemeinden-chevron" style="font-size:.7em;transition:transform .2s;display:inline-block">▼</span></button>
+    </div>
+    <div class="chip-reihe" id="stadtteile-chips" style="display:none; padding-top:.3rem; padding-left:.5rem; border-left: 2px solid var(--border);">
+      <button class="chip" onclick="ortWaehlen(this,'aschenberg')">Aschenberg</button>
+      <button class="chip" onclick="ortWaehlen(this,'besges')">Besges</button>
+      <button class="chip" onclick="ortWaehlen(this,'bernhards')">Bernhards</button>
+      <button class="chip" onclick="ortWaehlen(this,'bronnzell')">Bronnzell</button>
+      <button class="chip" onclick="ortWaehlen(this,'dietershan')">Dietershan</button>
+      <button class="chip" onclick="ortWaehlen(this,'edelzell')">Edelzell</button>
+      <button class="chip" onclick="ortWaehlen(this,'frauenberg')">Frauenberg</button>
+      <button class="chip" onclick="ortWaehlen(this,'fulda-galerie')">Fulda-Galerie</button>
+      <button class="chip" onclick="ortWaehlen(this,'gläserzell')">Gläserzell</button>
+      <button class="chip" onclick="ortWaehlen(this,'haimbach')">Haimbach</button>
+      <button class="chip" onclick="ortWaehlen(this,'harmerz')">Harmerz</button>
+      <button class="chip" onclick="ortWaehlen(this,'horas')">Horas</button>
+      <button class="chip" onclick="ortWaehlen(this,'innenstadt')">Innenstadt</button>
+      <button class="chip" onclick="ortWaehlen(this,'istergiesel')">Istergiesel</button>
+      <button class="chip" onclick="ortWaehlen(this,'johannesberg')">Johannesberg</button>
+      <button class="chip" onclick="ortWaehlen(this,'kämmerzell')">Kämmerzell</button>
+      <button class="chip" onclick="ortWaehlen(this,'kohlhaus')">Kohlhaus</button>
+      <button class="chip" onclick="ortWaehlen(this,'lehnerz')">Lehnerz</button>
+      <button class="chip" onclick="ortWaehlen(this,'lüdermünd')">Lüdermünd</button>
+      <button class="chip" onclick="ortWaehlen(this,'maberzell')">Maberzell</button>
+      <button class="chip" onclick="ortWaehlen(this,'maikes')">Maikes</button>
+      <button class="chip" onclick="ortWaehlen(this,'mittelrode')">Mittelrode</button>
+      <button class="chip" onclick="ortWaehlen(this,'niederrode')">Niederrode</button>
+      <button class="chip" onclick="ortWaehlen(this,'niesig')">Niesig</button>
+      <button class="chip" onclick="ortWaehlen(this,'nordend')">Nordend</button>
+      <button class="chip" onclick="ortWaehlen(this,'oberrode')">Oberrode</button>
+      <button class="chip" onclick="ortWaehlen(this,'ostend')">Ostend</button>
+      <button class="chip" onclick="ortWaehlen(this,'rodges')">Rodges</button>
+      <button class="chip" onclick="ortWaehlen(this,'sickels')">Sickels</button>
+      <button class="chip" onclick="ortWaehlen(this,'südend')">Südend</button>
+      <button class="chip" onclick="ortWaehlen(this,'westend')">Westend</button>
+      <button class="chip" onclick="ortWaehlen(this,'ziehers-nord')">Ziehers-Nord</button>
+      <button class="chip" onclick="ortWaehlen(this,'ziehers-süd')">Ziehers-Süd</button>
+      <button class="chip" onclick="ortWaehlen(this,'zirkenbach')">Zirkenbach</button>
     </div>
     <div class="chip-reihe" id="gemeinden-chips" style="display:none; padding-top:.3rem; padding-left:.5rem; border-left: 2px solid var(--border);">
       <button class="chip" onclick="ortWaehlen(this, 'hünfeld')">Hünfeld</button>
@@ -1667,13 +1808,14 @@ function ortWaehlen(btn, ort) {
     }
     return;
   }
-  document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+  document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
-  // Gemeinden-Liste: nur Top-Level-Buttons ändern den Zustand
-  // Klick auf einen Gemeinde-Chip lässt die Liste unberührt
   if (!btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
+  }
+  if (!btn.closest('#stadtteile-chips')) {
+    _stadtteileToggle(false);
   }
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
@@ -1708,8 +1850,27 @@ function karteAktivSynchro() {
   karteZahlenAktualisieren();
 }
 
+let _fuldaPending = false;
+
 function karteKlick(ort, el) {
-  const chip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
+  if (ort === 'fulda' && document.getElementById('karte-panel').classList.contains('gross')) {
+    if (_fuldaPending) {
+      // second click → filter for Stadt Fulda
+      _fuldaPending = false;
+      fuldaPromptSchliessen();
+      const chip = [...document.querySelectorAll('#ort-chips .chip')]
+        .find(c => (c.getAttribute('onclick') || '').includes("'fulda'"));
+      if (chip) ortWaehlen(chip, 'fulda');
+      else { aktivOrt = 'fulda'; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
+    } else {
+      // first click → show prompt bubble
+      _fuldaPending = true;
+      document.getElementById('fulda-prompt').style.display = 'block';
+    }
+    return;
+  }
+  fuldaPromptSchliessen();
+  const chip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${ort}'`));
   if (chip) ortWaehlen(chip, ort);
   else { aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
@@ -1718,10 +1879,129 @@ function karteKlick(ort, el) {
   }
 }
 
+function fuldaPromptSchliessen() {
+  _fuldaPending = false;
+  document.getElementById('fulda-prompt').style.display = 'none';
+}
+
 function karteReset() {
+  document.getElementById('karte-panel').classList.remove('fulda-drill');
   const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
   if (lkChip) ortWaehlen(lkChip, 'landkreis-fulda');
+}
+
+const KARTE_STADTTEIL_ID = {
+  'kämmerzell':'kämmerzell','maberzell':'maberzell','dietershan':'dietershan',
+  'niesig':'niesig','lüdermünd':'lüdermünd','bronnzell':'bronnzell',
+  'westend':'westend','südend':'südend','zirkenbach':'zirkenbach',
+  'haimbach':'haimbach','harmerz':'harmerz','edelzell':'edelzell',
+  'maikes':'maikes','niederrode':'niederrode','aschenberg':'aschenberg',
+  'gläserzell':'gläserzell','horas':'horas','sickels':'sickels',
+  'lehnerz':'lehnerz','oberrode':'oberrode','innenstadt':'innenstadt',
+  'besges':'besges','istergiesel':'istergiesel','ziehers-nord':'ziehers-nord',
+  'johannesberg':'johannesberg','ostend':'ostend','frauenberg':'frauenberg',
+  'kohlhaus':'kohlhaus','fulda-galerie':'fulda-galerie','ziehers-süd':'ziehers-süd',
+  'nordend':'nordend','rodges':'rodges','bernhards':'bernhards','mittelrode':'mittelrode'
+};
+
+function fuldaDrilldown() {
+  fuldaPromptSchliessen();
+  document.getElementById('karte-panel').classList.add('fulda-drill');
+  stadtteileZahlenAktualisieren();
+}
+
+function fuldaZurueck() {
+  fuldaPromptSchliessen();
+  document.getElementById('karte-panel').classList.remove('fulda-drill');
+  karteZahlenAktualisieren();
+}
+
+function _stadtteileToggle(offen) {
+  const chips = document.getElementById('stadtteile-chips');
+  const chev = document.getElementById('stadtteile-chevron');
+  if (chips) chips.style.display = offen ? 'flex' : 'none';
+  if (chev) chev.style.transform = offen ? 'rotate(180deg)' : '';
+}
+
+function stadtteileToggle(btn) {
+  const offen = document.getElementById('stadtteile-chips').style.display !== 'none';
+  if (offen) {
+    // second click → close list, go back to Landkreis Fulda
+    _stadtteileToggle(false);
+    const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
+      .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
+    document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+    if (lkChip) lkChip.classList.add('aktiv-ort');
+    aktivOrt = 'landkreis-fulda';
+    urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro();
+  } else {
+    // first click → open list, filter to Stadt Fulda
+    _stadtteileToggle(true);
+    document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+    if (btn) btn.classList.add('aktiv-ort');
+    aktivOrt = 'fulda';
+    urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro();
+  }
+}
+
+function stadtteileKlick(stadtteil, el) {
+  const chip = [...document.querySelectorAll('#stadtteile-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes(`'${stadtteil}'`));
+  if (chip) ortWaehlen(chip, stadtteil);
+  else { aktivOrt = stadtteil; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
+  document.querySelectorAll('#fulda-overlay .gem.aktiv').forEach(g => g.classList.remove('aktiv'));
+  if (el) el.classList.add('aktiv');
+}
+
+function stadtteileZahlenAktualisieren() {
+  const overlay = document.getElementById('fulda-overlay');
+  if (!overlay) return;
+  overlay.querySelectorAll('.k-badge').forEach(b => b.remove());
+  overlay.querySelectorAll('.gem.hat-neu').forEach(g => {
+    g.classList.remove('hat-neu'); g.style.removeProperty('--neu-fill'); g.style.removeProperty('--neu-hover');
+  });
+  const jetzt = Date.now();
+  const NS = 'http://www.w3.org/2000/svg';
+  const gross = document.getElementById('karte-panel').classList.contains('gross');
+  const FONT = gross ? 18 : 8;
+  const YOFF = gross ? 14 : 7;
+  for (const [stadtteil, svgId] of Object.entries(KARTE_STADTTEIL_ID)) {
+    const neueArtikel = alleArtikel.filter(a => {
+      const d = new Date((a.datum || '').replace(' ', 'T'));
+      if ((jetzt - d) >= 86400000) return false;
+      const text = ((a.titel||'') + ' ' + (a.tags||'') + ' ' + (a.beschreibung||'')).toLowerCase();
+      return ortMatch(text, stadtteil);
+    });
+    if (neueArtikel.length === 0) continue;
+    const katZahl = {};
+    neueArtikel.forEach(a => { const k = kategorieBestimmen(a.titel, a.tags); katZahl[k] = (katZahl[k]||0)+1; });
+    const maxN = Math.max(...Object.values(katZahl));
+    const domKat = Object.keys(katZahl).filter(k => katZahl[k] === maxN).sort()[0];
+    const farbe = (KATEGORIEN[domKat] || {}).farbe || '#c0152a';
+    const r = parseInt(farbe.slice(1,3),16), g2 = parseInt(farbe.slice(3,5),16), b = parseInt(farbe.slice(5,7),16);
+    const gem = document.getElementById('g-' + svgId);
+    if (gem) {
+      gem.classList.add('hat-neu');
+      gem.style.setProperty('--neu-fill', `rgba(${r},${g2},${b},0.28)`);
+      gem.style.setProperty('--neu-hover', `rgba(${r},${g2},${b},0.52)`);
+    }
+    const lbl = document.getElementById('l-' + svgId);
+    if (!lbl) continue;
+    try {
+      const bb = lbl.getBBox();
+      const cx = bb.x + bb.width / 2;
+      const by2 = bb.y + bb.height + YOFF;
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('class', 'k-badge');
+      t.setAttribute('font-size', FONT);
+      t.setAttribute('stroke-width', gross ? 3 : 2.5);
+      t.setAttribute('fill', farbe);
+      t.setAttribute('x', cx); t.setAttribute('y', by2);
+      t.textContent = '+' + neueArtikel.length + ' neu';
+      overlay.appendChild(t);
+    } catch(e) {}
+  }
 }
 
 function karteZahlenAktualisieren() {
@@ -1829,8 +2109,14 @@ function karteModalSchliessen(e) {
   }, 300);
 }
 
+document.addEventListener('pointerdown', e => {
+  if (_fuldaPending && !e.target.closest('#fulda-prompt') && e.target.id !== 'g-fulda') {
+    fuldaPromptSchliessen();
+  }
+});
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') karteModalSchliessen();
+  if (e.key === 'Escape') { karteModalSchliessen(); fuldaPromptSchliessen(); }
   if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
     if (document.getElementById('feedback-modal').style.display !== 'none') feedbackAbsenden();
     else if (document.getElementById('meld-modal').style.display !== 'none') meldungAbsenden();
@@ -1844,6 +2130,15 @@ document.addEventListener('keydown', e => {
   const img = new Image();
   img.onload = function() { canvas.width = img.naturalWidth; canvas.height = img.naturalHeight; ctx.drawImage(img, 0, 0); };
   img.src = 'Design/karte-landkreis.png';
+})();
+
+(function fuldaCanvasInit() {
+  const canvas = document.getElementById('fulda-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = function() { canvas.width = img.naturalWidth; canvas.height = img.naturalHeight; ctx.drawImage(img, 0, 0); };
+  img.src = 'Design/karte-fulda-stadtteile.png';
 })();
 
 function kategorieWaehlen(btn, k) {
