@@ -652,14 +652,17 @@ document.addEventListener('DOMContentLoaded', function() {
 <style>
   #karte-panel { flex-shrink: 0; }
   #karte-map-col { width: 140px; transition: width .3s ease; }
-  #karte-panel.gross #karte-map-col { width: 740px; }
+  #karte-panel.gross #karte-map-col { width: 666px; }
   #karte-wrap { position: relative; width: 100%; padding-bottom: 104.9%; border-radius: 8px; overflow: hidden; }
   #karte-panel.fulda-drill #karte-wrap { padding-bottom: 109.6%; }
   #karte-wrap canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-wrap svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-status { margin-top: 5px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--grau-mittel); flex-wrap: wrap; }
   #karte-reset-btn { display: none; padding: 1px 8px; background: var(--rot); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 500; }
-  #karte-toggle-btn { padding: 1px 8px; background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 10px; color: var(--grau-mittel); }
+  #karte-toggle-btn { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; background:var(--rot); color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700; font-family:var(--font-body); letter-spacing:.03em; box-shadow:0 2px 8px rgba(192,21,42,0.28); transition:background .15s,box-shadow .15s,transform .1s; }
+  #karte-toggle-btn:hover { background:#a3101f; box-shadow:0 3px 12px rgba(192,21,42,0.38); }
+  #karte-toggle-btn:active { transform:scale(.96); }
+  #karte-toggle-btn svg { width:13px; height:13px; stroke:currentColor; fill:none; flex-shrink:0; }
   #karte-info { display: none; margin-top: 1rem; background: #f2f2f2; border-radius: 8px; padding: 12px 14px; }
   #karte-info p { margin: 0 0 10px; font-size: 12px; color: var(--grau-dunkel); line-height: 1.6; }
   #karte-info button { padding: 3px 14px; background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--grau-mittel); }
@@ -985,7 +988,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="karte-status">
       <span id="karte-status-text"></span>
       <button id="karte-back-btn" onclick="fuldaZurueck()">← Landkreis</button>
-      <button id="karte-toggle-btn" onclick="karteToggle()">&#43; Vergrößern</button>
+      <button id="karte-toggle-btn" onclick="karteToggle()"><svg viewBox="0 0 24 24" stroke-width="2.2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>Vergrößern</button>
       <button id="karte-reset-btn" onclick="karteReset()">× Zurück</button>
     </div>
     </div>
@@ -2128,7 +2131,9 @@ function karteToggle() {
   const btn = document.getElementById('karte-toggle-btn');
   const info = document.getElementById('karte-info');
   const gross = panel.classList.toggle('gross');
-  btn.textContent = gross ? '− Verkleinern' : '+ Vergrößern';
+  const iconExpand = '<svg viewBox="0 0 24 24" stroke-width="2.2" fill="none" stroke="currentColor" style="width:13px;height:13px;flex-shrink:0"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+  const iconShrink = '<svg viewBox="0 0 24 24" stroke-width="2.2" fill="none" stroke="currentColor" style="width:13px;height:13px;flex-shrink:0"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>';
+  btn.innerHTML = gross ? iconShrink + 'Verkleinern' : iconExpand + 'Vergrößern';
   info.style.display = gross ? 'block' : 'none';
   if (gross) karteZahlenAktualisieren();
 }
