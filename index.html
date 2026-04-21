@@ -36,17 +36,17 @@ Fulda,
 Fulda Nachrichten">
 <meta name="robots" content="index, follow">
 <meta name="author" content="RegioNachrichten Fulda">
-<link rel="canonical" href="https://fuldasozial.de">
+<link rel="canonical" href="https://www.fuldasozial.de">
 
 <!-- Open Graph -->
 <meta property="og:title" content="RegioNachrichten Fulda – Lokale Nachrichten aus Fulda und Osthessen">
 <meta property="og:description" content="Aktuelle Nachrichten aus Fulda, dem Landkreis und der Rhön – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr.">
-<meta property="og:url" content="https://fuldasozial.de">
+<meta property="og:url" content="https://www.fuldasozial.de">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="de_DE">
 <meta property="og:site_name" content="RegioNachrichten Fulda">
-<meta property="og:image" content="https://fuldasozial.de/Design/rn_logo_mini.jpg">
-<meta name="twitter:image" content="https://fuldasozial.de/Design/rn_logo_mini.jpg">
+<meta property="og:image" content="https://www.fuldasozial.de/Design/rn_logo_mini.jpg">
+<meta name="twitter:image" content="https://www.fuldasozial.de/Design/rn_logo_mini.jpg">
 
 <!-- Twitter / X Card -->
 <meta name="twitter:card" content="summary">
@@ -60,8 +60,8 @@ Fulda Nachrichten">
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://fuldasozial.de/#website",
-      "url": "https://fuldasozial.de",
+      "@id": "https://www.fuldasozial.de/#website",
+      "url": "https://www.fuldasozial.de",
       "name": "RegioNachrichten Fulda",
       "description": "Aktuelle Nachrichten aus Fulda, dem Landkreis und der Region Osthessen",
       "inLanguage": "de",
@@ -69,19 +69,19 @@ Fulda Nachrichten">
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://fuldasozial.de/?suche={search_term_string}"
+          "urlTemplate": "https://www.fuldasozial.de/?suche={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
     },
     {
       "@type": "NewsMediaOrganization",
-      "@id": "https://fuldasozial.de/#organization",
+      "@id": "https://www.fuldasozial.de/#organization",
       "name": "RegioNachrichten Fulda",
-      "url": "https://fuldasozial.de",
+      "url": "https://www.fuldasozial.de",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://fuldasozial.de/Design/rn_logo_192.jpg",
+        "url": "https://www.fuldasozial.de/Design/rn_logo_192.jpg",
         "width": 192,
         "height": 192
       },
@@ -95,7 +95,7 @@ Fulda Nachrichten">
         "Osthessen", "Rhön"
       ],
       "inLanguage": "de",
-      "publishingPrinciples": "https://fuldasozial.de/impressum.html"
+      "publishingPrinciples": "https://www.fuldasozial.de/impressum.html"
     }
   ]
 }
@@ -2309,8 +2309,21 @@ function urlAktualisieren(replace = false) {
     ? teile.join(' · ') + ' – RegioNachrichten Fulda'
     : 'RegioNachrichten Fulda – Lokale Nachrichten aus Fulda und Osthessen';
 
+  const vollUrl = 'https://www.fuldasozial.de' + neueUrl;
+
   const canonical = document.querySelector('link[rel="canonical"]');
-  if (canonical) canonical.href = 'https://fuldasozial.de' + neueUrl;
+  if (canonical) canonical.href = vollUrl;
+
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  if (ogUrl) ogUrl.content = vollUrl;
+
+  const desc = ortLabel
+    ? `Aktuelle Nachrichten aus ${ortLabel} – automatisch gesammelt aus lokalen Quellen. RegioNachrichten Fulda.`
+    : 'Aktuelle Nachrichten aus Fulda und dem Landkreis – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr.';
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.content = desc;
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.content = desc;
 }
 
 function filterAusUrlLesen() {
