@@ -1832,6 +1832,10 @@ function karteModalSchliessen(e) {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') karteModalSchliessen();
+  if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
+    if (document.getElementById('feedback-modal').style.display !== 'none') feedbackAbsenden();
+    else if (document.getElementById('meld-modal').style.display !== 'none') meldungAbsenden();
+  }
 });
 
 (function karteInit() {
