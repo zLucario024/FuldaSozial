@@ -652,8 +652,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <style>
   #karte-panel { flex-shrink: 0; }
   #karte-map-col { width: 140px; transition: width .3s ease; }
-  #karte-panel.gross #karte-map-col { width: 520px; }
+  #karte-panel.gross #karte-map-col { width: 740px; }
   #karte-wrap { position: relative; width: 100%; padding-bottom: 104.9%; border-radius: 8px; overflow: hidden; }
+  #karte-panel.fulda-drill #karte-wrap { padding-bottom: 109.6%; }
   #karte-wrap canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-wrap svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   #karte-status { margin-top: 5px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--grau-mittel); flex-wrap: wrap; }
@@ -692,6 +693,10 @@ document.addEventListener('DOMContentLoaded', function() {
     #karte-mobil-sheet { border-radius:14px; max-width:560px; max-height:82vh; transform:scale(.93); opacity:0; transition:transform .25s ease,opacity .25s ease; }
     #karte-mobil-modal.aktiv #karte-mobil-sheet { transform:scale(1); opacity:1; }
   }
+  /* Brand-new pulse dot */
+  @keyframes neu-puls { 0%{transform:scale(1);opacity:.85} 100%{transform:scale(3);opacity:0} }
+  .neu-dot { fill:#e8000e; stroke:#fff; pointer-events:none; }
+  .neu-ring { fill:none; stroke:#e8000e; opacity:.8; pointer-events:none; transform-box:fill-box; transform-origin:center; animation:neu-puls 2s ease-out infinite; }
   /* Stadtteile drill-down */
   #fulda-canvas { display:none; }
   #fulda-overlay { display:none; width:100%; height:100%; position:absolute; top:0; left:0; }
@@ -1817,6 +1822,7 @@ function ortWaehlen(btn, ort) {
   if (!btn.closest('#stadtteile-chips')) {
     _stadtteileToggle(false);
   }
+  _ortAlsGesehen(ort);
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
   karteAktivSynchro();
@@ -1848,6 +1854,48 @@ function karteAktivSynchro() {
     document.getElementById('karte-reset-btn').style.display = 'none';
   }
   karteZahlenAktualisieren();
+}
+
+// "Brand new" threshold: since last visit, capped at 12h
+const _letzerBesuch = parseInt(localStorage.getItem('letzerBesuch') || '0');
+const NEU_SEIT = Math.max(Date.now() - 12 * 3600 * 1000, _letzerBesuch);
+localStorage.setItem('letzerBesuch', Date.now());
+
+// Track which regions the user has opened (dot disappears after opening)
+let _geseheneOrte = {};
+try { _geseheneOrte = JSON.parse(localStorage.getItem('geseheneOrte') || '{}'); } catch(_) {}
+
+function _ortAlsGesehen(ort) {
+  if (!ort || ort === 'gemeinden' || ort === 'landkreis-fulda' || ort === 'hessen' || ort === '') return;
+  _geseheneOrte[ort] = Date.now();
+  try { localStorage.setItem('geseheneOrte', JSON.stringify(_geseheneOrte)); } catch(_) {}
+}
+
+function _hatBrandNeu(artikel, ort) {
+  return artikel.some(a => {
+    const d = new Date((a.datum||'').replace(' ','T'));
+    if (d < NEU_SEIT) return false;
+    const seenAt = _geseheneOrte[ort] || 0;
+    return d.getTime() > seenAt;
+  });
+}
+
+function _neuDot(overlay, bb, gross) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const R = gross ? 7 : 3.5;
+  // Position above the label center — avoids overlap with Wappen images placed left-of-badge-below-label
+  const cx = bb.x + bb.width / 2;
+  const cy = bb.y - R - 3;
+  const ring = document.createElementNS(NS, 'circle');
+  ring.setAttribute('class', 'neu-ring k-badge');
+  ring.setAttribute('cx', cx); ring.setAttribute('cy', cy);
+  ring.setAttribute('r', R); ring.setAttribute('stroke-width', gross ? 2 : 1.2);
+  overlay.appendChild(ring);
+  const dot = document.createElementNS(NS, 'circle');
+  dot.setAttribute('class', 'neu-dot k-badge');
+  dot.setAttribute('stroke-width', gross ? 1.5 : 1);
+  dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', R * 0.52);
+  overlay.appendChild(dot);
 }
 
 let _fuldaPending = false;
@@ -1946,6 +1994,7 @@ function stadtteileToggle(btn) {
 }
 
 function stadtteileKlick(stadtteil, el) {
+  _ortAlsGesehen(stadtteil);
   const chip = [...document.querySelectorAll('#stadtteile-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${stadtteil}'`));
   if (chip) ortWaehlen(chip, stadtteil);
@@ -2000,6 +2049,7 @@ function stadtteileZahlenAktualisieren() {
       t.setAttribute('x', cx); t.setAttribute('y', by2);
       t.textContent = '+' + neueArtikel.length + ' neu';
       overlay.appendChild(t);
+      if (_hatBrandNeu(neueArtikel, stadtteil)) _neuDot(overlay, bb, gross);
     } catch(e) {}
   }
 }
@@ -2067,6 +2117,8 @@ function karteZahlenAktualisieren() {
         img.setAttribute('height', ICON);
         overlay.appendChild(img);
       }
+      // Brand-new pulse dot
+      if (_hatBrandNeu(neueArtikel, ort)) _neuDot(overlay, bb, gross);
     } catch(e) {}
   }
 }
