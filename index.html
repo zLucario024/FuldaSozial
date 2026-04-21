@@ -930,17 +930,15 @@ document.addEventListener('DOMContentLoaded', function() {
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         Meine Artikel
       </button>
-    </div>
-    <div class="filter-label" style="justify-content:space-between">
-      <span style="display:flex;align-items:center;gap:6px">
-        <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
-        Ort / Region
-      </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
         <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
         Karte
       </button>
+    </div>
+    <div class="filter-label">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+      Ort / Region
     </div>
     <div class="chip-reihe" id="ort-chips">
       <button class="chip" onclick="ortWaehlen(this, '')">Alle</button>
