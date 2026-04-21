@@ -668,6 +668,11 @@ document.addEventListener('DOMContentLoaded', function() {
   #karte-oeffnen-btn { display:flex; align-items:center; gap:4px; background:none; border:1px solid var(--border); border-radius:6px; padding:2px 9px; cursor:pointer; color:var(--rot); font-size:.7rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-family:var(--font-body); }
   #karte-oeffnen-btn svg { width:13px; height:13px; stroke:var(--rot); }
   #karte-oeffnen-btn:hover { background:var(--rot-hell); border-color:var(--rot); }
+  #karte-btn-wappen { display:none; }
+  @media (max-width:768px) {
+    #karte-oeffnen-btn { flex-direction:column; gap:5px; padding:8px 14px; border-radius:10px; }
+    #karte-btn-wappen { display:block; width:44px; height:auto; object-fit:contain; }
+  }
   /* Karten-Modal */
   #karte-mobil-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:1500; align-items:flex-end; justify-content:center; }
   #karte-mobil-modal.aktiv { display:flex; }
@@ -932,6 +937,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Ort / Region
       </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
+        <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
         Karte
       </button>
