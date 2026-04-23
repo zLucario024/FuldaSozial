@@ -2013,6 +2013,9 @@ function stadtteileKlick(stadtteil, el) {
   else { aktivOrt = stadtteil; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
   document.querySelectorAll('#fulda-overlay .gem.aktiv').forEach(g => g.classList.remove('aktiv'));
   if (el) el.classList.add('aktiv');
+  if (document.getElementById('karte-mobil-modal').classList.contains('aktiv')) {
+    setTimeout(karteModalSchliessen, 350);
+  }
 }
 
 function stadtteileZahlenAktualisieren() {
