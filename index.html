@@ -1348,7 +1348,7 @@ function ortMatch(text, ort) {
 const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
-    strong: ['polizei','unfall','vorfall','brand','blaulicht','mord','schießerei'],
+    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug'],
     keys: ['vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
@@ -1418,7 +1418,7 @@ const KATEGORIEN = {
   },
   'Bildung & Familie': {
     farbe: '#0369a1', hell: '#e0f2fe',
-    strong: ['bildung','schule','studium','universität','abitur','ausbildung'],
+    strong: ['bildung','schule','studium','universität','abitur','ausbildung', 'journalismus'],
     keys: ['schule','studie','kita','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'vortrag','nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise', 'beratung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#e0f2fe"/>
       <path d="M166,54 Q166,50 170,50 L200,54 L200,114 L166,110 Q162,110 162,106 Z" fill="#0369a1" opacity=".1"/>
@@ -1717,7 +1717,7 @@ function karteErstellen(artikel, index) {
     const tagListe = (artikel.tags || '').split(/,|·/).map(t => t.trim().toLowerCase());
     let wappenKey = null;
 
-    if (tagListe.includes('landkreis fulda') || tagListe.includes('region fulda')) {
+    if (tagListe.includes('landkreis fulda') || tagListe.includes('region fulda') || tagListe.includes('osthessen')) {
       // Expliziter Tag überschreibt jede andere Region
       wappenKey = 'Landkreis Fulda';
     } else {
