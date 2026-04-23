@@ -2329,6 +2329,9 @@ function urlAktualisieren(replace = false) {
   const ogUrl = document.querySelector('meta[property="og:url"]');
   if (ogUrl) ogUrl.content = vollUrl;
 
+  const robots = document.querySelector('meta[name="robots"]');
+  if (robots) robots.content = aktivTag ? 'noindex, follow' : 'index, follow';
+
   const desc = ortLabel
     ? `Aktuelle Nachrichten aus ${ortLabel} – automatisch gesammelt aus lokalen Quellen. RegioNachrichten Fulda.`
     : 'Aktuelle Nachrichten aus Fulda und dem Landkreis – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr.';
@@ -2373,7 +2376,11 @@ function filterAusUrlLesen() {
     if (quelleMatch) quelleMatch.classList.add('aktiv-dunkel');
   }
 
-  if (params.has('tag'))   aktivTag = params.get('tag');
+  if (params.has('tag')) {
+    aktivTag = params.get('tag');
+    const robots = document.querySelector('meta[name="robots"]');
+    if (robots) robots.content = 'noindex, follow';
+  }
   if (params.has('suche')) { suchbegriff = params.get('suche'); document.getElementById('suche').value = suchbegriff; }
   filterLeistAktualisieren();
 }
