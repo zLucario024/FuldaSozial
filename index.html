@@ -1223,8 +1223,12 @@ function filterLeistAktualisieren() {
   const chips = [];
   if (aktivMeineArtikel)
     chips.push(`<span class="filter-chip filter-chip-herz"><span class="filter-chip-label">♥</span> Meine Artikel <button onclick="meineArtikelFilterLeeren()" title="Entfernen">✕</button></span>`);
-  if (aktivOrt && aktivOrt !== 'landkreis-fulda')
-    chips.push(`<span class="filter-chip filter-chip-ort"><span class="filter-chip-label">Ort:</span> ${ORT_ANZEIGE[aktivOrt]||aktivOrt} <button onclick="ortFilterLeeren()" title="Entfernen">✕</button></span>`);
+  if (aktivOrt && aktivOrt !== 'landkreis-fulda') {
+    const ortLabel = ORT_ANZEIGE[aktivOrt]
+      || [...document.querySelectorAll('#stadtteile-chips .chip')].find(c => (c.getAttribute('onclick')||'').includes(`'${aktivOrt}'`))?.textContent?.trim()
+      || aktivOrt;
+    chips.push(`<span class="filter-chip filter-chip-ort"><span class="filter-chip-label">Ort:</span> ${ortLabel} <button onclick="ortFilterLeeren()" title="Entfernen">✕</button></span>`);
+  }
   if (aktivKategorie)
     chips.push(`<span class="filter-chip filter-chip-kat"><span class="filter-chip-label">Kategorie:</span> ${aktivKategorie} <button onclick="kategorieFilterLeeren()" title="Entfernen">✕</button></span>`);
   if (aktivQuelle)
@@ -1405,7 +1409,7 @@ const KATEGORIEN = {
   },
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
-    strong: ['kultur','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst', 'tradition', 'fotoshooting', 'l14zwo', 'flohmarkt'],
+    strong: ['kultur', 'fördermittel','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst', 'tradition', 'fotoshooting', 'l14zwo', 'flohmarkt'],
     keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
@@ -1418,8 +1422,8 @@ const KATEGORIEN = {
   },
   'Bildung & Familie': {
     farbe: '#0369a1', hell: '#e0f2fe',
-    strong: ['bildung','schule','studium','universität','abitur','ausbildung', 'journalismus'],
-    keys: ['schule','studie','kita','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'vortrag','nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise', 'beratung'],
+    strong: ['bildung','schule', 'kita','studium','universität','abitur','ausbildung', 'journalismus'],
+    keys: ['schule','studie','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'vortrag','nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise', 'beratung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#e0f2fe"/>
       <path d="M166,54 Q166,50 170,50 L200,54 L200,114 L166,110 Q162,110 162,106 Z" fill="#0369a1" opacity=".1"/>
       <path d="M200,54 L170,50 Q162,50 162,58 L162,106 Q162,114 170,114 L200,114" fill="none" stroke="#0369a1" stroke-width="2.5" stroke-linejoin="round"/>
@@ -1572,10 +1576,13 @@ async function quellenLaden() {
       btn.onclick = () => quelleWaehlen(btn, q.quelle);
       container.appendChild(btn);
     });
+    if (aktivQuelle) {
+      const m = [...container.querySelectorAll('.chip')].find(c => c.textContent.trim() === aktivQuelle);
+      if (m) m.classList.add('aktiv-dunkel');
+    }
   } catch(e) {}
 }
 
-let ersterLade = true;
 async function artikelLaden() {
   gezeigt = 0; alleArtikel = [];
   document.getElementById('artikel-grid').innerHTML =
@@ -1594,7 +1601,6 @@ async function artikelLaden() {
       if (!bisheriger || tagAnzahl > bisheriger.tagAnzahl) gesehen.set(key, { a, tagAnzahl });
     });
     alleArtikel = [...gesehen.values()].map(v => v.a);
-    if (ersterLade) { ersterLade = false; filterAusUrlLesen(); }
     artikelAnzeigen();
   } catch(e) {
     document.getElementById('artikel-grid').innerHTML =
@@ -2349,16 +2355,25 @@ function filterAusUrlLesen() {
 
   if (params.has('ort')) {
     aktivOrt = params.get('ort');
-    // Search both top-level and Gemeinden chips
-    document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+    document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
     const match = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
       .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
     if (match) {
       match.classList.add('aktiv-ort');
-      // If the active chip is inside the Gemeinden list, open it
       if (match.closest('#gemeinden-chips')) _gemeindenToggle(true);
+    } else if (aktivOrt === 'fulda') {
+      document.getElementById('stadtteile-btn').classList.add('aktiv-ort');
+      _stadtteileToggle(true);
     } else {
-      document.querySelector('#ort-chips .chip').classList.add('aktiv');
+      const stadtChip = [...document.querySelectorAll('#stadtteile-chips .chip')]
+        .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
+      if (stadtChip) {
+        stadtChip.classList.add('aktiv-ort');
+        document.getElementById('stadtteile-btn').classList.add('aktiv-ort');
+        _stadtteileToggle(true);
+      } else {
+        document.querySelector('#ort-chips .chip').classList.add('aktiv');
+      }
     }
   }
 
@@ -2372,7 +2387,6 @@ function filterAusUrlLesen() {
 
   if (params.has('quelle')) {
     aktivQuelle = params.get('quelle');
-    // quellenLaden() has already completed by this point, so apply chip highlight directly
     document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
     const quelleMatch = [...document.querySelectorAll('#quelle-chips .chip')]
       .find(c => c.textContent.trim() === aktivQuelle);
@@ -2396,13 +2410,30 @@ window.addEventListener('popstate', function(e) {
   aktivTag       = s.tag || '';
   suchbegriff    = s.suche || '';
   document.getElementById('suche').value = suchbegriff;
-  document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
+  document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
-  const ortChip = [...document.querySelectorAll('#ort-chips .chip')]
+  const ortChip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
-  if (ortChip) ortChip.classList.add(aktivOrt ? 'aktiv-ort' : 'aktiv');
-  else document.querySelector('#ort-chips .chip').classList.add('aktiv');
+  if (ortChip) {
+    ortChip.classList.add(aktivOrt ? 'aktiv-ort' : 'aktiv');
+    if (ortChip.closest('#gemeinden-chips')) _gemeindenToggle(true); else _gemeindenToggle(false);
+    _stadtteileToggle(false);
+  } else if (aktivOrt === 'fulda') {
+    document.getElementById('stadtteile-btn').classList.add('aktiv-ort');
+    _stadtteileToggle(true); _gemeindenToggle(false);
+  } else {
+    const stadtChip = [...document.querySelectorAll('#stadtteile-chips .chip')]
+      .find(c => (c.getAttribute('onclick') || '').includes(`'${aktivOrt}'`));
+    if (stadtChip) {
+      stadtChip.classList.add('aktiv-ort');
+      document.getElementById('stadtteile-btn').classList.add('aktiv-ort');
+      _stadtteileToggle(true); _gemeindenToggle(false);
+    } else {
+      document.querySelector('#ort-chips .chip').classList.add('aktiv');
+      _stadtteileToggle(false); _gemeindenToggle(false);
+    }
+  }
   if (aktivKategorie) {
     document.querySelector('#kategorie-chips .chip').classList.remove('aktiv');
     const m = [...document.querySelectorAll('#kategorie-chips .chip')]
@@ -2432,6 +2463,7 @@ if (localStorage.getItem('gemeinden-offen')) _gemeindenToggle(true);
 // Quelle-Sektion auch öffnen, wenn ein Quellenfilter per URL aktiv ist
 if (new URLSearchParams(window.location.search).has('quelle')) _sectionOeffnen('quelle-gruppe', '.quelle-toggle');
 
+filterAusUrlLesen();
 quellenLaden();
 artikelLaden();
 
