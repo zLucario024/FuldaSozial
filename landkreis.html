@@ -59,8 +59,11 @@
   .gemeinde-karte { border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; background: var(--weiss); transition: box-shadow .15s; }
   .gemeinde-karte:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
   .gemeinde-karte.landkreis { border-color: var(--rot); background: var(--rot-hell); grid-column: 1 / -1; }
-  .gemeinde-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; color: var(--schwarz); }
+  .gemeinde-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; }
+  .gemeinde-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--schwarz); }
   .gemeinde-karte.landkreis .gemeinde-name { color: var(--rot); font-size: 1.3rem; }
+  .gemeinde-wappen { height: 40px; width: auto; display: block; flex-shrink: 0; object-fit: contain; }
+  .gemeinde-karte.landkreis .gemeinde-wappen { height: 52px; }
   .gemeinde-platzhalter { font-size: .9rem; color: var(--grau-mittel); line-height: 1.6; display: flex; align-items: center; gap: 6px; }
   .gemeinde-platzhalter::before { content: ''; display: inline-block; width: 28px; height: 3px; background: var(--border); border-radius: 2px; flex-shrink: 0; }
 
@@ -125,7 +128,10 @@
   <p class="section-label">Landkreis</p>
   <div class="gemeinde-grid">
     <div class="gemeinde-karte landkreis">
-      <div class="gemeinde-name">Landkreis Fulda</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Landkreis Fulda</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
   </div>
@@ -134,95 +140,164 @@
   <p class="section-label">Städte &amp; Gemeinden</p>
   <div class="gemeinde-grid">
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Stadt Fulda</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Stadt Fulda</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Fulda.png" alt="Wappen Stadt Fulda">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Stadt Hünfeld</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Stadt Hünfeld</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Hünfeld.png" alt="Wappen Stadt Hünfeld">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Künzell</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Künzell</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Künzell.png" alt="Wappen Gemeinde Künzell">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Petersberg</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Petersberg</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Petersberg.png" alt="Wappen Gemeinde Petersberg">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Neuhof</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Neuhof</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Neuhof.png" alt="Wappen Gemeinde Neuhof">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Eichenzell</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Eichenzell</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Eichenzell.png" alt="Wappen Gemeinde Eichenzell">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Flieden</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Flieden</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Flieden.png" alt="Wappen Gemeinde Flieden">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Burghaun</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Burghaun</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Burghaun.png" alt="Wappen Gemeinde Burghaun">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Großenlüder</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Großenlüder</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Großenlüder.png" alt="Wappen Gemeinde Großenlüder">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Hilders</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Hilders</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Hilders.png" alt="Wappen Gemeinde Hilders">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Hofbieber</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Hofbieber</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Hofbieber.png" alt="Wappen Gemeinde Hofbieber">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Stadt Gersfeld (Rhön)</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Stadt Gersfeld (Rhön)</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Gersfeld.png" alt="Wappen Stadt Gersfeld">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Tann (Rhön)</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Tann (Rhön)</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Tann.png" alt="Wappen Gemeinde Tann">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Eiterfeld</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Eiterfeld</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Eiterfeld.png" alt="Wappen Gemeinde Eiterfeld">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Rasdorf</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Rasdorf</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Rasdorf.png" alt="Wappen Gemeinde Rasdorf">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Dipperz</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Dipperz</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Dipperz.png" alt="Wappen Gemeinde Dipperz">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Ebersburg</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Ebersburg</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Ebersburg.png" alt="Wappen Gemeinde Ebersburg">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Ehrenberg (Rhön)</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Ehrenberg (Rhön)</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Ehrenberg.png" alt="Wappen Gemeinde Ehrenberg">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Hosenfeld</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Hosenfeld</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Hosenfeld.png" alt="Wappen Gemeinde Hosenfeld">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Kalbach</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Kalbach</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Kalbach.png" alt="Wappen Gemeinde Kalbach">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Nüsttal</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Nüsttal</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Nüsttal.png" alt="Wappen Gemeinde Nüsttal">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Gemeinde Poppenhausen (Wasserkuppe)</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Gemeinde Poppenhausen (Wasserkuppe)</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Poppenhausen.png" alt="Wappen Gemeinde Poppenhausen">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
     <div class="gemeinde-karte">
-      <div class="gemeinde-name">Bad Salzschlirf</div>
+      <div class="gemeinde-header">
+        <div class="gemeinde-name">Bad Salzschlirf</div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Bad Salzschlirf.png" alt="Wappen Bad Salzschlirf">
+      </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
   </div>

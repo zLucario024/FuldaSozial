@@ -183,13 +183,19 @@ Fulda Nachrichten">
   transform: scale(1.05);
 }
 .wappen-svg {
-  width: 22px;
-  height: 28px;
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
 }
-.wappen-badge[title="Fulda"] .wappen-svg {
-  width: 30px;
-  height: 38px;
+.wappen-svg img {
+  height: 28px !important;
+  width: auto !important;
+  max-width: 36px !important;
+  display: block;
+}
+.wappen-badge[title="Fulda"] .wappen-svg img {
+  height: 38px !important;
+  max-width: 46px !important;
 }
 .wappen-name {
   font-size: 11px;
