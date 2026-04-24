@@ -726,8 +726,8 @@ document.addEventListener('DOMContentLoaded', function() {
   #karte-back-btn:hover { border-color:var(--rot); color:var(--rot); }
   #karte-panel.fulda-drill #karte-back-btn { display:inline-flex; align-items:center; gap:3px; }
   #karte-panel.gross #g-fulda { cursor:pointer; }
-  #fulda-prompt { display:none; position:absolute; left:35%; top:52%; transform:translate(-50%,10px); background:var(--weiss); border:1px solid var(--border); border-radius:10px; box-shadow:0 3px 16px rgba(0,0,0,0.18); padding:6px 8px; z-index:20; max-width:min(260px, calc(100% - 20px)); }
-  #fulda-prompt button { background:var(--rot); color:#fff; border:none; border-radius:7px; padding:5px 12px; cursor:pointer; font-size:11px; font-weight:700; font-family:var(--font-body); display:flex; align-items:center; gap:5px; }
+  #fulda-prompt { display:none; position:absolute; left:35%; top:52%; transform:translate(-50%,10px); background:var(--weiss); border:1px solid var(--border); border-radius:10px; box-shadow:0 3px 16px rgba(0,0,0,0.18); padding:8px; z-index:20; max-width:min(300px, calc(100% - 20px)); flex-direction:row; gap:6px; }
+  #fulda-prompt button { background:var(--rot); color:#fff; border:none; border-radius:7px; padding:6px 11px; cursor:pointer; font-size:11px; font-weight:700; font-family:var(--font-body); display:flex; align-items:center; gap:5px; white-space:nowrap; }
   #fulda-prompt button:hover { opacity:.88; }
   #fulda-prompt::after { content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--border); }
   #fulda-prompt::before { content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--weiss); z-index:1; }
@@ -994,9 +994,13 @@ document.addEventListener('DOMContentLoaded', function() {
         <text class="lbl fs8" id="l-mittelrode" x="170" y="518">Mittel-<tspan x="170" dy="10">rode</tspan></text>
       </svg>
       <div id="fulda-prompt">
+        <button onclick="fuldaNewsOeffnen()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
+          Nachrichten
+        </button>
         <button onclick="fuldaDrilldown()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-          Stadtteile öffnen
+          Stadtteile
         </button>
       </div>
     </div>
@@ -1919,23 +1923,9 @@ function _neuDot(overlay, bb, gross) {
   overlay.appendChild(dot);
 }
 
-let _fuldaPending = false;
-
 function karteKlick(ort, el) {
-  if (ort === 'fulda' && document.getElementById('karte-panel').classList.contains('gross')) {
-    if (_fuldaPending) {
-      // second click → filter for Stadt Fulda
-      _fuldaPending = false;
-      fuldaPromptSchliessen();
-      const chip = [...document.querySelectorAll('#ort-chips .chip')]
-        .find(c => (c.getAttribute('onclick') || '').includes("'fulda'"));
-      if (chip) ortWaehlen(chip, 'fulda');
-      else { _ortAlsGesehen('fulda'); aktivOrt = 'fulda'; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
-    } else {
-      // first click → show prompt bubble
-      _fuldaPending = true;
-      document.getElementById('fulda-prompt').style.display = 'block';
-    }
+  if (ort === 'fulda') {
+    document.getElementById('fulda-prompt').style.display = 'flex';
     return;
   }
   fuldaPromptSchliessen();
@@ -1943,14 +1933,28 @@ function karteKlick(ort, el) {
     .find(c => (c.getAttribute('onclick') || '').includes(`'${ort}'`));
   if (chip) ortWaehlen(chip, ort);
   else { _ortAlsGesehen(ort); aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
-  if (document.getElementById('karte-mobil-modal').classList.contains('aktiv')) {
-    setTimeout(karteModalSchliessen, 350);
-  }
+  const _mobil1 = document.getElementById('karte-mobil-modal').classList.contains('aktiv');
+  if (_mobil1) setTimeout(karteModalSchliessen, 350);
+  scrollZuArtikeln(_mobil1 ? 420 : 50);
+}
+
+function fuldaNewsOeffnen() {
+  fuldaPromptSchliessen();
+  const chip = [...document.querySelectorAll('#ort-chips .chip')]
+    .find(c => (c.getAttribute('onclick') || '').includes("'fulda'"));
+  if (chip) ortWaehlen(chip, 'fulda');
+  else { _ortAlsGesehen('fulda'); aktivOrt = 'fulda'; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
+  const _mobil2 = document.getElementById('karte-mobil-modal').classList.contains('aktiv');
+  if (_mobil2) setTimeout(karteModalSchliessen, 350);
+  scrollZuArtikeln(_mobil2 ? 420 : 50);
 }
 
 function fuldaPromptSchliessen() {
-  _fuldaPending = false;
   document.getElementById('fulda-prompt').style.display = 'none';
+}
+
+function scrollZuArtikeln(delay) {
+  setTimeout(() => document.getElementById('kategorie-gruppe').scrollIntoView({ behavior: 'smooth', block: 'start' }), delay || 50);
 }
 
 function karteReset() {
@@ -2026,9 +2030,9 @@ function stadtteileKlick(stadtteil, el) {
   else { aktivOrt = stadtteil; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
   document.querySelectorAll('#fulda-overlay .gem.aktiv').forEach(g => g.classList.remove('aktiv'));
   if (el) el.classList.add('aktiv');
-  if (document.getElementById('karte-mobil-modal').classList.contains('aktiv')) {
-    setTimeout(karteModalSchliessen, 350);
-  }
+  const _mobil3 = document.getElementById('karte-mobil-modal').classList.contains('aktiv');
+  if (_mobil3) setTimeout(karteModalSchliessen, 350);
+  scrollZuArtikeln(_mobil3 ? 420 : 50);
 }
 
 function stadtteileZahlenAktualisieren() {
@@ -2195,7 +2199,7 @@ function karteModalSchliessen(e) {
 }
 
 document.addEventListener('pointerdown', e => {
-  if (_fuldaPending && !e.target.closest('#fulda-prompt') && e.target.id !== 'g-fulda') {
+  if (!e.target.closest('#fulda-prompt') && e.target.id !== 'g-fulda') {
     fuldaPromptSchliessen();
   }
 });
