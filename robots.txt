@@ -7,4 +7,4 @@ Disallow: /.venv/
 Disallow: /venv313/
 Disallow: /Design/Wappen/
 
-Sitemap: https://fuldasozial.de/sitemap.xml
+Sitemap: https://rnfulda.de/sitemap.xml

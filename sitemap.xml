@@ -3,146 +3,146 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://www.fuldasozial.de/</loc>
+    <loc>https://www.rnfulda.de/</loc>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Statische Seiten -->
   <url>
-    <loc>https://www.fuldasozial.de/ueber.html</loc>
+    <loc>https://www.rnfulda.de/ueber.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/landkreis.html</loc>
+    <loc>https://www.rnfulda.de/landkreis.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/impressum.html</loc>
+    <loc>https://www.rnfulda.de/impressum.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/datenschutz.html</loc>
+    <loc>https://www.rnfulda.de/datenschutz.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <!-- Ort-Filter: Stadt Fulda und Gemeinden -->
   <url>
-    <loc>https://www.fuldasozial.de/?ort=fulda</loc>
+    <loc>https://www.rnfulda.de/?ort=fulda</loc>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=h%C3%BCnfeld</loc>
+    <loc>https://www.rnfulda.de/?ort=h%C3%BCnfeld</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=k%C3%BCnzell</loc>
+    <loc>https://www.rnfulda.de/?ort=k%C3%BCnzell</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=petersberg</loc>
+    <loc>https://www.rnfulda.de/?ort=petersberg</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=neuhof</loc>
+    <loc>https://www.rnfulda.de/?ort=neuhof</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=eichenzell</loc>
+    <loc>https://www.rnfulda.de/?ort=eichenzell</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=flieden</loc>
+    <loc>https://www.rnfulda.de/?ort=flieden</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=burghaun</loc>
+    <loc>https://www.rnfulda.de/?ort=burghaun</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=gro%C3%9Fenl%C3%BCder</loc>
+    <loc>https://www.rnfulda.de/?ort=gro%C3%9Fenl%C3%BCder</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=hilders</loc>
+    <loc>https://www.rnfulda.de/?ort=hilders</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=hofbieber</loc>
+    <loc>https://www.rnfulda.de/?ort=hofbieber</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=gersfeld</loc>
+    <loc>https://www.rnfulda.de/?ort=gersfeld</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=tann</loc>
+    <loc>https://www.rnfulda.de/?ort=tann</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=eiterfeld</loc>
+    <loc>https://www.rnfulda.de/?ort=eiterfeld</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=rasdorf</loc>
+    <loc>https://www.rnfulda.de/?ort=rasdorf</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=dipperz</loc>
+    <loc>https://www.rnfulda.de/?ort=dipperz</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=ebersburg</loc>
+    <loc>https://www.rnfulda.de/?ort=ebersburg</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=ehrenberg</loc>
+    <loc>https://www.rnfulda.de/?ort=ehrenberg</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=hosenfeld</loc>
+    <loc>https://www.rnfulda.de/?ort=hosenfeld</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=kalbach</loc>
+    <loc>https://www.rnfulda.de/?ort=kalbach</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=n%C3%BCsttal</loc>
+    <loc>https://www.rnfulda.de/?ort=n%C3%BCsttal</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=poppenhausen</loc>
+    <loc>https://www.rnfulda.de/?ort=poppenhausen</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.fuldasozial.de/?ort=bad+salzschlirf</loc>
+    <loc>https://www.rnfulda.de/?ort=bad+salzschlirf</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
