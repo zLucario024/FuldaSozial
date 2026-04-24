@@ -16,8 +16,8 @@ import de.rnfulda.app.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val appUrl = "https://fuldasozial.de"
-    private val appHost = "fuldasozial.de"
+    private val appUrl = "https://www.rnfulda.de"
+    private val appHost = "rnfulda.de"
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
