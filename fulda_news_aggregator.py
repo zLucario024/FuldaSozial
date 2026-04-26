@@ -664,9 +664,128 @@ def main():
         print(f"  {quelle} | {datum}")
 
     cursor.close()
+    print(f"\n{'=' * 55}")
+    print("ARCHIV")
+    archiv_generieren(conn)
     sitemap_generieren(conn)
     conn.close()
     print(f"\nFertig!")
+
+
+def archiv_generieren(conn):
+    """Generates static archiv/seite-N.html pages for articles outside each Gemeinde's top-200."""
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    count_query = """
+        SELECT COUNT(*) FROM (
+            SELECT ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region,''),'__keine__')
+                                      ORDER BY datum DESC) AS rn
+            FROM artikel
+            WHERE tags IS NOT NULL AND tags != ''
+        ) sub WHERE rn > 200
+    """
+    cursor.execute(count_query)
+    gesamt = cursor.fetchone()["count"]
+
+    LIMIT = 50
+    seiten_gesamt = max(1, (gesamt + LIMIT - 1) // LIMIT)
+
+    archiv_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "archiv")
+    os.makedirs(archiv_dir, exist_ok=True)
+
+    for seite in range(1, seiten_gesamt + 1):
+        offset = (seite - 1) * LIMIT
+        cursor.execute("""
+            SELECT titel, link, quelle, region, datum, beschreibung, tags
+            FROM (
+                SELECT *,
+                       ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region,''),'__keine__')
+                                          ORDER BY datum DESC) AS rn
+                FROM artikel
+                WHERE tags IS NOT NULL AND tags != ''
+            ) ranked
+            WHERE rn > 200
+            ORDER BY datum DESC
+            LIMIT %s OFFSET %s
+        """, (LIMIT, offset))
+        artikel = cursor.fetchall()
+        html = _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt)
+        pfad = os.path.join(archiv_dir, f"seite-{seite}.html")
+        with open(pfad, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    cursor.close()
+    print(f"  Archiv generiert: {seiten_gesamt} Seite(n), {gesamt} Artikel → archiv/")
+    return seiten_gesamt
+
+
+def _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt):
+    from html import escape
+
+    def fmt_datum(d):
+        try:
+            return datetime.fromisoformat(d.replace(" ", "T")).strftime("%d.%m.%Y")
+        except Exception:
+            return d or ""
+
+    prev_link = f'<a href="seite-{seite-1}.html" rel="prev">← Neuere</a>' if seite > 1 else ""
+    next_link = f'<a href="seite-{seite+1}.html" rel="next">Ältere →</a>' if seite < seiten_gesamt else ""
+    canon = f"https://www.rnfulda.de/archiv/seite-{seite}.html"
+
+    artikel_html = ""
+    for a in artikel:
+        titel = escape(a["titel"] or "")
+        quelle = escape(a["quelle"] or "")
+        region = escape(a["region"] or "")
+        beschr = escape(a["beschreibung"] or "")
+        link = a["link"] or "#"
+        datum_iso = (a["datum"] or "")[:10]
+        datum_fmt = fmt_datum(a["datum"] or "")
+        artikel_html += f"""
+    <article>
+      <h2><a href="{link}" target="_blank" rel="noopener">{titel}</a></h2>
+      <p class="meta"><time datetime="{datum_iso}">{datum_fmt}</time> · {quelle}{(' · ' + region) if region and region != '__keine__' else ''}</p>
+      {f'<p>{beschr}</p>' if beschr else ''}
+    </article>"""
+
+    return f"""<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nachrichtenarchiv Seite {seite} – RegioNachrichten Fulda</title>
+<meta name="description" content="Ältere Nachrichten aus dem Landkreis Fulda und Osthessen – Archiv Seite {seite} von {seiten_gesamt} ({gesamt} Artikel gesamt).">
+<link rel="canonical" href="{canon}">
+{f'<link rel="prev" href="seite-{seite-1}.html">' if seite > 1 else ''}
+{f'<link rel="next" href="seite-{seite+1}.html">' if seite < seiten_gesamt else ''}
+<style>
+body{{font-family:system-ui,sans-serif;max-width:800px;margin:0 auto;padding:1rem 1.5rem;color:#1a1a1a}}
+h1{{font-size:1.4rem;margin-bottom:.25rem}}
+.sub{{color:#666;font-size:.9rem;margin-bottom:1.5rem}}
+article{{border-bottom:1px solid #e5e5e5;padding:1rem 0}}
+article:last-child{{border-bottom:none}}
+h2{{font-size:1rem;margin:0 0 .25rem}}
+h2 a{{color:#c0392b;text-decoration:none}}
+h2 a:hover{{text-decoration:underline}}
+.meta{{font-size:.8rem;color:#666;margin:.25rem 0}}
+p{{font-size:.875rem;color:#444;margin:.25rem 0 0}}
+nav.pagination{{display:flex;justify-content:space-between;margin:2rem 0;font-size:.9rem}}
+nav.pagination a{{color:#c0392b;text-decoration:none}}
+footer{{margin-top:2rem;border-top:1px solid #e5e5e5;padding-top:1rem;font-size:.8rem;color:#888;text-align:center}}
+</style>
+</head>
+<body>
+<h1>Nachrichtenarchiv – Landkreis Fulda</h1>
+<p class="sub">Seite {seite} von {seiten_gesamt} · {gesamt} archivierte Artikel · <a href="../index.html">Zur Startseite</a></p>
+{artikel_html}
+<nav class="pagination">
+  <span>{prev_link}</span>
+  <span>Seite {seite} / {seiten_gesamt}</span>
+  <span>{next_link}</span>
+</nav>
+<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv-Übersicht</a> · <a href="../impressum.html">Impressum</a></footer>
+</body>
+</html>"""
 
 
 def sitemap_generieren(conn):
@@ -695,43 +814,44 @@ def sitemap_generieren(conn):
     haeufige_tags.sort()
 
     STATIC_URLS = [
-        ("https://fuldasozial.de",                                  "hourly", "1.0"),
-        ("https://fuldasozial.de/impressum.html",                   "yearly", "0.3"),
-        ("https://fuldasozial.de/datenschutz.html",                 "yearly", "0.3"),
+        ("https://www.rnfulda.de",                                  "hourly", "1.0"),
+        ("https://www.rnfulda.de/impressum.html",                   "yearly", "0.3"),
+        ("https://www.rnfulda.de/datenschutz.html",                 "yearly", "0.3"),
+        ("https://www.rnfulda.de/archiv.html",                      "weekly", "0.6"),
         # ?ort=landkreis-fulda weggelassen — Homepage ist bereits die Landkreis-Ansicht
-        ("https://fuldasozial.de/?ort=fulda",                       "hourly", "0.9"),
-        ("https://fuldasozial.de/?ort=h%C3%BCnfeld",                "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=k%C3%BCnzell",                "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=petersberg",                  "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=neuhof",                      "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=eichenzell",                  "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=flieden",                     "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=burghaun",                    "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=gro%C3%9Fenl%C3%BCder",       "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=hilders",                     "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=hofbieber",                   "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=gersfeld",                    "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=tann",                        "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=eiterfeld",                   "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=rasdorf",                     "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=dipperz",                     "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=ebersburg",                   "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=ehrenberg",                   "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=hosenfeld",                   "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=kalbach",                     "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=n%C3%BCsttal",                "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=poppenhausen",                "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=bad%20salzschlirf",           "daily",  "0.7"),
-        ("https://fuldasozial.de/?ort=hessen",                      "hourly", "0.6"),
-        ("https://fuldasozial.de/?kategorie=Vorf%C3%A4lle","hourly", "0.8"),
-        ("https://fuldasozial.de/?kategorie=Politik%20%26%20Verwaltung", "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Wirtschaft%20%26%20Arbeit",  "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Sport",                 "daily",  "0.7"),
-        ("https://fuldasozial.de/?kategorie=Kultur%20%26%20Freizeit",    "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Bildung%20%26%20Familie",    "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Natur%20%26%20Umwelt",       "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Verkehr%20%26%20Bau",        "daily", "0.7"),
-        ("https://fuldasozial.de/?kategorie=Gesundheit",            "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=fulda",                       "hourly", "0.9"),
+        ("https://www.rnfulda.de/?ort=h%C3%BCnfeld",                "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=k%C3%BCnzell",                "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=petersberg",                  "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=neuhof",                      "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=eichenzell",                  "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=flieden",                     "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=burghaun",                    "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=gro%C3%9Fenl%C3%BCder",       "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=hilders",                     "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=hofbieber",                   "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=gersfeld",                    "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=tann",                        "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=eiterfeld",                   "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=rasdorf",                     "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=dipperz",                     "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=ebersburg",                   "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=ehrenberg",                   "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=hosenfeld",                   "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=kalbach",                     "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=n%C3%BCsttal",                "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=poppenhausen",                "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=bad%20salzschlirf",           "daily",  "0.7"),
+        ("https://www.rnfulda.de/?ort=hessen",                      "hourly", "0.6"),
+        ("https://www.rnfulda.de/?kategorie=Vorf%C3%A4lle","hourly", "0.8"),
+        ("https://www.rnfulda.de/?kategorie=Politik%20%26%20Verwaltung", "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Wirtschaft%20%26%20Arbeit",  "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Sport",                 "daily",  "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Kultur%20%26%20Freizeit",    "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Bildung%20%26%20Familie",    "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Natur%20%26%20Umwelt",       "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Verkehr%20%26%20Bau",        "daily", "0.7"),
+        ("https://www.rnfulda.de/?kategorie=Gesundheit",            "daily",  "0.7"),
     ]
 
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -747,10 +867,27 @@ def sitemap_generieren(conn):
     for tag in haeufige_tags:
         encoded = quote(tag, safe='')
         lines += [f'  <url>',
-                  f'    <loc>https://fuldasozial.de/?tag={encoded}</loc>',
+                  f'    <loc>https://www.rnfulda.de/?tag={encoded}</loc>',
                   f'    <changefreq>daily</changefreq>',
                   f'    <priority>0.5</priority>',
                   f'  </url>']
+
+    # Archive pages — enumerate generated files
+    archiv_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "archiv")
+    archiv_seiten = []
+    if os.path.isdir(archiv_dir):
+        import glob as _glob
+        archiv_seiten = sorted(_glob.glob(os.path.join(archiv_dir, "seite-*.html")))
+
+    if archiv_seiten:
+        lines += ['', f'  <!-- Archiv-Seiten ({len(archiv_seiten)} Seiten) -->']
+        for pfad in archiv_seiten:
+            dateiname = os.path.basename(pfad)
+            lines += [f'  <url>',
+                      f'    <loc>https://www.rnfulda.de/archiv/{dateiname}</loc>',
+                      f'    <changefreq>weekly</changefreq>',
+                      f'    <priority>0.4</priority>',
+                      f'  </url>']
 
     lines += ['', '</urlset>', '']
 

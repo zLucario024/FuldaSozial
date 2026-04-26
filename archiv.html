@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nachrichtenarchiv – Landkreis Fulda | RegioNachrichten Fulda</title>
+<meta name="description" content="Ältere Nachrichten aus Fulda und dem Landkreis – alle Gemeinden, durchsuchbar und filterbar. RegioNachrichten Fulda Archiv.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.rnfulda.de/archiv.html">
+<meta property="og:title" content="Nachrichtenarchiv – Landkreis Fulda">
+<meta property="og:description" content="Ältere Nachrichten aus Fulda und dem Landkreis – alle Gemeinden, durchsuchbar und filterbar.">
+<meta property="og:url" content="https://www.rnfulda.de/archiv.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="RegioNachrichten Fulda">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="Design/rn_fulda_logo_klein.svg">
+<style>
+  :root {
+    --rot: #c0152a; --rot-hell: #fdf0f2;
+    --schwarz: #111; --grau-dunkel: #333; --grau-mittel: #666;
+    --grau-hell: #f4f4f4; --border: #e0e0e0; --weiss: #fff;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --weiss: #141414; --schwarz: #ececec;
+      --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa;
+      --grau-hell: #202020; --border: #333333;
+      --rot-hell: #2c0c10;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--weiss); color: var(--schwarz); min-height: 100vh; }
+
+  /* Header */
+  header { position: sticky; top: 0; z-index: 100; background: var(--weiss); border-bottom: 1px solid var(--border); padding: 0 1.5rem; display: flex; align-items: center; gap: 1rem; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--schwarz); flex-shrink: 0; }
+  .logo-icon { width: 36px; height: 36px; background: var(--rot); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+  .logo-text { font-family: var(--font-display); font-size: 1.1rem; line-height: 1.1; }
+  .logo-text span:first-child { color: var(--rot); }
+  .logo-ort { font-size: .75rem; display: block; color: var(--grau-mittel); font-family: var(--font-body); font-weight: 500; }
+  .back-btn { margin-left: auto; display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; border: 1px solid var(--border); background: none; font-family: var(--font-body); font-size: .85rem; font-weight: 600; color: var(--grau-dunkel); cursor: pointer; text-decoration: none; transition: border-color .15s, color .15s; }
+  .back-btn:hover { border-color: var(--rot); color: var(--rot); }
+  .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+  /* Layout */
+  main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+  h1 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: .25rem; }
+  .subline { color: var(--grau-mittel); font-size: .9rem; margin-bottom: 1.5rem; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+  .filter-bar input, .filter-bar select {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+    font-family: var(--font-body); font-size: .875rem; background: var(--weiss);
+    color: var(--schwarz); outline: none; transition: border-color .15s;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--rot); }
+  .filter-bar input { flex: 1; min-width: 180px; }
+  .filter-bar select { min-width: 140px; }
+  .filter-bar button {
+    padding: 8px 18px; border-radius: 8px; border: none; background: var(--rot);
+    color: #fff; font-family: var(--font-body); font-size: .875rem; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .filter-bar button:hover { opacity: .85; }
+
+  /* Article list */
+  .artikel-liste { display: flex; flex-direction: column; gap: 0; }
+  .artikel-eintrag {
+    border-bottom: 1px solid var(--border); padding: 1rem 0;
+  }
+  .artikel-eintrag:first-child { border-top: 1px solid var(--border); }
+  .artikel-titel { font-size: 1rem; font-weight: 600; margin-bottom: .2rem; }
+  .artikel-titel a { color: var(--rot); text-decoration: none; }
+  .artikel-titel a:hover { text-decoration: underline; }
+  .artikel-meta { font-size: .8rem; color: var(--grau-mittel); margin-bottom: .3rem; }
+  .artikel-beschr { font-size: .875rem; color: var(--grau-dunkel); line-height: 1.5; }
+  .artikel-tags { margin-top: .3rem; display: flex; flex-wrap: wrap; gap: .25rem; }
+  .tag-pill { font-size: .7rem; background: var(--rot-hell); color: var(--rot); padding: 2px 7px; border-radius: 10px; }
+
+  /* Loading / empty */
+  .lade-text { text-align: center; color: var(--grau-mittel); padding: 3rem 1rem; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--rot); border-radius: 50%; animation: drehen .7s linear infinite; vertical-align: middle; margin-right: .5rem; }
+  @keyframes drehen { to { transform: rotate(360deg); } }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 2rem; flex-wrap: wrap; }
+  .pagination button {
+    padding: 7px 14px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--weiss); font-family: var(--font-body); font-size: .875rem;
+    color: var(--grau-dunkel); cursor: pointer; transition: all .15s;
+  }
+  .pagination button:hover:not(:disabled) { border-color: var(--rot); color: var(--rot); }
+  .pagination button:disabled { opacity: .35; cursor: default; }
+  .pagination button.aktiv { background: var(--rot); color: #fff; border-color: var(--rot); }
+  .seiten-info { font-size: .85rem; color: var(--grau-mittel); padding: 0 .5rem; }
+
+  /* Static fallback */
+  .statische-links { margin-top: 1.5rem; padding: 1rem; background: var(--grau-hell); border-radius: 8px; font-size: .85rem; }
+  .statische-links a { color: var(--rot); margin-right: .75rem; }
+
+  footer { border-top: 1px solid var(--border); background: var(--grau-hell); padding: 1.5rem; text-align: center; font-size: .8rem; color: var(--grau-mittel); }
+  footer a { color: var(--rot); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    main { padding: 1rem 1rem 3rem; }
+    h1 { font-size: 1.3rem; }
+    .filter-bar input, .filter-bar select { min-width: 0; width: 100%; }
+    .filter-bar button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
+    </div>
+    <span class="logo-text">Regio<span>Nachrichten</span><span class="logo-ort">Fulda</span></span>
+  </a>
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Zurück zur Startseite
+  </a>
+</header>
+
+<main>
+  <h1>Nachrichtenarchiv</h1>
+  <p class="subline" id="archiv-subline">Ältere Artikel aus dem Landkreis Fulda – wird geladen…</p>
+
+  <form class="filter-bar" id="filter-form" onsubmit="return false">
+    <input type="text" id="suche-input" placeholder="Stichwort suchen…" oninput="filterAendern()">
+    <select id="region-select" onchange="filterAendern()">
+      <option value="">Alle Gemeinden</option>
+      <option value="fulda">Fulda</option>
+      <option value="hünfeld">Hünfeld</option>
+      <option value="künzell">Künzell</option>
+      <option value="petersberg">Petersberg</option>
+      <option value="neuhof">Neuhof</option>
+      <option value="eichenzell">Eichenzell</option>
+      <option value="flieden">Flieden</option>
+      <option value="burghaun">Burghaun</option>
+      <option value="großenlüder">Großenlüder</option>
+      <option value="hilders">Hilders</option>
+      <option value="hofbieber">Hofbieber</option>
+      <option value="gersfeld">Gersfeld</option>
+      <option value="tann">Tann</option>
+      <option value="eiterfeld">Eiterfeld</option>
+      <option value="rasdorf">Rasdorf</option>
+      <option value="dipperz">Dipperz</option>
+      <option value="ebersburg">Ebersburg</option>
+      <option value="ehrenberg">Ehrenberg</option>
+      <option value="hosenfeld">Hosenfeld</option>
+      <option value="kalbach">Kalbach</option>
+      <option value="nüsttal">Nüsttal</option>
+      <option value="poppenhausen">Poppenhausen</option>
+      <option value="bad salzschlirf">Bad Salzschlirf</option>
+    </select>
+  </form>
+
+  <div class="artikel-liste" id="artikel-liste">
+    <p class="lade-text"><span class="spinner"></span>Archiv wird geladen…</p>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <div class="statische-links" id="statische-links" style="display:none">
+    <strong>Archiv-Seiten (statisch):</strong><br>
+    <span id="statische-links-inhalt"></span>
+  </div>
+</main>
+
+<footer>
+  <a href="index.html">Startseite</a> ·
+  <a href="landkreis.html">Unser Landkreis</a> ·
+  <a href="impressum.html">Impressum</a> ·
+  <a href="datenschutz.html">Datenschutz</a>
+  <br><br>
+  &copy; RegioNachrichten Fulda
+</footer>
+
+<script>
+const API = 'https://fuldasozial.onrender.com';
+let aktuelleSeite = 1;
+let seitenGesamt = 1;
+let ladeTimeout = null;
+
+function fmtDatum(d) {
+  if (!d) return '';
+  try {
+    const dt = new Date(d.replace(' ', 'T'));
+    return dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch { return d.slice(0, 10); }
+}
+
+function filterAendern() {
+  clearTimeout(ladeTimeout);
+  ladeTimeout = setTimeout(() => { aktuelleSeite = 1; laden(); }, 400);
+}
+
+async function laden(seite) {
+  if (seite) aktuelleSeite = seite;
+
+  const suche  = document.getElementById('suche-input').value.trim();
+  const region = document.getElementById('region-select').value;
+
+  let url = `${API}/archiv?seite=${aktuelleSeite}&limit=50`;
+  if (suche)  url += `&suche=${encodeURIComponent(suche)}`;
+  if (region) url += `&region=${encodeURIComponent(region)}`;
+
+  const liste = document.getElementById('artikel-liste');
+  liste.innerHTML = '<p class="lade-text"><span class="spinner"></span>Wird geladen…</p>';
+  document.getElementById('pagination').innerHTML = '';
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+    const artikel = data.artikel || [];
+    seitenGesamt  = data.seiten_gesamt || 1;
+    const gesamt  = data.gesamt || 0;
+
+    document.getElementById('archiv-subline').textContent =
+      `${gesamt.toLocaleString('de-DE')} ältere Artikel aus dem Landkreis Fulda`;
+
+    if (!artikel.length) {
+      liste.innerHTML = '<p class="lade-text">Keine Artikel gefunden.</p>';
+      return;
+    }
+
+    liste.innerHTML = artikel.map(a => {
+      const tags = (a.tags || '').split('·').map(t => t.trim()).filter(Boolean);
+      const tagHtml = tags.length
+        ? `<div class="artikel-tags">${tags.slice(0, 5).map(t => `<span class="tag-pill">${t}</span>`).join('')}</div>`
+        : '';
+      return `<div class="artikel-eintrag">
+        <div class="artikel-titel"><a href="${a.link}" target="_blank" rel="noopener">${a.titel || ''}</a></div>
+        <div class="artikel-meta">${fmtDatum(a.datum)} · ${a.quelle || ''}${a.region ? ' · ' + a.region : ''}</div>
+        ${a.beschreibung ? `<div class="artikel-beschr">${a.beschreibung}</div>` : ''}
+        ${tagHtml}
+      </div>`;
+    }).join('');
+
+    renderPagination(gesamt);
+  } catch(e) {
+    liste.innerHTML = '<p class="lade-text">Archiv konnte nicht geladen werden. Bitte versuche es später.</p>';
+    zeigStatischeLinks();
+  }
+}
+
+function renderPagination(gesamt) {
+  const nav = document.getElementById('pagination');
+  if (seitenGesamt <= 1) { nav.innerHTML = ''; return; }
+
+  const start = Math.max(1, aktuelleSeite - 2);
+  const end   = Math.min(seitenGesamt, aktuelleSeite + 2);
+  let html = `<button onclick="laden(${aktuelleSeite - 1})" ${aktuelleSeite <= 1 ? 'disabled' : ''}>←</button>`;
+  if (start > 1) html += `<button onclick="laden(1)">1</button>${start > 2 ? '<span class="seiten-info">…</span>' : ''}`;
+  for (let i = start; i <= end; i++) {
+    html += `<button onclick="laden(${i})" class="${i === aktuelleSeite ? 'aktiv' : ''}">${i}</button>`;
+  }
+  if (end < seitenGesamt) {
+    html += `${end < seitenGesamt - 1 ? '<span class="seiten-info">…</span>' : ''}<button onclick="laden(${seitenGesamt})">${seitenGesamt}</button>`;
+  }
+  html += `<button onclick="laden(${aktuelleSeite + 1})" ${aktuelleSeite >= seitenGesamt ? 'disabled' : ''}>→</button>`;
+  html += `<span class="seiten-info">Seite ${aktuelleSeite} / ${seitenGesamt}</span>`;
+  nav.innerHTML = html;
+}
+
+function zeigStatischeLinks() {
+  const box = document.getElementById('statische-links');
+  const container = document.getElementById('statische-links-inhalt');
+  // Build links for up to 20 static pages
+  let links = '';
+  for (let i = 1; i <= 20; i++) links += `<a href="archiv/seite-${i}.html">Seite ${i}</a> `;
+  container.innerHTML = links;
+  box.style.display = 'block';
+}
+
+laden();
+</script>
+</body>
+</html>

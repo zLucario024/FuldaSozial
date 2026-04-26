@@ -366,6 +366,9 @@ Fulda Nachrichten">
   @keyframes drehen { to { transform: rotate(360deg); } }
   .mehr-btn { display: block; margin: 0 auto 3rem; padding: 12px 32px; border-radius: 8px; background: var(--weiss); border: 1px solid var(--border); font-family: var(--font-body); font-size: .9rem; font-weight: 600; color: var(--grau-dunkel); cursor: pointer; transition: all .2s; }
   .mehr-btn:hover { border-color: var(--rot); color: var(--rot); }
+  .archiv-hinweis { text-align: center; font-size: .8rem; color: var(--grau-dunkel); margin: -1.5rem auto 2.5rem; }
+  .archiv-hinweis a { color: var(--rot); text-decoration: none; }
+  .archiv-hinweis a:hover { text-decoration: underline; }
 
   footer { margin-top: 4rem; border-top: 1px solid var(--border); background: var(--grau-hell); }
   .footer-inner { max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .85rem; color: var(--grau-mittel); }
@@ -1026,6 +1029,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Unser Landkreis
     </a>
+    <a href="archiv.html" class="nav-menu-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9" y1="14.5" x2="15" y2="14.5"/></svg>
+      Archiv
+    </a>
     <a href="impressum.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Impressum
@@ -1209,6 +1216,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="grid" id="artikel-grid"></div>
 <button class="mehr-btn" id="mehr-btn" onclick="mehrLaden()" style="display:none">Mehr laden</button>
+<p class="archiv-hinweis" id="archiv-hinweis" style="display:none">
+  Ältere Artikel (über 200 je Gemeinde) sind im <a href="archiv.html">Archiv</a> verfügbar.
+</p>
 
 <script>
 const API = 'https://fuldasozial.onrender.com';
@@ -1598,12 +1608,19 @@ async function artikelLaden() {
   gezeigt = 0; alleArtikel = [];
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
-  let url = `${API}/artikel?tage=60&limit=3000`;
-  if (aktivQuelle) url += `&quelle=${encodeURIComponent(aktivQuelle)}`;
   try {
-    const res = await fetch(url);
-    const data = await res.json();
-    const roh = data.artikel || [];
+    // Try new per-Gemeinde-cap endpoint; fall back to legacy if not deployed yet
+    let roh;
+    try {
+      const res = await fetch(`${API}/artikel-hauptseite`);
+      const data = await res.json();
+      roh = data.artikel;
+    } catch(_) {}
+    if (!roh || !roh.length) {
+      const res = await fetch(`${API}/artikel?tage=60&limit=3000`);
+      const data = await res.json();
+      roh = data.artikel || [];
+    }
     const gesehen = new Map();
     roh.forEach(a => {
       const key = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -1648,6 +1665,7 @@ function gefilterteArtikel() {
         if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
       }
     }
+    if (aktivQuelle && (a.quelle || '') !== aktivQuelle) return false;
     if (aktivMeineArtikel && !gemerkte.has(a.link)) return false;
     if (aktivKategorie && kategorieBestimmen(a.titel, a.tags) !== aktivKategorie) return false;
     if (aktivTag && !text.includes(aktivTag.toLowerCase())) return false;
@@ -1673,6 +1691,7 @@ function artikelAnzeigen() {
   gefiltert.slice(0, PRO_SEITE).forEach((a, i) => grid.appendChild(karteErstellen(a, i)));
   gezeigt = Math.min(PRO_SEITE, gefiltert.length);
   document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
+  document.getElementById('archiv-hinweis').style.display = gezeigt >= gefiltert.length && gefiltert.length > 0 ? 'block' : 'none';
   karteZahlenAktualisieren();
 }
 
@@ -1683,7 +1702,9 @@ function mehrLaden() {
   batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
   gezeigt = Math.min(gezeigt + PRO_SEITE, gefiltert.length);
   document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length} Artikeln`;
-  document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
+  const nochMehr = gezeigt < gefiltert.length;
+  document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
+  document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
 }
 
 function karteErstellen(artikel, index) {
@@ -2250,7 +2271,7 @@ function quelleWaehlen(btn, q) {
   btn.classList.add('aktiv-dunkel');
   aktivQuelle = q;
   if (q && typeof umami !== 'undefined') umami.track('filter-quelle', { quelle: q });
-  filterLeistAktualisieren(); artikelLaden();
+  filterLeistAktualisieren(); urlAktualisieren(); artikelAnzeigen();
 }
 
 function sucheAktualisieren() {

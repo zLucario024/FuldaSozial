@@ -90,6 +90,93 @@ def artikel_abrufen(
     }
 
 
+@app.get("/artikel-hauptseite")
+def artikel_hauptseite():
+    """Returns up to 200 most recent articles per region (Gemeinde reservoir).
+    Replaces the old tage=60&limit=3000 call on the main page."""
+    query = """
+        SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
+        FROM (
+            SELECT *,
+                   ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region, ''), '__keine__')
+                                      ORDER BY datum DESC) AS rn
+            FROM artikel
+            WHERE tags IS NOT NULL AND tags != ''
+        ) ranked
+        WHERE rn <= 200
+        ORDER BY datum DESC
+    """
+    conn = db_verbinden()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return {"anzahl": len(rows), "artikel": [dict(r) for r in rows]}
+
+
+@app.get("/archiv")
+def archiv_abrufen(
+    seite:  int = Query(1),
+    limit:  int = Query(50),
+    region: str = Query(None),
+    suche:  str = Query(None),
+    von:    str = Query(None),
+    bis:    str = Query(None),
+):
+    """Returns articles that overflow the per-Gemeinde top-200 (i.e. the archive)."""
+    limit  = min(limit, 100)
+    offset = (seite - 1) * limit
+
+    base = """
+        FROM (
+            SELECT *,
+                   ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region, ''), '__keine__')
+                                      ORDER BY datum DESC) AS rn
+            FROM artikel
+            WHERE tags IS NOT NULL AND tags != ''
+        ) ranked
+        WHERE rn > 200
+    """
+    params: list = []
+
+    extra = ""
+    if region:
+        extra += " AND region = %s"
+        params.append(region)
+    if suche:
+        extra += " AND (titel ILIKE %s OR beschreibung ILIKE %s)"
+        params.extend([f"%{suche}%", f"%{suche}%"])
+    if von:
+        extra += " AND datum >= %s"
+        params.append(von)
+    if bis:
+        extra += " AND datum <= %s"
+        params.append(bis + " 23:59:59")
+
+    conn = db_verbinden()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute(f"SELECT COUNT(*) {base}{extra}", params)
+    gesamt = cursor.fetchone()["count"]
+
+    cursor.execute(
+        f"SELECT id, titel, link, quelle, typ, region, datum, tags, beschreibung {base}{extra} ORDER BY datum DESC LIMIT %s OFFSET %s",
+        params + [limit, offset]
+    )
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    import math
+    return {
+        "artikel":        [dict(r) for r in rows],
+        "gesamt":         gesamt,
+        "seite":          seite,
+        "seiten_gesamt":  math.ceil(gesamt / limit) if gesamt else 1,
+    }
+
+
 @app.get("/artikel/{artikel_id}")
 def einzelner_artikel(artikel_id: int):
     conn = db_verbinden()
@@ -157,6 +244,7 @@ def _aggregator_ausfuehren():
     for quelle in agg.HTML_QUELLEN:
         agg.html_quelle_verarbeiten(quelle, conn)
     agg.deduplizieren(conn)
+    agg.archiv_generieren(conn)
     agg.sitemap_generieren(conn)
     conn.close()
 
