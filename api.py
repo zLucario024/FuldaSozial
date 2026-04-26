@@ -16,6 +16,72 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
+# Regions that are always shown on the main page regardless of age.
+# Articles whose region falls outside this set are considered "Alle"-only
+# and are moved to the archive after 7 days.
+BEKANNTE_REGIONEN = {
+    # Überregional
+    'landkreis-fulda', 'hessen', 'osthessen',
+    # Gemeinden
+    'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
+    'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
+    'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
+    'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
+    # Stadtteile Fulda
+    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
+    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach',
+    'harmerz', 'hochschule fulda', 'horas', 'innenstadt', 'istergiesel',
+    'johannesberg', 'kämmerzell', 'kohlhaus', 'lehnerz', 'lüdermünd',
+    'maberzell', 'maikes', 'malkes', 'mittelrode', 'neuenberg', 'niederrode',
+    'niesig', 'nordend', 'oberrode', 'ostend', 'rodges', 'roßberg', 'sickels',
+    'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
+    'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
+    # Ortsteile Künzell
+    'bachrain', 'dirlos', 'engelhelms', 'haunes', 'pilgerzell',
+    # Ortsteile Petersberg
+    'almendorf', 'böckels', 'dalherda', 'giesel', 'großsassen', 'habelsbach',
+    'kesselbach', 'kleinsassen', 'marbach', 'orferode', 'roßbach',
+    # Ortsteile Neuhof
+    'hauswurz', 'hainzell', 'motzlar', 'rommerz', 'schachten',
+    # Ortsteile Eichenzell
+    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
+    # Ortsteile Flieden
+    'haindorf', 'kohlgrund', 'rückers',
+    # Ortsteile Burghaun
+    'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
+    'steens', 'thälau', 'wehrda',
+    # Ortsteile Großenlüder
+    'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
+    # Ortsteile Hünfeld
+    'großenbach', 'hünfelder', 'kirchhasel', 'mackenzell', 'malges',
+    'molzbach', 'steinbach',
+    # Ortsteile Hofbieber
+    'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
+    # Ortsteile Kalbach
+    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
+    # Ortsteile Hosenfeld
+    'altenhof', 'büchenberg', 'eichenberg', 'mittelhaun',
+    # Ortsteile Dipperz
+    'dörnhagen', 'rönshausen',
+    # Ortsteile Ebersburg
+    'euters', 'götzenhof', 'thalau', 'weyhers',
+    # Ortsteile Ehrenberg
+    'reulbach', 'seiferts', 'wüstensachsen',
+    # Ortsteile Hilders
+    'dietges', 'liebhards', 'simmershausen', 'unterweid',
+    # Ortsteile Gersfeld
+    'melperts',
+    # Ortsteile Tann
+    'günthers', 'lahrbach', 'neuswarts',
+    # Ortsteile Poppenhausen
+    'abtsroda', 'rodholz', 'sieblos',
+    # Ortsteile Nüsttal
+    'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
+    # Ortsteile Eiterfeld
+    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+}
+_REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
+
 app = FastAPI(
     title="Fulda News API",
     description="Regionale Nachrichten aus dem Landkreis Fulda",
@@ -92,18 +158,18 @@ def artikel_abrufen(
 
 @app.get("/artikel-hauptseite")
 def artikel_hauptseite():
-    """Main page feed: all tagged articles (no age limit) + untagged articles < 7 days old.
-    Untagged articles older than 7 days are considered unassociated and live in /archiv."""
+    """Main page feed: all articles with a known region + any article < 7 days old.
+    Articles with an unrecognised region older than 7 days live in /archiv."""
     query = """
         SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
         FROM artikel
-        WHERE (tags IS NOT NULL AND tags != '')
+        WHERE region = ANY(%s)
            OR datum >= TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
         ORDER BY datum DESC
     """
     conn = db_verbinden()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute(query)
+    cursor.execute(query, (list(_REGIONEN_SQL),))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -119,16 +185,17 @@ def archiv_abrufen(
     von:    str = Query(None),
     bis:    str = Query(None),
 ):
-    """Returns untagged articles older than 7 days — articles not yet associated with any region."""
+    """Returns articles with an unrecognised region older than 7 days (the 'Alle'-only articles)."""
     limit  = min(limit, 100)
     offset = (seite - 1) * limit
 
     base = """
         FROM artikel
-        WHERE (tags IS NULL OR tags = '')
+        WHERE (region IS NULL OR region NOT IN %s)
           AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
     """
-    params: list = []
+    # First param is always the known-regions tuple (used in NOT IN %s)
+    params: list = [_REGIONEN_SQL]
 
     extra = ""
     if region:

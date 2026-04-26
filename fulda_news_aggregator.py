@@ -672,16 +672,79 @@ def main():
     print(f"\nFertig!")
 
 
+BEKANNTE_REGIONEN = (
+    # Überregional
+    'landkreis-fulda', 'hessen', 'osthessen',
+    # Gemeinden
+    'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
+    'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
+    'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
+    'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
+    # Stadtteile Fulda
+    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
+    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach',
+    'harmerz', 'hochschule fulda', 'horas', 'innenstadt', 'istergiesel',
+    'johannesberg', 'kämmerzell', 'kohlhaus', 'lehnerz', 'lüdermünd',
+    'maberzell', 'maikes', 'malkes', 'mittelrode', 'neuenberg', 'niederrode',
+    'niesig', 'nordend', 'oberrode', 'ostend', 'rodges', 'roßberg', 'sickels',
+    'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
+    'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
+    # Ortsteile Künzell
+    'bachrain', 'dirlos', 'engelhelms', 'haunes', 'pilgerzell',
+    # Ortsteile Petersberg
+    'almendorf', 'böckels', 'dalherda', 'giesel', 'großsassen', 'habelsbach',
+    'kesselbach', 'kleinsassen', 'marbach', 'orferode', 'roßbach',
+    # Ortsteile Neuhof
+    'hauswurz', 'hainzell', 'motzlar', 'rommerz', 'schachten',
+    # Ortsteile Eichenzell
+    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
+    # Ortsteile Flieden
+    'haindorf', 'kohlgrund', 'rückers',
+    # Ortsteile Burghaun
+    'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
+    'steens', 'thälau', 'wehrda',
+    # Ortsteile Großenlüder
+    'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
+    # Ortsteile Hünfeld
+    'großenbach', 'hünfelder', 'kirchhasel', 'mackenzell', 'malges',
+    'molzbach', 'steinbach',
+    # Ortsteile Hofbieber
+    'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
+    # Ortsteile Kalbach
+    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
+    # Ortsteile Hosenfeld
+    'altenhof', 'büchenberg', 'eichenberg', 'mittelhaun',
+    # Ortsteile Dipperz
+    'dörnhagen', 'rönshausen',
+    # Ortsteile Ebersburg
+    'euters', 'götzenhof', 'thalau', 'weyhers',
+    # Ortsteile Ehrenberg
+    'reulbach', 'seiferts', 'wüstensachsen',
+    # Ortsteile Hilders
+    'dietges', 'liebhards', 'simmershausen', 'unterweid',
+    # Ortsteile Gersfeld
+    'melperts',
+    # Ortsteile Tann
+    'günthers', 'lahrbach', 'neuswarts',
+    # Ortsteile Poppenhausen
+    'abtsroda', 'rodholz', 'sieblos',
+    # Ortsteile Nüsttal
+    'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
+    # Ortsteile Eiterfeld
+    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+)
+
+
 def archiv_generieren(conn):
-    """Generates static archiv/seite-N.html pages for untagged articles older than 7 days
-    (articles not yet associated with any region)."""
+    """Generates static archiv/seite-N.html pages for articles whose region is not in
+    BEKANNTE_REGIONEN and are older than 7 days (the 'Alle'-only articles)."""
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("""
         SELECT COUNT(*) FROM artikel
-        WHERE (tags IS NULL OR tags = '')
+        WHERE (region IS NULL OR region NOT IN %s)
           AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
-    """)
+    """, (BEKANNTE_REGIONEN,))
     gesamt = cursor.fetchone()["count"]
 
     LIMIT = 50
@@ -695,11 +758,11 @@ def archiv_generieren(conn):
         cursor.execute("""
             SELECT titel, link, quelle, region, datum, beschreibung, tags
             FROM artikel
-            WHERE (tags IS NULL OR tags = '')
+            WHERE (region IS NULL OR region NOT IN %s)
               AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
             ORDER BY datum DESC
             LIMIT %s OFFSET %s
-        """, (LIMIT, offset))
+        """, (BEKANNTE_REGIONEN, LIMIT, offset))
         artikel = cursor.fetchall()
         html = _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt)
         pfad = os.path.join(archiv_dir, f"seite-{seite}.html")
