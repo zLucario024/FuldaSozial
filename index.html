@@ -188,14 +188,14 @@ Fulda Nachrichten">
   flex-shrink: 0;
 }
 .wappen-svg img {
-  height: 28px !important;
+  height: 34px !important;
   width: auto !important;
-  max-width: 36px !important;
+  max-width: 56px !important;
   display: block;
 }
 .wappen-badge[title="Fulda"] .wappen-svg img {
-  height: 38px !important;
-  max-width: 46px !important;
+  height: 44px !important;
+  max-width: 66px !important;
 }
 .wappen-name {
   font-size: 11px;
@@ -2095,8 +2095,9 @@ function karteZahlenAktualisieren() {
   const NS = 'http://www.w3.org/2000/svg';
   const gross = document.getElementById('karte-panel').classList.contains('gross');
   const FONT = gross ? 26 : 8;
-  const ICON = gross ? 34 : 11;
-  const YOFF = gross ? 20 : 7;
+  const ICON_H = gross ? 46 : 16;
+  const ICON_W = gross ? 72 : 26;
+  const YOFF = gross ? 28 : 11;
   for (const [ort, svgId] of Object.entries(KARTE_ORT_ID)) {
     const neueArtikel = alleArtikel.filter(a => {
       const d = new Date((a.datum || '').replace(' ', 'T'));
@@ -2140,13 +2141,19 @@ function karteZahlenAktualisieren() {
       const wappenKey = Object.keys(WAPPEN).find(k => k.toLowerCase() === ort);
       if (wappenKey) {
         const tbb = t.getBBox();
+        const WAPPEN_OFFSET = { 'petersberg': [0,-55], 'großenlüder': [15,-60], 'neuhof': [0,-35] };
+        const [ox, oy] = WAPPEN_OFFSET[ort] || [0, 0];
         const img = document.createElementNS(NS, 'image');
         img.setAttribute('class', 'k-badge');
         img.setAttribute('href', `Design/Wappen/${wappenKey}.png`);
-        img.setAttribute('x', tbb.x - ICON - 3);
-        img.setAttribute('y', by - ICON / 2);
-        img.setAttribute('width', ICON);
-        img.setAttribute('height', ICON);
+        img.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        img.setAttribute('x', tbb.x - ICON_W - 3 + ox);
+        img.setAttribute('y', by - ICON_H / 2 + oy);
+        img.setAttribute('width', ICON_W);
+        img.setAttribute('height', ICON_H);
+        img.style.cursor = 'pointer';
+        img.style.pointerEvents = 'auto';
+        img.addEventListener('click', () => karteKlick(ort, gem));
         overlay.appendChild(img);
       }
       // Brand-new pulse dot
