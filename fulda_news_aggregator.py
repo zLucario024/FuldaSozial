@@ -789,6 +789,30 @@ def archiv_generieren(conn):
     return seiten_gesamt
 
 
+_KAT_REGELN = [
+    ("Vorfälle",              "#c53030", ["unfall","brand","polizei","einbruch","gewalt","verletzt","blaulicht","einsatz","mord","diebstahl","täter","festnahme","vermisst","notfall","crash"]),
+    ("Politik & Verwaltung",  "#1e429f", ["politik","verwaltung","bürgermeister","gemeinderat","kreistag","partei","minister","wahl","sitzung","haushalt","beschluss"]),
+    ("Wirtschaft & Arbeit",   "#065f46", ["wirtschaft","unternehmen","jobs","arbeit","betrieb","firma","insolvenz","investition","gewerbe","handel"]),
+    ("Sport",                 "#7e3af2", ["sport","fußball","turnier","meisterschaft","liga","trainer","spieler","sieg","niederlage","handball","leichtathletik"]),
+    ("Kultur & Freizeit",     "#d97706", ["kultur","veranstaltung","festival","ausstellung","konzert","theater","museum","kunst","freizeit","messe"]),
+    ("Bildung & Familie",     "#0284c7", ["schule","bildung","kita","kindergarten","studium","familie","jugend","ausbildung","lehrer","universität"]),
+    ("Natur & Umwelt",        "#15803d", ["natur","umwelt","klima","wald","tier","wetter","hochwasser","nachhaltigkeit","energie","solaranlage"]),
+    ("Verkehr & Bau",         "#92400e", ["verkehr","straße","bau","baustelle","brücke","autobahn","zug","bus","radweg","parkplatz"]),
+    ("Gesundheit",            "#be185d", ["gesundheit","krankenhaus","arzt","medizin","impfung","pflege","klinik","therapie","apotheke"]),
+]
+
+def _kategorie_bestimmen(titel, tags):
+    text = ((titel or "") + " " + (tags or "")).lower()
+    bestes = ("Sonstiges", "#6b7280")
+    bester_score = 0
+    for name, farbe, keys in _KAT_REGELN:
+        score = sum(3 if k in ["unfall","brand","polizei","mord","blaulicht"] and k in text else
+                    (1 if k in text else 0) for k in keys)
+        if score > bester_score:
+            bester_score, bestes = score, (name, farbe)
+    return bestes
+
+
 def _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt):
     from html import escape
 
@@ -798,25 +822,62 @@ def _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt):
         except Exception:
             return d or ""
 
-    prev_link = f'<a href="seite-{seite-1}.html" rel="prev">← Neuere</a>' if seite > 1 else ""
-    next_link = f'<a href="seite-{seite+1}.html" rel="next">Ältere →</a>' if seite < seiten_gesamt else ""
+    def fmt_zeit(d):
+        try:
+            dt = datetime.fromisoformat(d.replace(" ", "T"))
+            delta = datetime.now() - dt
+            if delta.days == 0:
+                h = delta.seconds // 3600
+                return f"vor {h} Std." if h else "vor kurzem"
+            if delta.days == 1:
+                return "gestern"
+            if delta.days < 7:
+                return f"vor {delta.days} Tagen"
+            return fmt_datum(d)
+        except Exception:
+            return fmt_datum(d)
+
     canon = f"https://www.rnfulda.de/archiv/seite-{seite}.html"
 
-    artikel_html = ""
+    karten_html = ""
     for a in artikel:
-        titel = escape(a["titel"] or "")
+        titel  = escape(a["titel"] or "")
         quelle = escape(a["quelle"] or "")
-        region = escape(a["region"] or "")
-        beschr = escape(a["beschreibung"] or "")
-        link = a["link"] or "#"
+        link   = a["link"] or "#"
         datum_iso = (a["datum"] or "")[:10]
-        datum_fmt = fmt_datum(a["datum"] or "")
-        artikel_html += f"""
-    <article>
-      <h2><a href="{link}" target="_blank" rel="noopener">{titel}</a></h2>
-      <p class="meta"><time datetime="{datum_iso}">{datum_fmt}</time> · {quelle}{(' · ' + region) if region and region != '__keine__' else ''}</p>
-      {f'<p>{beschr}</p>' if beschr else ''}
-    </article>"""
+        zeit   = escape(fmt_zeit(a["datum"] or ""))
+        kat_name, kat_farbe = _kategorie_bestimmen(a["titel"], a["tags"])
+
+        tags_html = ""
+        if a["tags"]:
+            pills = [escape(t.strip()) for t in a["tags"].split("·") if t.strip()][:5]
+            tags_html = '<div class="karte-tags">' + "".join(f'<span class="tag-pill">{p}</span>' for p in pills) + "</div>"
+
+        karten_html += f"""<div class="karte">
+  <a href="{link}" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:{kat_farbe}18">
+      <span class="badge" style="background:{kat_farbe}">↗ {escape(kat_name)}</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="{link}" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">{titel}</div>
+    </a>
+    {tags_html}
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="{datum_iso}">{zeit}</time>
+      <span class="meta-trenner">·</span>
+      <span>{quelle}</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="{link}" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div>"""
+
+    prev_link = f'<a href="seite-{seite-1}.html" rel="prev">← Neuere</a>' if seite > 1 else ""
+    next_link = f'<a href="seite-{seite+1}.html" rel="next">Ältere →</a>' if seite < seiten_gesamt else ""
 
     return f"""<!DOCTYPE html>
 <html lang="de">
@@ -828,32 +889,68 @@ def _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt):
 <link rel="canonical" href="{canon}">
 {f'<link rel="prev" href="seite-{seite-1}.html">' if seite > 1 else ''}
 {f'<link rel="next" href="seite-{seite+1}.html">' if seite < seiten_gesamt else ''}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{{font-family:system-ui,sans-serif;max-width:800px;margin:0 auto;padding:1rem 1.5rem;color:#1a1a1a}}
-h1{{font-size:1.4rem;margin-bottom:.25rem}}
-.sub{{color:#666;font-size:.9rem;margin-bottom:1.5rem}}
-article{{border-bottom:1px solid #e5e5e5;padding:1rem 0}}
-article:last-child{{border-bottom:none}}
-h2{{font-size:1rem;margin:0 0 .25rem}}
-h2 a{{color:#c0392b;text-decoration:none}}
-h2 a:hover{{text-decoration:underline}}
-.meta{{font-size:.8rem;color:#666;margin:.25rem 0}}
-p{{font-size:.875rem;color:#444;margin:.25rem 0 0}}
-nav.pagination{{display:flex;justify-content:space-between;margin:2rem 0;font-size:.9rem}}
-nav.pagination a{{color:#c0392b;text-decoration:none}}
-footer{{margin-top:2rem;border-top:1px solid #e5e5e5;padding-top:1rem;font-size:.8rem;color:#888;text-align:center}}
+:root{{--rot:#c0152a;--border:#e0e0e0;--weiss:#fff;--schwarz:#111;--grau-dunkel:#333;--grau-mittel:#666;--grau-hell:#f4f4f4;--font-display:'Playfair Display',Georgia,serif;--font-body:'Source Sans 3',sans-serif}}
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+body{{font-family:var(--font-body);background:var(--grau-hell);color:var(--schwarz);min-height:100vh}}
+header{{background:var(--weiss);border-bottom:1px solid var(--border);padding:0 1.5rem;height:60px;display:flex;align-items:center;gap:10px}}
+.logo-icon{{width:36px;height:36px;background:var(--rot);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}}
+.logo-icon svg{{width:20px;height:20px;fill:#fff}}
+.logo-text{{font-family:var(--font-display);font-size:1.1rem;line-height:1.1}}
+.logo-text span:first-child{{color:var(--rot)}}
+.logo-ort{{font-size:.75rem;color:var(--grau-mittel);font-family:var(--font-body);font-weight:500}}
+.back-btn{{margin-left:auto;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:none;font-family:var(--font-body);font-size:.85rem;font-weight:600;color:var(--grau-dunkel);cursor:pointer;text-decoration:none;transition:border-color .15s,color .15s}}
+.back-btn:hover{{border-color:var(--rot);color:var(--rot)}}
+main{{max-width:1200px;margin:0 auto;padding:1.5rem 1.5rem 4rem}}
+h1{{font-family:var(--font-display);font-size:1.5rem;margin-bottom:.2rem}}
+.sub{{color:var(--grau-mittel);font-size:.875rem;margin-bottom:1.5rem}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin-bottom:2rem}}
+.karte{{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--weiss);display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}}
+.karte:hover{{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px)}}
+.karte-bild-link{{display:block;text-decoration:none}}
+.karte-bild{{height:80px;display:flex;align-items:flex-end;padding:.6rem;position:relative}}
+.badge{{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:4px;color:#fff}}
+.karte-inhalt{{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.5rem}}
+.karte-titel-link{{text-decoration:none;color:inherit}}
+.karte-titel{{font-family:var(--font-display);font-size:.95rem;font-weight:700;line-height:1.35;color:var(--schwarz);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
+.karte-titel-link:hover .karte-titel{{color:var(--rot)}}
+.karte-tags{{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}}
+.tag-pill{{font-size:.65rem;background:#f0f0f0;color:var(--grau-dunkel);padding:2px 7px;border-radius:10px;border:1px solid var(--border)}}
+.karte-meta{{display:flex;flex-wrap:wrap;gap:.3rem;font-size:.72rem;color:var(--grau-mittel);align-items:center;padding-top:.4rem;border-top:1px solid var(--border);margin-top:auto}}
+.meta-trenner{{opacity:.4}}
+.karte-footer{{padding:.7rem 1rem;border-top:1px solid var(--border)}}
+.lese-link{{display:flex;align-items:center;gap:.35rem;font-size:.8rem;font-weight:600;color:var(--rot);text-decoration:none}}
+.lese-link:hover{{text-decoration:underline}}
+nav.pagination{{display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0;font-size:.875rem}}
+nav.pagination a{{color:var(--rot);text-decoration:none;font-weight:600}}
+nav.pagination a:hover{{text-decoration:underline}}
+footer{{border-top:1px solid var(--border);background:var(--weiss);padding:1.5rem;text-align:center;font-size:.8rem;color:var(--grau-mittel)}}
+footer a{{color:var(--rot);text-decoration:none}}
+@media(max-width:600px){{main{{padding:1rem 1rem 3rem}}.grid{{grid-template-columns:1fr}}}}
 </style>
 </head>
 <body>
-<h1>Nachrichtenarchiv – Landkreis Fulda</h1>
-<p class="sub">Seite {seite} von {seiten_gesamt} · {gesamt} archivierte Artikel · <a href="../index.html">Zur Startseite</a></p>
-{artikel_html}
-<nav class="pagination">
-  <span>{prev_link}</span>
-  <span>Seite {seite} / {seiten_gesamt}</span>
-  <span>{next_link}</span>
-</nav>
-<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv-Übersicht</a> · <a href="../impressum.html">Impressum</a></footer>
+<header>
+  <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg></div>
+  <div class="logo-text">Regio<span>Nachrichten</span><span class="logo-ort">Fulda</span></div>
+  <a href="../index.html" class="back-btn"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg> Startseite</a>
+</header>
+<main>
+  <h1>Nachrichtenarchiv</h1>
+  <p class="sub">Seite {seite} von {seiten_gesamt} · {gesamt:,} archivierte Artikel · <a href="../archiv.html" style="color:var(--rot)">Archiv-Übersicht</a></p>
+  <div class="grid">
+{karten_html}
+  </div>
+  <nav class="pagination">
+    <span>{prev_link}</span>
+    <span style="color:var(--grau-mittel)">Seite {seite} / {seiten_gesamt}</span>
+    <span>{next_link}</span>
+  </nav>
+</main>
+<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></footer>
 </body>
 </html>"""
 

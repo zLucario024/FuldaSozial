@@ -50,7 +50,7 @@
   .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
 
   /* Layout */
-  main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
   h1 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: .25rem; }
   .subline { color: var(--grau-mittel); font-size: .9rem; margin-bottom: 1.5rem; }
 
@@ -71,19 +71,47 @@
   }
   .filter-bar button:hover { opacity: .85; }
 
-  /* Article list */
-  .artikel-liste { display: flex; flex-direction: column; gap: 0; }
-  .artikel-eintrag {
-    border-bottom: 1px solid var(--border); padding: 1rem 0;
+  /* Card grid */
+  .karten-raster {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
   }
-  .artikel-eintrag:first-child { border-top: 1px solid var(--border); }
-  .artikel-titel { font-size: 1rem; font-weight: 600; margin-bottom: .2rem; }
-  .artikel-titel a { color: var(--rot); text-decoration: none; }
-  .artikel-titel a:hover { text-decoration: underline; }
-  .artikel-meta { font-size: .8rem; color: var(--grau-mittel); margin-bottom: .3rem; }
-  .artikel-beschr { font-size: .875rem; color: var(--grau-dunkel); line-height: 1.5; }
-  .artikel-tags { margin-top: .3rem; display: flex; flex-wrap: wrap; gap: .25rem; }
-  .tag-pill { font-size: .7rem; background: var(--rot-hell); color: var(--rot); padding: 2px 7px; border-radius: 10px; }
+  .karte {
+    background: var(--weiss); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .karte:hover { box-shadow: 0 6px 24px rgba(0,0,0,.10); transform: translateY(-2px); }
+  .karte-kopf { height: 80px; display: flex; align-items: flex-start; padding: 12px 14px; flex-shrink: 0; }
+  .karte-kat-badge {
+    display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+    background: rgba(255,255,255,.22); color: #fff;
+  }
+  .karte-body { padding: 14px 16px 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .karte-titel {
+    font-family: var(--font-display); font-size: 1rem; line-height: 1.4;
+    color: var(--schwarz);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .karte-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .karte-tag {
+    font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+    background: var(--rot-hell); color: var(--rot);
+  }
+  .karte-meta {
+    display: flex; align-items: center; gap: 5px;
+    font-size: .75rem; color: var(--grau-mittel); margin-top: auto;
+  }
+  .karte-meta svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .karte-fuss {
+    padding: 10px 16px; border-top: 1px solid var(--border); margin-top: 10px;
+  }
+  .karte-fuss a {
+    font-size: .8rem; font-weight: 600; color: var(--rot); text-decoration: none;
+  }
+  .karte-fuss a:hover { text-decoration: underline; }
 
   /* Loading / empty */
   .lade-text { text-align: center; color: var(--grau-mittel); padding: 3rem 1rem; }
@@ -114,6 +142,7 @@
     h1 { font-size: 1.3rem; }
     .filter-bar input, .filter-bar select { min-width: 0; width: 100%; }
     .filter-bar button { width: 100%; }
+    .karten-raster { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -166,8 +195,8 @@
     </select>
   </form>
 
-  <div class="artikel-liste" id="artikel-liste">
-    <p class="lade-text"><span class="spinner"></span>Archiv wird geladen…</p>
+  <div class="karten-raster" id="artikel-liste">
+    <p class="lade-text" style="grid-column:1/-1"><span class="spinner"></span>Archiv wird geladen…</p>
   </div>
 
   <div class="pagination" id="pagination"></div>
@@ -193,10 +222,37 @@ let aktuelleSeite = 1;
 let seitenGesamt = 1;
 let ladeTimeout = null;
 
-function fmtDatum(d) {
+const KAT_REGELN = [
+  ["Vorfälle",             "#c53030", ["unfall","brand","polizei","feuerwehr","rettung","notfall","verbrechen","einbruch","diebstahl","betrug","unglück","verletzt","todesfall","absturz","explosion"]],
+  ["Politik & Verwaltung", "#1e429f", ["politik","verwaltung","gemeinderat","stadtrat","bürgermeister","kreistag","wahl","abstimmung","sitzung","beschluss","haushalt","gesetz","verordnung","behörde"]],
+  ["Wirtschaft",           "#92400e", ["wirtschaft","unternehmen","firma","betrieb","arbeitsplatz","jobs","stellenabbau","insolvenz","investition","förderung","einzelhandel","gewerbe","industrie"]],
+  ["Sport",                "#065f46", ["sport","fußball","handball","tennis","verein","turnier","meisterschaft","liga","spiel","trainer","mannschaft","athlet","wettkampf","marathon"]],
+  ["Kultur & Freizeit",    "#5b21b6", ["kultur","konzert","ausstellung","museum","theater","festival","veranstaltung","event","fest","feier","messe","kino","kunst","musik"]],
+  ["Soziales",             "#0e7490", ["sozial","hilfe","ehrenamt","verein","initiative","spende","unterstützung","pflege","jugend","senioren","beratung","bildung","schule","kita"]],
+  ["Natur & Umwelt",       "#166534", ["natur","umwelt","klima","wald","tiere","energie","solar","wind","recycling","müll","wasser","landwirtschaft","nachhaltigkeit"]],
+  ["Infrastruktur",        "#374151", ["straße","bau","baustelle","brücke","sperrung","verkehr","parkplatz","anbindung","linie","bus","bahn","radweg","glasfaser","breitband"]],
+];
+
+function kategorieBestimmen(titel, tags) {
+  const text = ((titel || '') + ' ' + (tags || '')).toLowerCase();
+  let best = null, bestScore = 0;
+  for (const [name, farbe, schluessel] of KAT_REGELN) {
+    const score = schluessel.reduce((s, k) => s + (text.includes(k) ? 1 : 0), 0);
+    if (score > bestScore) { bestScore = score; best = [name, farbe]; }
+  }
+  return best || ["Nachrichten", "#c0152a"];
+}
+
+function fmtZeit(d) {
   if (!d) return '';
   try {
     const dt = new Date(d.replace(' ', 'T'));
+    const diff = Math.floor((Date.now() - dt) / 1000);
+    if (diff < 3600)  return `vor ${Math.floor(diff / 60)} Min.`;
+    if (diff < 86400) return `vor ${Math.floor(diff / 3600)} Std.`;
+    const tage = Math.floor(diff / 86400);
+    if (tage === 1) return 'gestern';
+    if (tage < 30)  return `vor ${tage} Tagen`;
     return dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   } catch { return d.slice(0, 10); }
 }
@@ -217,7 +273,7 @@ async function laden(seite) {
   if (region) url += `&region=${encodeURIComponent(region)}`;
 
   const liste = document.getElementById('artikel-liste');
-  liste.innerHTML = '<p class="lade-text"><span class="spinner"></span>Wird geladen…</p>';
+  liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1"><span class="spinner"></span>Wird geladen…</p>';
   document.getElementById('pagination').innerHTML = '';
 
   try {
@@ -231,26 +287,38 @@ async function laden(seite) {
       `${gesamt.toLocaleString('de-DE')} ältere Artikel aus dem Landkreis Fulda`;
 
     if (!artikel.length) {
-      liste.innerHTML = '<p class="lade-text">Keine Artikel gefunden.</p>';
+      liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1">Keine Artikel gefunden.</p>';
       return;
     }
 
     liste.innerHTML = artikel.map(a => {
       const tags = (a.tags || '').split('·').map(t => t.trim()).filter(Boolean);
       const tagHtml = tags.length
-        ? `<div class="artikel-tags">${tags.slice(0, 5).map(t => `<span class="tag-pill">${t}</span>`).join('')}</div>`
+        ? `<div class="karte-tags">${tags.slice(0, 5).map(t => `<span class="karte-tag">${t}</span>`).join('')}</div>`
         : '';
-      return `<div class="artikel-eintrag">
-        <div class="artikel-titel"><a href="${a.link}" target="_blank" rel="noopener">${a.titel || ''}</a></div>
-        <div class="artikel-meta">${fmtDatum(a.datum)} · ${a.quelle || ''}${a.region ? ' · ' + a.region : ''}</div>
-        ${a.beschreibung ? `<div class="artikel-beschr">${a.beschreibung}</div>` : ''}
-        ${tagHtml}
+      const [katName, katFarbe] = kategorieBestimmen(a.titel, a.tags);
+      const escTitel = (a.titel || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<div class="karte">
+        <div class="karte-kopf" style="background:${katFarbe}">
+          <span class="karte-kat-badge">${katName}</span>
+        </div>
+        <div class="karte-body">
+          <div class="karte-titel">${escTitel}</div>
+          ${tagHtml}
+          <div class="karte-meta">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${fmtZeit(a.datum)}${a.quelle ? ' · ' + a.quelle : ''}
+          </div>
+        </div>
+        <div class="karte-fuss">
+          <a href="${a.link}" target="_blank" rel="noopener">Ganzen Artikel lesen →</a>
+        </div>
       </div>`;
     }).join('');
 
     renderPagination(gesamt);
   } catch(e) {
-    liste.innerHTML = '<p class="lade-text">Archiv konnte nicht geladen werden. Bitte versuche es später.</p>';
+    liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1">Archiv konnte nicht geladen werden. Bitte versuche es später.</p>';
     zeigStatischeLinks();
   }
 }
