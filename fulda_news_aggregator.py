@@ -673,18 +673,15 @@ def main():
 
 
 def archiv_generieren(conn):
-    """Generates static archiv/seite-N.html pages for articles outside each Gemeinde's top-200."""
+    """Generates static archiv/seite-N.html pages for untagged articles older than 7 days
+    (articles not yet associated with any region)."""
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    count_query = """
-        SELECT COUNT(*) FROM (
-            SELECT ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region,''),'__keine__')
-                                      ORDER BY datum DESC) AS rn
-            FROM artikel
-            WHERE tags IS NOT NULL AND tags != ''
-        ) sub WHERE rn > 200
-    """
-    cursor.execute(count_query)
+    cursor.execute("""
+        SELECT COUNT(*) FROM artikel
+        WHERE (tags IS NULL OR tags = '')
+          AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+    """)
     gesamt = cursor.fetchone()["count"]
 
     LIMIT = 50
@@ -697,14 +694,9 @@ def archiv_generieren(conn):
         offset = (seite - 1) * LIMIT
         cursor.execute("""
             SELECT titel, link, quelle, region, datum, beschreibung, tags
-            FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region,''),'__keine__')
-                                          ORDER BY datum DESC) AS rn
-                FROM artikel
-                WHERE tags IS NOT NULL AND tags != ''
-            ) ranked
-            WHERE rn > 200
+            FROM artikel
+            WHERE (tags IS NULL OR tags = '')
+              AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
             ORDER BY datum DESC
             LIMIT %s OFFSET %s
         """, (LIMIT, offset))

@@ -92,18 +92,13 @@ def artikel_abrufen(
 
 @app.get("/artikel-hauptseite")
 def artikel_hauptseite():
-    """Returns up to 200 most recent articles per region (Gemeinde reservoir).
-    Replaces the old tage=60&limit=3000 call on the main page."""
+    """Main page feed: all tagged articles (no age limit) + untagged articles < 7 days old.
+    Untagged articles older than 7 days are considered unassociated and live in /archiv."""
     query = """
         SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
-        FROM (
-            SELECT *,
-                   ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region, ''), '__keine__')
-                                      ORDER BY datum DESC) AS rn
-            FROM artikel
-            WHERE tags IS NOT NULL AND tags != ''
-        ) ranked
-        WHERE rn <= 200
+        FROM artikel
+        WHERE (tags IS NOT NULL AND tags != '')
+           OR datum >= TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
         ORDER BY datum DESC
     """
     conn = db_verbinden()
@@ -124,19 +119,14 @@ def archiv_abrufen(
     von:    str = Query(None),
     bis:    str = Query(None),
 ):
-    """Returns articles that overflow the per-Gemeinde top-200 (i.e. the archive)."""
+    """Returns untagged articles older than 7 days — articles not yet associated with any region."""
     limit  = min(limit, 100)
     offset = (seite - 1) * limit
 
     base = """
-        FROM (
-            SELECT *,
-                   ROW_NUMBER() OVER (PARTITION BY COALESCE(NULLIF(region, ''), '__keine__')
-                                      ORDER BY datum DESC) AS rn
-            FROM artikel
-            WHERE tags IS NOT NULL AND tags != ''
-        ) ranked
-        WHERE rn > 200
+        FROM artikel
+        WHERE (tags IS NULL OR tags = '')
+          AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
     """
     params: list = []
 
