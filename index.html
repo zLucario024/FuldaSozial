@@ -1223,6 +1223,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
+let archivSuchErgebnisse = [];
+let _archivSuchTimeout = null;
 const PRO_SEITE = 50;
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let gemerkte = new Set(JSON.parse(localStorage.getItem('gemerkte') || '[]'));
@@ -1638,7 +1640,7 @@ async function artikelLaden() {
 }
 
 function gefilterteArtikel() {
-  return alleArtikel.filter(a => {
+  const haupt = alleArtikel.filter(a => {
     const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
@@ -1675,6 +1677,14 @@ function gefilterteArtikel() {
     if (bis && a.datum > bis + ' 23:59:59') return false;
     return true;
   });
+
+  // When searching, append archive results not already in the main list
+  if (suchbegriff && archivSuchErgebnisse.length) {
+    const bekannteLinks = new Set(haupt.map(a => a.link));
+    const archivNeu = archivSuchErgebnisse.filter(a => !bekannteLinks.has(a.link));
+    return [...haupt, ...archivNeu];
+  }
+  return haupt;
 }
 
 function artikelAnzeigen() {
@@ -2277,7 +2287,22 @@ function quelleWaehlen(btn, q) {
 function sucheAktualisieren() {
   suchbegriff = document.getElementById('suche').value.toLowerCase().trim();
   document.getElementById('suche-clear').style.display = suchbegriff ? 'block' : 'none';
+  if (!suchbegriff) { archivSuchErgebnisse = []; clearTimeout(_archivSuchTimeout); }
   urlAktualisieren(true); artikelAnzeigen();
+  if (suchbegriff.length >= 2) {
+    clearTimeout(_archivSuchTimeout);
+    _archivSuchTimeout = setTimeout(() => archivSuche(suchbegriff), 400);
+  }
+}
+
+async function archivSuche(snap) {
+  try {
+    const res = await fetch(`${API}/archiv?suche=${encodeURIComponent(snap)}&limit=100`);
+    const data = await res.json();
+    if (snap !== suchbegriff) return; // discard stale response
+    archivSuchErgebnisse = data.artikel || [];
+    artikelAnzeigen();
+  } catch(e) { /* archive unavailable – silent */ }
 }
 
 function sucheLöschen() {
@@ -2319,6 +2344,7 @@ function datumFilterLeeren() {
 
 function alleFilterZurueck() {
   aktivOrt = 'landkreis-fulda'; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = ''; aktivMeineArtikel = false;
+  archivSuchErgebnisse = []; clearTimeout(_archivSuchTimeout);
   const maChip = document.getElementById('meine-artikel-chip');
   if (maChip) maChip.classList.remove('aktiv-herz');
   document.getElementById('suche').value = '';

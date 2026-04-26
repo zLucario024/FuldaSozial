@@ -16,12 +16,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-# Regions that are always shown on the main page regardless of age.
-# Articles whose region falls outside this set are considered "Alle"-only
-# and are moved to the archive after 7 days.
+# Hessen/Osthessen articles stay on the main page for 14 days, then go to archive.
+REGIONEN_HESSEN = ('hessen', 'osthessen')
+
+# Regions shown on the main page permanently (Gemeinden, Landkreis, Stadtteile, Dörfer).
+# Articles whose region is not in this set AND not in REGIONEN_HESSEN are
+# considered "Alle"-only and archived after 7 days.
 BEKANNTE_REGIONEN = {
-    # Überregional
-    'landkreis-fulda', 'hessen', 'osthessen',
+    # Landkreis (permanent)
+    'landkreis-fulda',
     # Gemeinden
     'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
     'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
@@ -81,6 +84,7 @@ BEKANNTE_REGIONEN = {
     'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
 }
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
+_ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
 
 app = FastAPI(
     title="Fulda News API",
@@ -158,18 +162,22 @@ def artikel_abrufen(
 
 @app.get("/artikel-hauptseite")
 def artikel_hauptseite():
-    """Main page feed: all articles with a known region + any article < 7 days old.
-    Articles with an unrecognised region older than 7 days live in /archiv."""
+    """Main page feed:
+    - Gemeinde/Landkreis/Stadtteil articles: permanent
+    - Hessen/Osthessen articles: up to 14 days
+    - Everything else: up to 7 days (while AI tagging is pending)
+    """
     query = """
         SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
         FROM artikel
         WHERE region = ANY(%s)
+           OR (region = ANY(%s) AND datum >= TO_CHAR(NOW() - INTERVAL '14 days', 'YYYY-MM-DD HH24:MI:SS'))
            OR datum >= TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
         ORDER BY datum DESC
     """
     conn = db_verbinden()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute(query, (list(_REGIONEN_SQL),))
+    cursor.execute(query, (list(_REGIONEN_SQL), list(REGIONEN_HESSEN)))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -185,17 +193,25 @@ def archiv_abrufen(
     von:    str = Query(None),
     bis:    str = Query(None),
 ):
-    """Returns articles with an unrecognised region older than 7 days (the 'Alle'-only articles)."""
+    """Returns archived articles:
+    - Unknown-region articles older than 7 days
+    - Hessen/Osthessen articles older than 14 days
+    """
     limit  = min(limit, 100)
     offset = (seite - 1) * limit
 
     base = """
         FROM artikel
-        WHERE (region IS NULL OR region NOT IN %s)
-          AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+        WHERE (
+            (region IS NULL OR region NOT IN %s)
+            AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+        ) OR (
+            region = ANY(%s)
+            AND datum < TO_CHAR(NOW() - INTERVAL '14 days', 'YYYY-MM-DD HH24:MI:SS')
+        )
     """
-    # First param is always the known-regions tuple (used in NOT IN %s)
-    params: list = [_REGIONEN_SQL]
+    # First two params are the region tuples used in the base WHERE clause
+    params: list = [_ALLE_BEKANNTEN_SQL, list(REGIONEN_HESSEN)]
 
     extra = ""
     if region:

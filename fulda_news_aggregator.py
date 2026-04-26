@@ -672,9 +672,11 @@ def main():
     print(f"\nFertig!")
 
 
+REGIONEN_HESSEN = ('hessen', 'osthessen')
+
 BEKANNTE_REGIONEN = (
-    # Überregional
-    'landkreis-fulda', 'hessen', 'osthessen',
+    # Landkreis (permanent)
+    'landkreis-fulda',
     # Gemeinden
     'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
     'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
@@ -736,15 +738,23 @@ BEKANNTE_REGIONEN = (
 
 
 def archiv_generieren(conn):
-    """Generates static archiv/seite-N.html pages for articles whose region is not in
-    BEKANNTE_REGIONEN and are older than 7 days (the 'Alle'-only articles)."""
+    """Generates static archiv/seite-N.html pages for:
+    - Unknown-region articles older than 7 days
+    - Hessen/Osthessen articles older than 14 days
+    """
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    alle_bekannten = BEKANNTE_REGIONEN + REGIONEN_HESSEN
 
     cursor.execute("""
         SELECT COUNT(*) FROM artikel
-        WHERE (region IS NULL OR region NOT IN %s)
-          AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
-    """, (BEKANNTE_REGIONEN,))
+        WHERE (
+            (region IS NULL OR region NOT IN %s)
+            AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+        ) OR (
+            region = ANY(%s)
+            AND datum < TO_CHAR(NOW() - INTERVAL '14 days', 'YYYY-MM-DD HH24:MI:SS')
+        )
+    """, (alle_bekannten, list(REGIONEN_HESSEN)))
     gesamt = cursor.fetchone()["count"]
 
     LIMIT = 50
@@ -758,11 +768,16 @@ def archiv_generieren(conn):
         cursor.execute("""
             SELECT titel, link, quelle, region, datum, beschreibung, tags
             FROM artikel
-            WHERE (region IS NULL OR region NOT IN %s)
-              AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+            WHERE (
+                (region IS NULL OR region NOT IN %s)
+                AND datum < TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
+            ) OR (
+                region = ANY(%s)
+                AND datum < TO_CHAR(NOW() - INTERVAL '14 days', 'YYYY-MM-DD HH24:MI:SS')
+            )
             ORDER BY datum DESC
             LIMIT %s OFFSET %s
-        """, (BEKANNTE_REGIONEN, LIMIT, offset))
+        """, (alle_bekannten, list(REGIONEN_HESSEN), LIMIT, offset))
         artikel = cursor.fetchall()
         html = _archiv_seite_html(artikel, seite, seiten_gesamt, gesamt)
         pfad = os.path.join(archiv_dir, f"seite-{seite}.html")
