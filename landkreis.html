@@ -94,6 +94,40 @@
     .gemeinde-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
     .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; }
   }
+
+  /* Wappen lightbox */
+  .gemeinde-wappen { cursor: zoom-in; }
+  #wappen-modal {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,.72); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  #wappen-modal.offen { display: flex; }
+  #wappen-modal-inhalt {
+    position: relative; background: var(--weiss); border-radius: 16px;
+    padding: 2rem 2rem 1.5rem; max-width: 90vw; max-height: 90vh;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    box-shadow: 0 24px 64px rgba(0,0,0,.4);
+    animation: einblenden .18s ease;
+  }
+  @keyframes einblenden { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+  #wappen-modal img {
+    max-width: min(340px, 80vw); max-height: 60vh;
+    object-fit: contain; display: block;
+  }
+  #wappen-modal-name {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+    color: var(--schwarz); text-align: center;
+  }
+  #wappen-modal-schliessen {
+    position: absolute; top: .75rem; right: .75rem;
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: var(--grau-hell); cursor: pointer; display: flex;
+    align-items: center; justify-content: center; color: var(--grau-dunkel);
+    transition: background .15s;
+  }
+  #wappen-modal-schliessen:hover { background: var(--border); }
+  #wappen-modal-schliessen svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 </style>
 <script>if(localStorage.getItem('darkmode')==='1')document.documentElement.classList.add('dark-mode');</script>
 </head>
@@ -313,5 +347,37 @@
   </div>
 </footer>
 
+<div id="wappen-modal" role="dialog" aria-modal="true" aria-label="Wappen Großansicht" onclick="wappenSchliessen(event)">
+  <div id="wappen-modal-inhalt">
+    <button id="wappen-modal-schliessen" onclick="wappenZu()" aria-label="Schließen">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <img id="wappen-modal-bild" src="" alt="">
+    <div id="wappen-modal-name"></div>
+  </div>
+</div>
+
+<script>
+function wappenOeffnen(src, name) {
+  document.getElementById('wappen-modal-bild').src = src;
+  document.getElementById('wappen-modal-bild').alt = 'Wappen ' + name;
+  document.getElementById('wappen-modal-name').textContent = name;
+  document.getElementById('wappen-modal').classList.add('offen');
+  document.body.style.overflow = 'hidden';
+}
+function wappenZu() {
+  document.getElementById('wappen-modal').classList.remove('offen');
+  document.body.style.overflow = '';
+}
+function wappenSchliessen(e) {
+  if (e.target === document.getElementById('wappen-modal')) wappenZu();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') wappenZu(); });
+
+document.querySelectorAll('.gemeinde-wappen').forEach(img => {
+  const name = img.alt.replace(/^Wappen\s*/i, '');
+  img.addEventListener('click', () => wappenOeffnen(img.src, name));
+});
+</script>
 </body>
 </html>
