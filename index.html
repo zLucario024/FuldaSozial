@@ -1432,6 +1432,12 @@ for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
   (GEMEINDE_ORTSTEILE[gemeinde] ??= []).push(ortsteil);
 }
 
+// Ortsnamen, die in anderen Städten ebenfalls vorkommen.
+// Wenn der Artikel einen dieser Ausschluss-Orte enthält, wird er beim Filtern ignoriert.
+const ORT_AUSSCHLUSS = {
+  'innenstadt': ['frankfurt', 'hünfeld', 'hanau', 'kassel', 'marburg', 'darmstadt'],
+};
+
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".
 function ortMatch(text, ort) {
@@ -1758,6 +1764,8 @@ function gefilterteArtikel() {
       } else {
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
         if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
+        const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
+        if (ausschluss && ausschluss.some(a => ortMatch(text, a))) return false;
       }
     }
     if (aktivQuelle && (a.quelle || '') !== aktivQuelle) return false;
