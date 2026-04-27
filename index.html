@@ -2438,9 +2438,14 @@ function heimatNeuZaehlen() {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { karteModalSchliessen(); fuldaPromptSchliessen(); heimatPickerSchliessen(); }
-  if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
-    if (document.getElementById('feedback-modal').style.display !== 'none') feedbackAbsenden();
-    else if (document.getElementById('meld-modal').style.display !== 'none') meldungAbsenden();
+  if (e.key === 'Enter' && !e.shiftKey) {
+    const meldOffen = document.getElementById('meld-modal').style.display !== 'none';
+    const feedbackOffen = document.getElementById('feedback-modal').style.display !== 'none';
+    if (meldOffen && (e.target.tagName !== 'TEXTAREA' || e.target.id === 'meld-text')) {
+      e.preventDefault(); meldungAbsenden();
+    } else if (feedbackOffen && e.target.tagName !== 'TEXTAREA') {
+      feedbackAbsenden();
+    }
   }
 });
 
@@ -2657,7 +2662,7 @@ function filterAusUrlLesen() {
     const robots = document.querySelector('meta[name="robots"]');
     if (robots) robots.content = 'noindex, follow';
   }
-  if (params.has('suche')) { suchbegriff = params.get('suche'); document.getElementById('suche').value = suchbegriff; }
+  if (params.has('suche')) { suchbegriff = params.get('suche').toLowerCase(); document.getElementById('suche').value = suchbegriff; }
   filterLeistAktualisieren();
 }
 
@@ -2667,7 +2672,7 @@ window.addEventListener('popstate', function(e) {
   aktivKategorie = s.kategorie || '';
   aktivQuelle    = s.quelle || '';
   aktivTag       = s.tag || '';
-  suchbegriff    = s.suche || '';
+  suchbegriff    = (s.suche || '').toLowerCase();
   document.getElementById('suche').value = suchbegriff;
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
