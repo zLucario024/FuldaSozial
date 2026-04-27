@@ -1293,6 +1293,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
+let erweiterteArtikelGeladen = false;
 let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
 const PRO_SEITE = 50;
@@ -1678,37 +1679,56 @@ async function quellenLaden() {
   } catch(e) {}
 }
 
+function _deduplizieren(roh) {
+  const gesehen = new Map();
+  roh.forEach(a => {
+    const key = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    const tagAnzahl = (a.tags || '').split('·').filter(t => t.trim()).length;
+    const bisheriger = gesehen.get(key);
+    if (!bisheriger || tagAnzahl > bisheriger.tagAnzahl) gesehen.set(key, { a, tagAnzahl });
+  });
+  return [...gesehen.values()].map(v => v.a);
+}
+
 async function artikelLaden() {
-  gezeigt = 0; alleArtikel = [];
+  gezeigt = 0; alleArtikel = []; erweiterteArtikelGeladen = false;
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
   try {
-    // Try new per-Gemeinde-cap endpoint; fall back to legacy if not deployed yet
-    let roh;
-    try {
-      const res = await fetch(`${API}/artikel-hauptseite`);
-      const data = await res.json();
-      roh = data.artikel;
-    } catch(_) {}
-    if (!roh || !roh.length) {
-      const res = await fetch(`${API}/artikel?tage=60&limit=3000`);
-      const data = await res.json();
-      roh = data.artikel || [];
-    }
-    const gesehen = new Map();
-    roh.forEach(a => {
-      const key = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
-      const tagAnzahl = (a.tags || '').split('·').filter(t => t.trim()).length;
-      const bisheriger = gesehen.get(key);
-      if (!bisheriger || tagAnzahl > bisheriger.tagAnzahl) gesehen.set(key, { a, tagAnzahl });
-    });
-    alleArtikel = [...gesehen.values()].map(v => v.a);
+    const res = await fetch(`${API}/artikel-hauptseite`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    alleArtikel = _deduplizieren(data.artikel || []);
     artikelAnzeigen();
     heimatNeuZaehlen();
+    if (!aktivOrt || aktivOrt === 'hessen') erweiterteArtikelLaden();
   } catch(e) {
     document.getElementById('artikel-grid').innerHTML =
-      '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ API nicht erreichbar. Starte: <strong>uvicorn api:app --reload</strong></p></div>';
+      '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ Artikel konnten nicht geladen werden. Bitte Seite neu laden.</p></div>';
     document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
+  }
+}
+
+async function erweiterteArtikelLaden() {
+  if (erweiterteArtikelGeladen) return;
+  erweiterteArtikelGeladen = true;
+  document.getElementById('anzahl-text').textContent = 'Lade weitere Artikel…';
+  try {
+    const res = await fetch(`${API}/artikel?tage=60&limit=3000`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const vorhandene = new Set(alleArtikel.map(
+      a => (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim()
+    ));
+    const hinzu = (data.artikel || []).filter(a => {
+      const k = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      return !vorhandene.has(k);
+    });
+    alleArtikel = [...alleArtikel, ...hinzu].sort((a, b) => b.datum.localeCompare(a.datum));
+    artikelAnzeigen();
+    heimatNeuZaehlen();
+  } catch(_) {
+    erweiterteArtikelGeladen = false;
   }
 }
 
@@ -1956,6 +1976,7 @@ function ortWaehlen(btn, ort) {
   }
   _ortAlsGesehen(ort);
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
+  if (!ort || ort === 'hessen') erweiterteArtikelLaden();
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
   karteAktivSynchro();
 }
