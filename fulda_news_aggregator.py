@@ -271,27 +271,7 @@ def feed_verarbeiten(feed, conn):
     else:
         print(f"  Gefunden: {len(parsed.entries)} | Neu: 0 | Duplikate: {duplikate}")
 
-# Region verfeinern anhand Beschreibung + Tags
-    ORTE_LANDKREIS = [
-        'fulda', 'hünfeld', 'künzell', 'petersberg', 'neuhof', 'eichenzell',
-        'flieden', 'burghaun', 'großenlüder', 'hilders', 'hofbieber', 'gersfeld',
-        'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
-        'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf'
-    ]
-
-    for hash_wert, titel in neue_artikel:
-        cursor.execute(
-            "SELECT beschreibung, tags FROM artikel WHERE hash = %s", (hash_wert,)
-        )
-        row = cursor.fetchone()
-        if row:
-            text = ((row[0] or '') + ' ' + (row[1] or '') + ' ' + titel).lower()
-            if any(ort in text for ort in ORTE_LANDKREIS):
-                cursor.execute(
-                    "UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s",
-                    (hash_wert,)
-                )
-    conn.commit()
+    region_aus_tags_verfeinern(neue_artikel, cursor, conn)
 
     cursor.close()
     return neu, duplikate
@@ -510,6 +490,7 @@ def html_quelle_verarbeiten(quelle, conn):
                     )
             conn.commit()
             print(f"  Tags generiert: {min(i + 20, len(neue_artikel))}/{len(neue_artikel)}")
+        region_aus_tags_verfeinern(neue_artikel, cursor, conn)
     else:
         print(f"  Gefunden: {len(gefundene)} | Neu: 0 | Duplikate: {duplikate}")
 
@@ -618,6 +599,7 @@ def main():
 
     conn = db_verbinden()
     datenbank_einrichten(conn)
+    _region_retroaktiv_korrigieren(conn)
 
     gesamt_neu = 0
     gesamt_duplikate = 0
@@ -735,6 +717,58 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Eiterfeld
     'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
 )
+
+_BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
+_BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
+
+
+def _region_retroaktiv_korrigieren(conn):
+    """One-time pass: fix existing articles whose tags contain a known Gemeinde/Stadtteil
+    but whose region is still set to a broad value (hessen, osthessen, landkreis-fulda, etc.).
+    Safe to run on every aggregator start — only updates rows that need it."""
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''"
+        " AND (region IS NULL OR region NOT IN %s)",
+        (_BEKANNTE_SET_SQL,)
+    )
+    rows = cursor.fetchall()
+    updated = 0
+    for hash_wert, tags_str in rows:
+        for tag in tags_str.split('·'):
+            tag_norm = tag.strip().lower()
+            if tag_norm in _BEKANNTE_SET:
+                cursor.execute(
+                    "UPDATE artikel SET region = %s WHERE hash = %s",
+                    (tag_norm, hash_wert)
+                )
+                updated += 1
+                break
+    conn.commit()
+    cursor.close()
+    if updated:
+        print(f"  Regionen korrigiert (retroaktiv): {updated} Artikel")
+
+
+def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
+    """Upgrades an article's region to a specific Gemeinde/Stadtteil/Ortsteil
+    when the AI-assigned tags contain a matching known-region name.
+    This prevents Hessen/Osthessen articles that were tagged with a local
+    place name from being archived after 14 days."""
+    for hash_wert, _ in neue_artikel:
+        cursor.execute("SELECT tags FROM artikel WHERE hash = %s", (hash_wert,))
+        row = cursor.fetchone()
+        if not row or not row[0]:
+            continue
+        for tag in row[0].split('·'):
+            tag_norm = tag.strip().lower()
+            if tag_norm in _BEKANNTE_SET:
+                cursor.execute(
+                    "UPDATE artikel SET region = %s WHERE hash = %s",
+                    (tag_norm, hash_wert)
+                )
+                break
+    conn.commit()
 
 
 def archiv_generieren(conn):
