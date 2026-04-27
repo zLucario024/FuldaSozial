@@ -158,6 +158,72 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .empty { text-align: center; padding: 60px 20px; color: #aaa; }
+
+  /* ── Tabs ── */
+  .tab-bar {
+    display: flex; gap: 0; border-bottom: 2px solid #e5e7eb;
+    background: #fff; padding: 0 24px;
+  }
+  .tab-btn {
+    padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; background: none; color: #888; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: color .15s, border-color .15s;
+  }
+  .tab-btn.aktiv { color: #c0152a; border-bottom-color: #c0152a; }
+  .tab-panel { display: none; }
+  .tab-panel.aktiv { display: block; }
+
+  /* ── Statistik ── */
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    padding: 24px;
+  }
+  @media (max-width: 900px) { .stat-grid { grid-template-columns: 1fr; } }
+  .stat-panel {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 20px;
+  }
+  .stat-panel h3 {
+    font-size: 13px; font-weight: 700; color: #555; text-transform: uppercase;
+    letter-spacing: .06em; margin-bottom: 16px;
+  }
+  .stat-row {
+    display: grid; grid-template-columns: 160px 1fr 52px 48px;
+    align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px;
+  }
+  .stat-label { color: #333; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat-bar-wrap { background: #f0f0f0; border-radius: 4px; height: 10px; overflow: hidden; }
+  .stat-bar { height: 100%; border-radius: 4px; transition: width .4s ease; }
+  .stat-count { color: #888; text-align: right; }
+  .stat-pct { color: #555; font-weight: 600; text-align: right; }
+
+  /* ── Beliebtheit ── */
+  .bel-toolbar {
+    padding: 14px 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    background: #fff; border-bottom: 1px solid #e5e7eb;
+  }
+  .bel-toolbar input[type=text], .bel-toolbar input[type=password] {
+    flex: 1; min-width: 260px; padding: 7px 12px; border: 1px solid #ddd;
+    border-radius: 7px; font-size: 13px;
+  }
+  .bel-toolbar select { padding: 7px 10px; border: 1px solid #ddd; border-radius: 7px; font-size: 13px; background: #fff; }
+  .bel-key-hint { font-size: 11px; color: #aaa; }
+  .bel-key-hint a { color: #3b82f6; }
+  .rank-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .rank-table th {
+    text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: .05em; border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .rank-table td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; font-size: 12px; vertical-align: middle; }
+  .rank-table tr:hover td { background: #fafafa; }
+  .rank-num { color: #bbb; font-weight: 700; width: 28px; text-align: right; }
+  .rank-titel { font-weight: 500; color: #1a1a1a; max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank-quelle { color: #888; white-space: nowrap; }
+  .rank-count { font-weight: 700; color: #1a1a1a; text-align: right; white-space: nowrap; }
+  .rank-bar-cell { width: 120px; }
+  .rank-bar-wrap { background: #f0f0f0; border-radius: 4px; height: 8px; overflow: hidden; }
+  .rank-bar { height: 100%; border-radius: 4px; background: #c0152a; transition: width .4s ease; }
 </style>
 </head>
 <body>
@@ -181,48 +247,85 @@
     <button class="btn btn-ghost" onclick="logout()">Abmelden</button>
   </header>
 
-  <div class="toolbar">
-    <input type="text" id="suche" placeholder="Titel, Tags oder Quelle suchen…" oninput="filterAnwenden()" />
-    <select id="filter-quelle" onchange="filterAnwenden()">
-      <option value="">Alle Quellen</option>
-    </select>
-    <select id="filter-tage" onchange="laden()">
-      <option value="14">Letzte 14 Tage</option>
-      <option value="30" selected>Letzte 30 Tage</option>
-      <option value="60">Letzte 60 Tage</option>
-      <option value="180">Letzte 180 Tage</option>
-    </select>
-    <button class="btn btn-ghost" onclick="laden()">↻ Neu laden</button>
+  <div class="tab-bar">
+    <button class="tab-btn aktiv" onclick="tabWechseln('artikel', this)">Artikel</button>
+    <button class="tab-btn" onclick="tabWechseln('statistik', this)">Statistiken</button>
+    <button class="tab-btn" onclick="tabWechseln('beliebtheit', this)">Beliebtheit</button>
   </div>
 
-  <div id="status-bar">
-    <span class="dot"></span>
-    <span id="status-text">Verbunden</span>
-  </div>
+  <!-- ── Tab: Artikel ── -->
+  <div id="tab-artikel" class="tab-panel aktiv">
+    <div class="toolbar">
+      <input type="text" id="suche" placeholder="Titel, Tags oder Quelle suchen…" oninput="filterAnwenden()" />
+      <select id="filter-quelle" onchange="filterAnwenden()">
+        <option value="">Alle Quellen</option>
+      </select>
+      <select id="filter-kategorie" onchange="filterAnwenden()">
+        <option value="">Alle Kategorien</option>
+      </select>
+      <select id="filter-tage" onchange="laden()">
+        <option value="14">Letzte 14 Tage</option>
+        <option value="30" selected>Letzte 30 Tage</option>
+        <option value="60">Letzte 60 Tage</option>
+        <option value="180">Letzte 180 Tage</option>
+      </select>
+      <button class="btn btn-ghost" onclick="laden()">↻ Neu laden</button>
+    </div>
 
-  <div style="padding: 0 24px">
-    <div class="agg-panel">
-      <span>Aggregator manuell starten (RSS + HTML-Quellen neu abrufen)</span>
-      <span id="agg-status"></span>
-      <button class="btn btn-primary" onclick="aggregatorStarten()">▶ Aggregator starten</button>
+    <div id="status-bar">
+      <span class="dot"></span>
+      <span id="status-text">Verbunden</span>
+    </div>
+
+    <div style="padding: 0 24px">
+      <div class="agg-panel">
+        <span>Aggregator manuell starten (RSS + HTML-Quellen neu abrufen)</span>
+        <span id="agg-status"></span>
+        <button class="btn btn-primary" onclick="aggregatorStarten()">▶ Aggregator starten</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="artikel-tabelle">
+        <thead>
+          <tr>
+            <th class="col-id">ID</th>
+            <th class="col-datum">Datum</th>
+            <th class="col-quelle">Quelle</th>
+            <th class="col-titel">Titel</th>
+            <th class="col-tags">Tags <span style="font-weight:400;color:#aaa">(· getrennt)</span></th>
+            <th class="col-aktionen">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="tabelle-body"></tbody>
+      </table>
+      <div id="leer-hinweis" class="empty" style="display:none">Keine Artikel gefunden.</div>
     </div>
   </div>
 
-  <div class="table-wrap">
-    <table id="artikel-tabelle">
-      <thead>
-        <tr>
-          <th class="col-id">ID</th>
-          <th class="col-datum">Datum</th>
-          <th class="col-quelle">Quelle</th>
-          <th class="col-titel">Titel</th>
-          <th class="col-tags">Tags <span style="font-weight:400;color:#aaa">(· getrennt)</span></th>
-          <th class="col-aktionen">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody id="tabelle-body"></tbody>
-    </table>
-    <div id="leer-hinweis" class="empty" style="display:none">Keine Artikel gefunden.</div>
+  <!-- ── Tab: Beliebtheit ── -->
+  <div id="tab-beliebtheit" class="tab-panel">
+    <div class="bel-toolbar">
+      <input type="password" id="umami-key" placeholder="Umami API-Key (x-umami-api-key)" />
+      <select id="bel-tage" onchange="beliebtheitLaden()">
+        <option value="7">Letzte 7 Tage</option>
+        <option value="30" selected>Letzte 30 Tage</option>
+        <option value="90">Letzte 90 Tage</option>
+        <option value="365">Letzte 365 Tage</option>
+      </select>
+      <button class="btn btn-primary" onclick="beliebtheitLaden()">↻ Laden</button>
+      <span class="bel-key-hint">API-Key unter <a href="https://cloud.umami.is" target="_blank">cloud.umami.is</a> → Profil → API Keys erstellen</span>
+    </div>
+    <div class="stat-grid" id="bel-grid">
+      <div class="stat-panel empty">API-Key eingeben und „Laden" klicken.</div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Statistiken ── -->
+  <div id="tab-statistik" class="tab-panel">
+    <div class="stat-grid" id="stat-grid">
+      <div class="stat-panel empty">Lade Daten…</div>
+    </div>
   </div>
 </div>
 
@@ -286,6 +389,7 @@ function laden() {
       alleArtikel = data.artikel.sort((a, b) => b.datum.localeCompare(a.datum));
       document.getElementById('status-text').textContent = `${alleArtikel.length} Artikel geladen`;
       quellenBefuellen();
+      kategorienBefuellen();
       filterAnwenden();
     })
     .catch(() => {
@@ -301,11 +405,21 @@ function quellenBefuellen() {
     quellen.map(q => `<option value="${q}"${q===aktuell?' selected':''}>${q}</option>`).join('');
 }
 
+function kategorienBefuellen() {
+  const sel = document.getElementById('filter-kategorie');
+  const aktuell = sel.value;
+  const reihenfolge = [...KATEGORIE_NAMEN, 'Sonstiges'];
+  sel.innerHTML = '<option value="">Alle Kategorien</option>' +
+    reihenfolge.map(k => `<option value="${k}"${k===aktuell?' selected':''}>${k}</option>`).join('');
+}
+
 function filterAnwenden() {
   const suche = document.getElementById('suche').value.toLowerCase();
   const quelle = document.getElementById('filter-quelle').value;
+  const kategorie = document.getElementById('filter-kategorie').value;
   gefilterteArtikel = alleArtikel.filter(a => {
     if (quelle && a.quelle !== quelle) return false;
+    if (kategorie && kategorieBestimmen(a.titel, a.tags) !== kategorie) return false;
     if (suche) {
       const haystack = ((a.titel||'') + ' ' + (a.tags||'') + ' ' + (a.quelle||'')).toLowerCase();
       if (!haystack.includes(suche)) return false;
@@ -435,6 +549,230 @@ async function aggregatorStarten() {
     s.textContent = 'Fehler';
     toast('Aggregator-Fehler', true);
   }
+}
+
+// ── Tabs ──
+function tabWechseln(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('aktiv'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('aktiv'));
+  document.getElementById('tab-' + id).classList.add('aktiv');
+  btn.classList.add('aktiv');
+  if (id === 'statistik') statistikRendern();
+  if (id === 'beliebtheit') {
+    const saved = localStorage.getItem('umami_api_key');
+    if (saved) document.getElementById('umami-key').value = saved;
+  }
+}
+
+// ── Kategorien (identical to index.html) ──
+const KATEGORIEN = {
+  'Vorfälle': {
+    farbe: '#c53030', hell: '#fff5f5',
+    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei','betrug'],
+    keys: ['vorfall','polizei','unfall','feuer','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer','mord','erpressung','lebensgefahr','vermisst','todesfall','schüsse','schießerei','vor gericht','tötung'],
+  },
+  'Politik & Verwaltung': {
+    farbe: '#1e429f', hell: '#eff6ff',
+    strong: ['politik','verwaltung','bundestag','partei','minister','kanzler','koalition','waffenruhe'],
+    keys: ['politik','verwaltung','gemeinderat','stadtrat','bürgermeister','kreistag','wahl','abstimmung','sitzung','beschluss','haushalt','gesetz','verordnung','behörde','bundestag','partei','minister','kanzler','koalition','referendum','demokratie','senat','parlament','regierung','opposition','fraktion','abgeordneter','kandidat','wahlkampf'],
+  },
+  'Wirtschaft & Arbeit': {
+    farbe: '#14532d', hell: '#f0fdf4',
+    strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos','kreishandwerkschaft'],
+    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe','industrie','produktion','dienstleistung','export','import','konjunktur','streik','energiepreis','marketing','inflation','steuer','opel','spritpreis','waffenruhe','kommune','tegut'],
+  },
+  'Sport': {
+    farbe: '#c2410c', hell: '#fff7ed',
+    strong: ['sport','fußball','handball','liga','meisterschaft','turnier','leichtathletik'],
+    keys: ['sport','leichtathletik','fußball','handball','tennis','turnier','champions league','europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft','playoff','basketball','bvb','schwimmen','finale','eishockey','sg barockstadt','sgb'],
+  },
+  'Kultur & Freizeit': {
+    farbe: '#6d28d9', hell: '#f5f3ff',
+    strong: ['kultur','fördermittel','konzert','music','führung','festival','ausstellung','theater','museum','kunst','tradition','fotoshooting','l14zwo','flohmarkt'],
+    keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug','bibliothek','kirche','tourismus','christen','bischof','ostern','comedian','jubiläum','tag der offenen tür','stefan buß','park','wildpark','graffiti','schauspieler','singen','einwanderung','gesang','musik','reise','charity','kulinarik','tradition','kreuzfahrt','papst','denkmal'],
+  },
+  'Bildung & Familie': {
+    farbe: '#0369a1', hell: '#e0f2fe',
+    strong: ['bildung','schule','kita','studium','universität','abitur','ausbildung','journalismus'],
+    keys: ['schule','studie','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht','vortrag','nasa','nachwuchs','astronomie','wissenschaft','mittelalter','zeitreise','caritas','malteser','altkleid','forschung','universität','frauenhaus','sozial','student','expertise','beratung'],
+  },
+  'Natur & Umwelt': {
+    farbe: '#166534', hell: '#dcfce7',
+    strong: ['natur','umwelt','klima','naturschutz','hochwasser','überschwemmung'],
+    keys: ['wetter','wald','rhön','naturschutz','tier','papagei','spargel','katze','schlange','überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser','biber','weiher','blitzeinschlag','blitzeinschläge','himmel','nachthimmel','astronomie'],
+  },
+  'Verkehr & Bau': {
+    farbe: '#92400e', hell: '#fef3c7',
+    strong: ['verkehr','baustelle','sperrung','autobahn','öpnv','stau'],
+    keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof','tankstelle','flugverkehr','flughafen','fußgängerzone','abriss','k72','blitzen','a7','lufthansa','mobilfunk'],
+  },
+  'Gesundheit': {
+    farbe: '#115e59', hell: '#ccfbf1',
+    strong: ['gesundheit','krankenhaus','klinik','medizin','arzt','klinikum','chirurgie'],
+    keys: ['krankenhaus','arzt','pflege','impfung','klinik','gesundheit','patient','medizin','therapie','praxis','notaufnahme','ambulanz','apotheke','diagnose','klinikum','rücken','chirurgie','ernährung'],
+  },
+  'Sonstiges': { farbe: '#4b5563', hell: '#f9fafb', strong: [], keys: [] },
+};
+const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
+
+function kategorieBestimmen(titel, tags) {
+  const text = ((titel || '') + ' ' + (tags || '')).toLowerCase();
+  let besteKat = 'Sonstiges', besterScore = 0;
+  for (const name of KATEGORIE_NAMEN) {
+    const kat = KATEGORIEN[name];
+    const strongSet = new Set(kat.strong || []);
+    const score =
+      [...strongSet].reduce((s, k) => s + (text.includes(k) ? 3 : 0), 0) +
+      kat.keys.reduce((s, k) => s + (!strongSet.has(k) && text.includes(k) ? 1 : 0), 0);
+    if (score > besterScore) { besterScore = score; besteKat = name; }
+  }
+  return besteKat;
+}
+
+function statistikRendern() {
+  if (!alleArtikel.length) {
+    document.getElementById('stat-grid').innerHTML =
+      '<div class="stat-panel empty">Keine Daten – zuerst Artikel laden.</div>';
+    return;
+  }
+
+  const gesamt = alleArtikel.length;
+
+  // ── Quellen ──
+  const quellenMap = {};
+  alleArtikel.forEach(a => { quellenMap[a.quelle || '—'] = (quellenMap[a.quelle || '—'] || 0) + 1; });
+  const quellenSortiert = Object.entries(quellenMap).sort((a, b) => b[1] - a[1]);
+  const maxQ = quellenSortiert[0][1];
+
+  const quellenHtml = quellenSortiert.map(([q, n]) => {
+    const pct = ((n / gesamt) * 100).toFixed(1);
+    const barW = ((n / maxQ) * 100).toFixed(1);
+    return `<div class="stat-row">
+      <div class="stat-label" title="${esc(q)}">${esc(q)}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${barW}%;background:#3b82f6"></div></div>
+      <div class="stat-count">${n.toLocaleString('de-DE')}</div>
+      <div class="stat-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  // ── Kategorien ──
+  const katMap = {};
+  alleArtikel.forEach(a => {
+    const name = kategorieBestimmen(a.titel, a.tags);
+    katMap[name] = (katMap[name] || 0) + 1;
+  });
+  const katSortiert = Object.entries(katMap).sort((a, b) => b[1] - a[1]);
+  const maxK = katSortiert[0][1];
+
+  const katHtml = katSortiert.map(([k, n]) => {
+    const pct = ((n / gesamt) * 100).toFixed(1);
+    const barW = ((n / maxK) * 100).toFixed(1);
+    const farbe = (KATEGORIEN[k] || KATEGORIEN['Sonstiges']).farbe;
+    return `<div class="stat-row">
+      <div class="stat-label">${esc(k)}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${barW}%;background:${farbe}"></div></div>
+      <div class="stat-count">${n.toLocaleString('de-DE')}</div>
+      <div class="stat-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-panel">
+      <h3>Quellen <span style="font-weight:400;color:#aaa;text-transform:none">(${gesamt.toLocaleString('de-DE')} Artikel gesamt)</span></h3>
+      ${quellenHtml}
+    </div>
+    <div class="stat-panel">
+      <h3>Kategorien</h3>
+      ${katHtml}
+    </div>`;
+}
+
+// ── Beliebtheit (Umami) ──
+const UMAMI_BASE = 'https://api.umami.is/v1';
+const UMAMI_SITE = 'ff8bd343-419c-41c7-86fe-c96a60506d8a';
+
+async function beliebtheitLaden() {
+  const key = document.getElementById('umami-key').value.trim();
+  if (!key) { toast('Bitte Umami API-Key eingeben', true); return; }
+  localStorage.setItem('umami_api_key', key);
+
+  const tage = parseInt(document.getElementById('bel-tage').value, 10);
+  const endAt = Date.now();
+  const startAt = endAt - tage * 86400 * 1000;
+
+  const grid = document.getElementById('bel-grid');
+  grid.innerHTML = '<div class="stat-panel empty"><span class="spinner"></span> Lade Umami-Daten…</div>';
+
+  try {
+    const [titelDaten, quellenDaten] = await Promise.all([
+      umamiEventWerte(key, startAt, endAt, 'artikel-geklickt', 'titel'),
+      umamiEventWerte(key, startAt, endAt, 'artikel-geklickt', 'quelle'),
+    ]);
+    beliebtheitRendern(titelDaten, quellenDaten, tage);
+  } catch (e) {
+    grid.innerHTML = `<div class="stat-panel empty">Fehler: ${esc(e.message)}</div>`;
+  }
+}
+
+async function umamiEventWerte(key, startAt, endAt, event, propertyName) {
+  const url = `${UMAMI_BASE}/websites/${UMAMI_SITE}/event-data/values` +
+    `?startAt=${startAt}&endAt=${endAt}&event=${encodeURIComponent(event)}&propertyName=${encodeURIComponent(propertyName)}`;
+  const r = await fetch(url, { headers: { 'x-umami-api-key': key, 'Accept': 'application/json' } });
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`Umami API ${r.status}: ${text.slice(0, 120)}`);
+  }
+  return r.json();
+}
+
+function beliebtheitRendern(titelDaten, quellenDaten, tage) {
+  const grid = document.getElementById('bel-grid');
+
+  // Umami returns [{ value, total }] or similar — normalise both shapes
+  const normalise = d => {
+    if (!Array.isArray(d)) d = d.data || [];
+    return d
+      .map(r => ({ label: r.value ?? r.x ?? '—', count: r.total ?? r.y ?? 0 }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const artikel = normalise(titelDaten);
+  const quellen = normalise(quellenDaten);
+  const gesamtKlicks = artikel.reduce((s, r) => s + r.count, 0);
+  const maxA = artikel[0]?.count || 1;
+  const maxQ = quellen[0]?.count || 1;
+
+  const artikelRows = artikel.map((r, i) => `
+    <tr>
+      <td class="rank-num">${i + 1}</td>
+      <td class="rank-titel" title="${esc(r.label)}">${esc(r.label)}</td>
+      <td class="rank-bar-cell"><div class="rank-bar-wrap"><div class="rank-bar" style="width:${((r.count/maxA)*100).toFixed(1)}%"></div></div></td>
+      <td class="rank-count">${r.count}</td>
+    </tr>`).join('') || '<tr><td colspan="4" class="empty">Keine Daten</td></tr>';
+
+  const quellenRows = quellen.map((r, i) => `
+    <tr>
+      <td class="rank-num">${i + 1}</td>
+      <td class="rank-titel" title="${esc(r.label)}">${esc(r.label)}</td>
+      <td class="rank-bar-cell"><div class="rank-bar-wrap"><div class="rank-bar" style="width:${((r.count/maxQ)*100).toFixed(1)}%;background:#3b82f6"></div></div></td>
+      <td class="rank-count">${r.count}</td>
+    </tr>`).join('') || '<tr><td colspan="4" class="empty">Keine Daten</td></tr>';
+
+  grid.innerHTML = `
+    <div class="stat-panel">
+      <h3>Top Artikel <span style="font-weight:400;color:#aaa;text-transform:none">${gesamtKlicks} Klicks · letzte ${tage} Tage</span></h3>
+      <table class="rank-table">
+        <thead><tr><th>#</th><th>Titel</th><th></th><th style="text-align:right">Klicks</th></tr></thead>
+        <tbody>${artikelRows}</tbody>
+      </table>
+    </div>
+    <div class="stat-panel">
+      <h3>Klicks nach Quelle</h3>
+      <table class="rank-table">
+        <thead><tr><th>#</th><th>Quelle</th><th></th><th style="text-align:right">Klicks</th></tr></thead>
+        <tbody>${quellenRows}</tbody>
+      </table>
+    </div>`;
 }
 
 // ── Toast ──
