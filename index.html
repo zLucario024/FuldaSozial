@@ -285,6 +285,32 @@ Fulda Nachrichten">
   .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
   @keyframes einblenden { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* ── Meine Heimat ── */
+  .heimat-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 2px solid var(--rot); background: var(--rot-hell); color: var(--rot); font-family: var(--font-body); font-size: .85rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background .15s; }
+  .heimat-chip:hover { background: #f9d0d5; }
+  .heimat-chip.aktiv { background: var(--rot); color: #fff; }
+  .heimat-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; background: #fff; color: var(--rot); border-radius: 10px; font-size: .7rem; font-weight: 800; line-height: 1; }
+  .heimat-chip.aktiv .heimat-badge { background: rgba(255,255,255,.25); color: #fff; }
+  .heimat-edit-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--rot); opacity: .7; display: inline-flex; align-items: center; }
+  .heimat-edit-btn:hover { opacity: 1; }
+  #heimat-modal { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.55); backdrop-filter: blur(3px); align-items: flex-start; justify-content: center; padding: 60px 1rem 2rem; overflow-y: auto; }
+  #heimat-modal.offen { display: flex; }
+  #heimat-modal-inhalt { background: var(--weiss); border-radius: 16px; padding: 1.5rem; width: min(600px, 96vw); animation: heimat-einblenden .18s ease; }
+  @keyframes heimat-einblenden { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  .heimat-modal-kopf { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .heimat-modal-kopf h2 { font-family: var(--font-display); font-size: 1.2rem; }
+  .heimat-modal-schliessen { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--grau-hell); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--grau-dunkel); }
+  .heimat-sektion-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rot); margin: 1rem 0 .5rem; }
+  .heimat-kachel-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .5rem; }
+  .heimat-kachel { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: .6rem .4rem; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: var(--weiss); transition: border-color .15s, background .15s; font-size: .78rem; font-weight: 600; text-align: center; color: var(--schwarz); }
+  .heimat-kachel:hover { border-color: var(--rot); background: var(--rot-hell); }
+  .heimat-kachel.ausgewaehlt { border-color: var(--rot); background: var(--rot); color: #fff; }
+  .heimat-kachel img { height: 32px; width: auto; object-fit: contain; }
+  .heimat-kachel.ausgewaehlt img { filter: brightness(0) invert(1); }
+  .heimat-kachel-raster.stadtteile { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+  .heimat-kachel.stadtteil { font-size: .72rem; padding: .45rem .3rem; }
+  .heimat-ortsteil-gruppe-label { font-size: .7rem; font-weight: 700; color: var(--grau-mittel); text-transform: uppercase; letter-spacing: .06em; margin: .75rem 0 .3rem; }
+
   .karte-bild { position: relative; height: 160px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .karte-bild svg.kategorie-svg { width: 100%; height: 100%; }
   .badge { position: absolute; top: 12px; left: 12px; color: var(--weiss); font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
@@ -1068,6 +1094,16 @@ document.addEventListener('DOMContentLoaded', function() {
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         Meine Artikel
       </button>
+      <span style="display:inline-flex;align-items:center;gap:2px">
+        <button class="heimat-chip" id="heimat-chip" onclick="heimatKlick()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+          <span id="heimat-chip-text">Meine Heimat</span>
+          <span class="heimat-badge" id="heimat-badge" style="display:none"></span>
+        </button>
+        <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+      </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
         <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
@@ -1220,6 +1256,27 @@ document.addEventListener('DOMContentLoaded', function() {
   Ältere Artikel (über 200 je Gemeinde) sind im <a href="archiv.html">Archiv</a> verfügbar.
 </p>
 
+<div id="heimat-modal" onclick="heimatModalHintergrundKlick(event)">
+  <div id="heimat-modal-inhalt">
+    <div class="heimat-modal-kopf">
+      <h2>Wo ist deine Heimat?</h2>
+      <button class="heimat-modal-schliessen" onclick="heimatPickerSchliessen()" aria-label="Schließen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="heimat-sektion-label">Landkreis</div>
+    <div class="heimat-kachel-raster" style="grid-template-columns:1fr;max-width:160px">
+      <div class="heimat-kachel" onclick="heimatWaehlen('landkreis-fulda')" data-ort="landkreis-fulda">
+        <img src="Design/Wappen/Landkreis Fulda.png" alt="">Landkreis Fulda
+      </div>
+    </div>
+    <div class="heimat-sektion-label">Städte &amp; Gemeinden</div>
+    <div class="heimat-kachel-raster" id="heimat-gemeinden-raster"></div>
+    <div class="heimat-sektion-label">Ortsteile &amp; Stadtteile</div>
+    <div id="heimat-ortsteile-container"></div>
+  </div>
+</div>
+
 <script>
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
@@ -1227,6 +1284,8 @@ let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
 const PRO_SEITE = 50;
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
+let meineHeimat = localStorage.getItem('meine-heimat') || '';
+let heimatLetzterKlick = localStorage.getItem('meine-heimat-letzer-klick') || '';
 let gemerkte = new Set(JSON.parse(localStorage.getItem('gemerkte') || '[]'));
 
 const ORT_ANZEIGE = {
@@ -1632,6 +1691,7 @@ async function artikelLaden() {
     });
     alleArtikel = [...gesehen.values()].map(v => v.a);
     artikelAnzeigen();
+    heimatNeuZaehlen();
   } catch(e) {
     document.getElementById('artikel-grid').innerHTML =
       '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ API nicht erreichbar. Starte: <strong>uvicorn api:app --reload</strong></p></div>';
@@ -1873,12 +1933,12 @@ function ortWaehlen(btn, ort) {
     return;
   }
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
-  btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
+  if (btn) btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   aktivOrt = ort;
-  if (!btn.closest('#gemeinden-chips')) {
+  if (!btn || !btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
   }
-  if (!btn.closest('#stadtteile-chips')) {
+  if (!btn || !btn.closest('#stadtteile-chips')) {
     _stadtteileToggle(false);
   }
   _ortAlsGesehen(ort);
@@ -2242,8 +2302,115 @@ document.addEventListener('pointerdown', e => {
   }
 });
 
+// ── Meine Heimat ────────────────────────────────────────────────────────────
+
+function heimatPickerBauen() {
+  // Gemeinden with Wappen
+  const gr = document.getElementById('heimat-gemeinden-raster');
+  Object.keys(WAPPEN).forEach(name => {
+    if (name === 'Landkreis Fulda') return;
+    const slug = name.toLowerCase();
+    const div = document.createElement('div');
+    div.className = 'heimat-kachel' + (meineHeimat === slug ? ' ausgewaehlt' : '');
+    div.dataset.ort = slug;
+    div.onclick = () => heimatWaehlen(slug);
+    div.innerHTML = `<img src="Design/Wappen/${name}.png" alt="">${name}`;
+    gr.appendChild(div);
+  });
+
+  // All Ortsteile grouped by Gemeinde
+  const container = document.getElementById('heimat-ortsteile-container');
+  // Sort Gemeinden alphabetically
+  const sortedGemeinden = Object.keys(GEMEINDE_ORTSTEILE).sort((a, b) => a.localeCompare(b, 'de'));
+  sortedGemeinden.forEach(gemeinde => {
+    const ortsteile = [...GEMEINDE_ORTSTEILE[gemeinde]].sort((a, b) => a.localeCompare(b, 'de'));
+    const label = document.createElement('div');
+    label.className = 'heimat-ortsteil-gruppe-label';
+    label.textContent = gemeinde.charAt(0).toUpperCase() + gemeinde.slice(1);
+    container.appendChild(label);
+    const raster = document.createElement('div');
+    raster.className = 'heimat-kachel-raster stadtteile';
+    ortsteile.forEach(ort => {
+      const div = document.createElement('div');
+      div.className = 'heimat-kachel stadtteil' + (meineHeimat === ort ? ' ausgewaehlt' : '');
+      div.dataset.ort = ort;
+      div.onclick = () => heimatWaehlen(ort);
+      div.textContent = ort.charAt(0).toUpperCase() + ort.slice(1);
+      raster.appendChild(div);
+    });
+    container.appendChild(raster);
+  });
+
+  if (meineHeimat === 'landkreis-fulda') {
+    document.querySelector('[data-ort="landkreis-fulda"]')?.classList.add('ausgewaehlt');
+  }
+}
+
+function heimatPickerOeffnen() {
+  document.getElementById('heimat-modal').classList.add('offen');
+  document.body.style.overflow = 'hidden';
+}
+function heimatPickerSchliessen() {
+  document.getElementById('heimat-modal').classList.remove('offen');
+  document.body.style.overflow = '';
+}
+function heimatModalHintergrundKlick(e) {
+  if (e.target === document.getElementById('heimat-modal')) heimatPickerSchliessen();
+}
+
+function heimatWaehlen(ort) {
+  meineHeimat = ort;
+  localStorage.setItem('meine-heimat', ort);
+  document.querySelectorAll('.heimat-kachel').forEach(k =>
+    k.classList.toggle('ausgewaehlt', k.dataset.ort === ort)
+  );
+  heimatPickerSchliessen();
+  heimatKlick();
+}
+
+function heimatKlick() {
+  if (!meineHeimat) { heimatPickerOeffnen(); return; }
+  heimatLetzterKlick = new Date().toISOString();
+  localStorage.setItem('meine-heimat-letzer-klick', heimatLetzterKlick);
+  const chip = [...document.querySelectorAll('[onclick*="ortWaehlen"]')]
+    .find(el => el.getAttribute('onclick').includes(`'${meineHeimat}'`) || el.getAttribute('onclick').includes(`"${meineHeimat}"`));
+  ortWaehlen(chip || null, meineHeimat);
+  document.getElementById('heimat-chip').classList.add('aktiv');
+  heimatButtonAktualisieren(0);
+}
+
+function heimatButtonAktualisieren(count) {
+  const label = meineHeimat
+    ? meineHeimat.charAt(0).toUpperCase() + meineHeimat.slice(1)
+    : 'Meine Heimat';
+  document.getElementById('heimat-chip-text').textContent = label;
+  const badge = document.getElementById('heimat-badge');
+  if (meineHeimat && count > 0) {
+    badge.textContent = count + ' neu';
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+  document.getElementById('heimat-edit-btn').style.display = meineHeimat ? 'inline-flex' : 'none';
+}
+
+function heimatNeuZaehlen() {
+  if (!meineHeimat || !alleArtikel.length) return;
+  const seit = heimatLetzterKlick ? new Date(heimatLetzterKlick) : null;
+  const ortsteile = (GEMEINDE_ORTSTEILE[meineHeimat] || [meineHeimat]).map(o => o.toLowerCase());
+  const count = alleArtikel.filter(a => {
+    if (seit && new Date(a.datum.replace(' ', 'T')) <= seit) return false;
+    if (a.region && ortsteile.includes(a.region.toLowerCase())) return true;
+    const text = ((a.titel || '') + ' ' + (a.tags || '')).toLowerCase();
+    return ortsteile.some(o => text.includes(o));
+  }).length;
+  heimatButtonAktualisieren(count);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { karteModalSchliessen(); fuldaPromptSchliessen(); }
+  if (e.key === 'Escape') { karteModalSchliessen(); fuldaPromptSchliessen(); heimatPickerSchliessen(); }
   if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
     if (document.getElementById('feedback-modal').style.display !== 'none') feedbackAbsenden();
     else if (document.getElementById('meld-modal').style.display !== 'none') meldungAbsenden();
@@ -2531,6 +2698,8 @@ if (new URLSearchParams(window.location.search).has('quelle')) _sectionOeffnen('
 filterAusUrlLesen();
 quellenLaden();
 artikelLaden();
+heimatPickerBauen();
+heimatButtonAktualisieren(0);
 
 </script>
 
