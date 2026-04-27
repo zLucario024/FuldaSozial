@@ -224,6 +224,30 @@
   .rank-bar-cell { width: 120px; }
   .rank-bar-wrap { background: #f0f0f0; border-radius: 4px; height: 8px; overflow: hidden; }
   .rank-bar { height: 100%; border-radius: 4px; background: #c0152a; transition: width .4s ease; }
+
+  /* ── Heute-Übersicht ── */
+  .heute-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px; padding: 20px 24px 0;
+  }
+  .kpi-card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi-card.wide { grid-column: span 2; }
+  .kpi-label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  .kpi-value { font-size: 30px; font-weight: 800; color: #1a1a1a; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: #aaa; margin-top: 4px; }
+  .kpi-warn { color: #c0152a; }
+  .heute-quellen { margin-top: 12px; }
+  .heute-quellen-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; margin-bottom: 6px;
+  }
+  .heute-quellen-label { flex: 0 0 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-weight: 500; }
+  .heute-quellen-bar-wrap { flex: 1; background: #f0f0f0; border-radius: 4px; height: 8px; overflow: hidden; }
+  .heute-quellen-bar { height: 100%; background: #3b82f6; border-radius: 4px; }
+  .heute-quellen-count { flex: 0 0 28px; text-align: right; color: #888; }
 </style>
 </head>
 <body>
@@ -316,6 +340,7 @@
       <button class="btn btn-primary" onclick="beliebtheitLaden()">↻ Laden</button>
       <span class="bel-key-hint">API-Key unter <a href="https://cloud.umami.is" target="_blank">cloud.umami.is</a> → Profil → API Keys erstellen</span>
     </div>
+    <div class="heute-grid" id="heute-grid"></div>
     <div class="stat-grid" id="bel-grid">
       <div class="stat-panel empty">API-Key eingeben und „Laden" klicken.</div>
     </div>
@@ -700,18 +725,86 @@ async function beliebtheitLaden() {
   const endAt = Date.now();
   const startAt = endAt - tage * 86400 * 1000;
 
+  // today boundaries (local midnight → now)
+  const heuteStart = new Date(); heuteStart.setHours(0, 0, 0, 0);
+
   const grid = document.getElementById('bel-grid');
+  const hGrid = document.getElementById('heute-grid');
   grid.innerHTML = '<div class="stat-panel empty"><span class="spinner"></span> Lade Umami-Daten…</div>';
+  hGrid.innerHTML = '';
 
   try {
-    const [titelDaten, quellenDaten] = await Promise.all([
+    const [titelDaten, quellenDaten, statsDaten] = await Promise.all([
       umamiEventWerte(key, startAt, endAt, 'artikel-geklickt', 'titel'),
       umamiEventWerte(key, startAt, endAt, 'artikel-geklickt', 'quelle'),
+      umamiStats(key, heuteStart.getTime(), endAt),
     ]);
+    heuteRendern(statsDaten);
     beliebtheitRendern(titelDaten, quellenDaten, tage);
   } catch (e) {
     grid.innerHTML = `<div class="stat-panel empty">Fehler: ${esc(e.message)}</div>`;
   }
+}
+
+async function umamiStats(key, startAt, endAt) {
+  const url = `${UMAMI_BASE}/websites/${UMAMI_SITE}/stats?startAt=${startAt}&endAt=${endAt}`;
+  const r = await fetch(url, { headers: { 'x-umami-api-key': key, 'Accept': 'application/json' } });
+  if (!r.ok) throw new Error(`Umami stats ${r.status}`);
+  return r.json();
+}
+
+function heuteRendern(stats) {
+  const hGrid = document.getElementById('heute-grid');
+  const heute = new Date().toISOString().slice(0, 10);
+
+  // Article metrics from already-loaded alleArtikel
+  const heuteArtikel = alleArtikel.filter(a => (a.datum || '').startsWith(heute));
+  const anzahl = heuteArtikel.length;
+  const ohneKat = heuteArtikel.filter(a => kategorieBestimmen(a.titel, a.tags) === 'Sonstiges').length;
+
+  // Sources breakdown for today
+  const quellenMap = {};
+  heuteArtikel.forEach(a => { quellenMap[a.quelle || '—'] = (quellenMap[a.quelle || '—'] || 0) + 1; });
+  const quellenSortiert = Object.entries(quellenMap).sort((a, b) => b[1] - a[1]);
+  const maxQ = quellenSortiert[0]?.[1] || 1;
+  const quellenHtml = quellenSortiert.map(([q, n]) => `
+    <div class="heute-quellen-row">
+      <div class="heute-quellen-label" title="${esc(q)}">${esc(q)}</div>
+      <div class="heute-quellen-bar-wrap"><div class="heute-quellen-bar" style="width:${((n/maxQ)*100).toFixed(0)}%"></div></div>
+      <div class="heute-quellen-count">${n}</div>
+    </div>`).join('') || '<div style="font-size:12px;color:#aaa">Keine Artikel heute</div>';
+
+  // Umami stats (may be missing if API failed silently)
+  const besucher = stats?.visitors?.value ?? '–';
+  const aufrufe  = stats?.pageviews?.value ?? '–';
+
+  const datum = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  hGrid.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Besucher heute</div>
+      <div class="kpi-value">${typeof besucher === 'number' ? besucher.toLocaleString('de-DE') : besucher}</div>
+      <div class="kpi-sub">${datum}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Seitenaufrufe</div>
+      <div class="kpi-value">${typeof aufrufe === 'number' ? aufrufe.toLocaleString('de-DE') : aufrufe}</div>
+      <div class="kpi-sub">heute</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Artikel heute</div>
+      <div class="kpi-value">${anzahl}</div>
+      <div class="kpi-sub">neu veröffentlicht</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Ohne Kategorie</div>
+      <div class="kpi-value ${ohneKat > 0 ? 'kpi-warn' : ''}">${ohneKat}</div>
+      <div class="kpi-sub">${anzahl > 0 ? ((ohneKat/anzahl)*100).toFixed(0) + '% der heutigen Artikel' : '–'}</div>
+    </div>
+    <div class="kpi-card wide" style="grid-column:1/-1">
+      <div class="kpi-label">Quellen heute</div>
+      <div class="heute-quellen">${quellenHtml}</div>
+    </div>`;
 }
 
 async function umamiEventWerte(key, startAt, endAt, event, propertyName) {
