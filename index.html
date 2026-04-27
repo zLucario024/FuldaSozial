@@ -430,6 +430,9 @@ Fulda Nachrichten">
     .chip-reihe { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
     .chip-reihe::-webkit-scrollbar { display: none; }
 
+    /* Persönlich-Wrap: stack Meine Artikel + Meine Heimat vertically on mobile */
+    #persoenlich-wrap { flex-direction: column; align-items: flex-start; gap: .25rem; flex-shrink: 0; }
+
     /* Heimat-Chip: match .chip size on mobile */
     .heimat-chip { border-width: 1px; padding: 6px 12px; font-weight: 500; }
 
@@ -1093,19 +1096,21 @@ document.addEventListener('DOMContentLoaded', function() {
   <!-- REGION / ORT -->
   <div class="filter-gruppe">
     <div class="chip-reihe" style="margin-bottom:.5rem">
-      <button class="chip" id="meine-artikel-chip" onclick="meineArtikelToggle(this)">
-        <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Meine Artikel
-      </button>
-      <span style="display:inline-flex;align-items:center;gap:2px">
-        <button class="heimat-chip" id="heimat-chip" onclick="heimatKlick()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
-          <span id="heimat-chip-text">Meine Heimat</span>
-          <span class="heimat-badge" id="heimat-badge" style="display:none"></span>
+      <span id="persoenlich-wrap" style="display:inline-flex;align-items:center;gap:.4rem">
+        <button class="chip" id="meine-artikel-chip" onclick="meineArtikelToggle(this)">
+          <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Meine Artikel
         </button>
-        <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
+        <span style="display:inline-flex;align-items:center;gap:2px">
+          <button class="heimat-chip" id="heimat-chip" onclick="heimatKlick()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+            <span id="heimat-chip-text">Meine Heimat</span>
+            <span class="heimat-badge" id="heimat-badge" style="display:none"></span>
+          </button>
+          <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+        </span>
       </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
         <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
