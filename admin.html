@@ -374,7 +374,7 @@ function login() {
       return fetch(`${API}/artikel?limit=1`);
     })
     .then(() => {
-      localStorage.setItem('admin_key', apiKey);
+      sessionStorage.setItem('admin_key', apiKey);
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       laden();
@@ -385,13 +385,13 @@ function login() {
 }
 
 function logout() {
-  localStorage.removeItem('admin_key');
+  sessionStorage.removeItem('admin_key');
   location.reload();
 }
 
-// Auto-login from localStorage
+// Auto-login from sessionStorage
 window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('admin_key');
+  const saved = sessionStorage.getItem('admin_key');
   if (saved) {
     apiKey = saved;
     document.getElementById('key-input').value = saved;

@@ -1,10 +1,9 @@
+import os
 import sqlite3
 import psycopg2
 
-SUPABASE_URL = "postgresql://postgres.thfhjdijwpwdbxznsvhe:-8sYGkqhq?bhStG@aws-1-eu-central-1.pooler.supabase.com:6543/postgres"
-
+pg_conn = psycopg2.connect(os.getenv("DATABASE_URL"))
 sqlite_conn = sqlite3.connect('fulda_news.db')
-pg_conn = psycopg2.connect(SUPABASE_URL)
 pg_cursor = pg_conn.cursor()
 
 artikel = sqlite_conn.execute('''

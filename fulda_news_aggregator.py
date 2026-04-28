@@ -17,6 +17,7 @@ from difflib import SequenceMatcher
 from html import unescape as html_unescape
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -122,6 +123,8 @@ def datenbank_einrichten(conn):
             beschreibung TEXT
         )
     """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_datum ON artikel(datum)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_quelle_region ON artikel(quelle, region)")
     conn.commit()
     cursor.close()
     print("Datenbank bereit (PostgreSQL/Supabase)")
@@ -134,7 +137,7 @@ def datum_parsen(datum_str):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         dt = parsedate_to_datetime(datum_str)
-        dt_berlin = dt.astimezone(timezone(timedelta(hours=2)))
+        dt_berlin = dt.astimezone(ZoneInfo("Europe/Berlin"))
         return dt_berlin.strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
         print(f"  WARNUNG: Datum konnte nicht geparst werden ({datum_str}): {e}")
@@ -252,12 +255,13 @@ def feed_verarbeiten(feed, conn):
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
         for i in range(0, len(neue_artikel), 20):
             batch = neue_artikel[i:i + 20]
-            # Beschreibungen aus DB holen
-            beschreibungen = []
-            for hash_wert, titel in batch:
-                cursor.execute("SELECT beschreibung FROM artikel WHERE hash = %s", (hash_wert,))
-                row = cursor.fetchone()
-                beschreibungen.append(row[0] if row and row[0] else "")
+            batch_hashes = [h for h, _ in batch]
+            cursor.execute(
+                "SELECT hash, beschreibung FROM artikel WHERE hash = ANY(%s)",
+                (batch_hashes,)
+            )
+            desc_map = {row[0]: row[1] or "" for row in cursor.fetchall()}
+            beschreibungen = [desc_map.get(h, "") for h, _ in batch]
             tags_dict = tags_generieren([t for _, t in batch], beschreibungen)
             for hash_wert, titel in batch:
                 tags = tags_dict.get(titel, "")
@@ -526,7 +530,7 @@ def deduplizieren(conn):
             (titel, quelle)
         )
         eintraege = cursor.fetchall()
-        beste_id = max(eintraege, key=lambda e: _tag_anzahl(e[1]))[0]
+        beste_id = max(eintraege, key=lambda e: (_tag_anzahl(e[1]), e[0]))[0]
         for id_, _ in eintraege:
             if id_ != beste_id:
                 cursor.execute("DELETE FROM artikel WHERE id = %s", (id_,))
@@ -755,10 +759,13 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
     when the AI-assigned tags contain a matching known-region name.
     This prevents Hessen/Osthessen articles that were tagged with a local
     place name from being archived after 14 days."""
+    BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
     for hash_wert, _ in neue_artikel:
-        cursor.execute("SELECT tags FROM artikel WHERE hash = %s", (hash_wert,))
+        cursor.execute("SELECT tags, region FROM artikel WHERE hash = %s", (hash_wert,))
         row = cursor.fetchone()
         if not row or not row[0]:
+            continue
+        if row[1] not in BROAD:
             continue
         for tag in row[0].split('·'):
             tag_norm = tag.strip().lower()

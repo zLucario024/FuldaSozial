@@ -2,7 +2,7 @@ import sqlite3
 import requests
 import feedparser
 from email.utils import parsedate_to_datetime
-from datetime import timezone, timedelta
+from zoneinfo import ZoneInfo
 
 FEEDS = [
     "https://www.hessenschau.de/osthessen/index.rss",
@@ -13,8 +13,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
 
-utc_offset = timedelta(hours=2)
-berlin = timezone(utc_offset)
+berlin = ZoneInfo("Europe/Berlin")
 
 conn = sqlite3.connect('fulda_news.db')
 korrigiert = 0
