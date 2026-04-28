@@ -293,6 +293,9 @@ Fulda Nachrichten">
   .heimat-chip.aktiv .heimat-badge { background: rgba(255,255,255,.25); color: #fff; }
   .heimat-edit-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--rot); opacity: .7; display: inline-flex; align-items: center; }
   .heimat-edit-btn:hover { opacity: 1; }
+  .push-bell-btn { background: none; border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: .85rem; display: inline-flex; align-items: center; justify-content: center; transition: all .2s; padding: 0; }
+  .push-bell-btn:hover, .push-bell-btn.aktiv { border-color: var(--rot); background: var(--rot); }
+  .push-bell-btn.aktiv { color: white; }
   #heimat-modal { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.55); backdrop-filter: blur(3px); align-items: flex-start; justify-content: center; padding: 60px 1rem 2rem; overflow-y: auto; }
   #heimat-modal.offen { display: flex; }
   #heimat-modal-inhalt { background: var(--weiss); border-radius: 16px; padding: 1.5rem; width: min(600px, 96vw); animation: heimat-einblenden .18s ease; }
@@ -767,6 +770,7 @@ document.addEventListener('DOMContentLoaded', function() {
   #fulda-prompt::after { content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--border); }
   #fulda-prompt::before { content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-bottom-color:var(--weiss); z-index:1; }
 </style>
+<link rel="manifest" href="/manifest.webmanifest">
 </head>
 
 
@@ -1115,6 +1119,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
+          <button id="push-bell" class="push-bell-btn" onclick="(_pushSubscription ? pushAbbestellen : pushAbonnieren)()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none">🔔</button>
         </span>
       </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
@@ -1301,6 +1306,8 @@ const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let meineHeimat = localStorage.getItem('meine-heimat') || '';
 let heimatLetzterKlick = localStorage.getItem('meine-heimat-letzer-klick') || '';
+let _swRegistration = null;
+let _pushSubscription = null;
 let gemerkte = new Set(JSON.parse(localStorage.getItem('gemerkte') || '[]'));
 
 const ORT_ANZEIGE = {
@@ -2426,6 +2433,14 @@ function heimatWaehlen(ort) {
   document.querySelectorAll('.heimat-kachel').forEach(k =>
     k.classList.toggle('ausgewaehlt', k.dataset.ort === ort)
   );
+  if (_pushSubscription && ort) {
+    fetch(`${API}/push-abonnieren`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: _pushSubscription.endpoint, heimat: ort })
+    });
+  }
+  pushBellAktualisieren();
   heimatPickerSchliessen();
   heimatKlick();
 }
@@ -2468,6 +2483,7 @@ function heimatButtonAktualisieren(count) {
     wappenImg.style.display = 'none';
     icon.style.display = '';
   }
+  pushBellAktualisieren();
 }
 
 function heimatNeuZaehlen() {
@@ -2781,6 +2797,66 @@ quellenLaden();
 artikelLaden();
 heimatPickerBauen();
 heimatButtonAktualisieren(0);
+
+// ── Web Push ─────────────────────────────────────────────────────────────────
+
+async function swRegistrieren() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  try {
+    _swRegistration = await navigator.serviceWorker.register('/sw.js');
+    _pushSubscription = await _swRegistration.pushManager.getSubscription();
+    pushBellAktualisieren();
+  } catch(e) { /* SW blocked or not supported */ }
+}
+
+async function pushAbonnieren() {
+  if (!_swRegistration) return;
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') { toast('Benachrichtigungen wurden blockiert.', true); return; }
+
+  const res = await fetch(`${API}/push-public-key`);
+  const { publicKey } = await res.json();
+  const appKey = Uint8Array.from(atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+
+  _pushSubscription = await _swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: appKey
+  });
+
+  const sub = _pushSubscription.toJSON();
+  await fetch(`${API}/push-abonnieren`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth, heimat: meineHeimat })
+  });
+  pushBellAktualisieren();
+  toast('Benachrichtigungen aktiviert!');
+}
+
+async function pushAbbestellen() {
+  if (!_pushSubscription) return;
+  const endpoint = _pushSubscription.endpoint;
+  await _pushSubscription.unsubscribe();
+  _pushSubscription = null;
+  await fetch(`${API}/push-abonnieren`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ endpoint })
+  });
+  pushBellAktualisieren();
+  toast('Benachrichtigungen deaktiviert.');
+}
+
+function pushBellAktualisieren() {
+  const bell = document.getElementById('push-bell');
+  if (!bell) return;
+  bell.style.display = meineHeimat ? 'inline-flex' : 'none';
+  const aktiv = !!_pushSubscription;
+  bell.title = aktiv ? 'Benachrichtigungen deaktivieren' : 'Benachrichtigungen aktivieren';
+  bell.classList.toggle('aktiv', aktiv);
+}
+
+swRegistrieren();
 
 </script>
 

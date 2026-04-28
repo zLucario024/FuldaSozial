@@ -12,6 +12,7 @@ import hashlib
 import anthropic
 import re
 import os
+import json
 from collections import defaultdict
 from difflib import SequenceMatcher
 from html import unescape as html_unescape
@@ -19,8 +20,112 @@ from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
+from pywebpush import webpush, WebPushException
 
 load_dotenv()
+
+SITE_URL = "https://www.rnfulda.de"
+
+WAPPEN_NAMEN = {
+    'fulda': 'Fulda', 'hünfeld': 'Hünfeld', 'künzell': 'Künzell',
+    'petersberg': 'Petersberg', 'neuhof': 'Neuhof', 'eichenzell': 'Eichenzell',
+    'flieden': 'Flieden', 'burghaun': 'Burghaun', 'großenlüder': 'Großenlüder',
+    'hilders': 'Hilders', 'hofbieber': 'Hofbieber', 'gersfeld': 'Gersfeld',
+    'tann': 'Tann', 'eiterfeld': 'Eiterfeld', 'rasdorf': 'Rasdorf',
+    'dipperz': 'Dipperz', 'ebersburg': 'Ebersburg', 'ehrenberg': 'Ehrenberg',
+    'hosenfeld': 'Hosenfeld', 'kalbach': 'Kalbach', 'nüsttal': 'Nüsttal',
+    'poppenhausen': 'Poppenhausen', 'bad salzschlirf': 'Bad Salzschlirf',
+    'landkreis-fulda': 'Landkreis Fulda',
+}
+
+KATEGORIE_EMOJI = {
+    'Vorfälle':             '🚨',
+    'Politik & Verwaltung': '🏛️',
+    'Wirtschaft & Arbeit':  '💼',
+    'Sport':                '⚽',
+    'Kultur & Freizeit':    '🎭',
+    'Bildung & Familie':    '📚',
+    'Natur & Umwelt':       '🌿',
+    'Verkehr & Bau':        '🚧',
+    'Gesundheit':           '🏥',
+    'Sonstiges':            '📰',
+}
+
+_KATEGORIE_SCHLUESSEL = {
+    'Vorfälle':             ['unfall','vorfall','brand','blaulicht','mord','betrug','einbruch','polizei','feuer','rettung','diebstahl','gewalt','verletzt','notfall','einsatz','vermisst','todesfall'],
+    'Politik & Verwaltung': ['politik','verwaltung','bundestag','partei','minister','kanzler','koalition','bürgermeister','gemeinde','stadtrat','landrat','wahl'],
+    'Wirtschaft & Arbeit':  ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos','stellenanzeige','eröffnung'],
+    'Sport':                ['sport','fußball','handball','liga','meisterschaft','turnier','leichtathletik','basketball','eishockey'],
+    'Kultur & Freizeit':    ['kultur','konzert','festival','ausstellung','theater','museum','kunst','flohmarkt','literatur','fest','event'],
+    'Bildung & Familie':    ['bildung','schule','kita','studium','universität','abitur','ausbildung','hochschule','jugend','kinder','familie'],
+    'Natur & Umwelt':       ['natur','umwelt','klima','naturschutz','hochwasser','überschwemmung','wetter','wald'],
+    'Verkehr & Bau':        ['verkehr','baustelle','sperrung','autobahn','öpnv','stau','straße','bus','bahn','brücke','umleitung'],
+    'Gesundheit':           ['gesundheit','krankenhaus','klinik','medizin','arzt','klinikum','pflege','impfung','patient'],
+}
+
+
+def kategorie_bestimmen(titel, tags):
+    text = f"{titel or ''} {tags or ''}".lower()
+    for kat, schluessel in _KATEGORIE_SCHLUESSEL.items():
+        if any(s in text for s in schluessel):
+            return kat
+    return 'Sonstiges'
+
+
+def benachrichtigungen_senden(conn, neue_artikel_info):
+    private_key = os.getenv("VAPID_PRIVATE_KEY")
+    if not private_key:
+        return
+
+    cursor = conn.cursor()
+    gesendet = 0
+    fehler = 0
+    zu_loeschen = []
+
+    for artikel in neue_artikel_info:
+        region = (artikel.get('region') or '').lower()
+        if region not in WAPPEN_NAMEN:
+            continue
+
+        kat = kategorie_bestimmen(artikel.get('titel', ''), artikel.get('tags', ''))
+        emoji = KATEGORIE_EMOJI.get(kat, '📰')
+        wappen_name = WAPPEN_NAMEN[region]
+        icon_url = f"{SITE_URL}/Design/Wappen/{wappen_name}.png"
+
+        payload = json.dumps({
+            "title": f"{emoji} Neues aus {wappen_name}",
+            "body":  artikel['titel'][:120],
+            "icon":  icon_url,
+            "tag":   artikel['hash'],
+            "url":   artikel['link'],
+        })
+
+        cursor.execute(
+            "SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE heimat = %s",
+            (region,)
+        )
+        for endpoint, p256dh, auth in cursor.fetchall():
+            try:
+                webpush(
+                    subscription_info={"endpoint": endpoint, "keys": {"p256dh": p256dh, "auth": auth}},
+                    data=payload,
+                    vapid_private_key=private_key,
+                    vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'adrian.jestaedt@gmail.com')}"},
+                )
+                gesendet += 1
+            except WebPushException as e:
+                if e.response and e.response.status_code == 410:
+                    zu_loeschen.append(endpoint)
+                fehler += 1
+
+    for endpoint in zu_loeschen:
+        cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (endpoint,))
+    if zu_loeschen:
+        conn.commit()
+
+    cursor.close()
+    print(f"  Push-Benachrichtigungen: {gesendet} gesendet, {fehler} Fehler, {len(zu_loeschen)} abgelaufen")
+
 
 FEEDS = [
     {"name": "Hessenschau Osthessen", "url": "https://www.hessenschau.de/osthessen/index.html", "rss": "https://www.hessenschau.de/osthessen/index.rss", "typ": "Öffentlich-rechtlich", "region": "osthessen"},
@@ -650,6 +755,19 @@ def main():
         print(f"  {quelle} | {datum}")
 
     cursor.close()
+
+    print(f"\n{'=' * 55}")
+    print("PUSH-BENACHRICHTIGUNGEN")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT hash, titel, link, region, tags FROM artikel
+        WHERE gespeichert >= TO_CHAR(NOW() - INTERVAL '30 minutes', 'YYYY-MM-DD HH24:MI:SS')
+        ORDER BY id DESC
+    """)
+    neue_artikel_info = [dict(zip(['hash', 'titel', 'link', 'region', 'tags'], r)) for r in cursor.fetchall()]
+    cursor.close()
+    benachrichtigungen_senden(conn, neue_artikel_info)
+
     print(f"\n{'=' * 55}")
     print("ARCHIV")
     archiv_generieren(conn)

@@ -8,11 +8,13 @@ Starten:
 """
 
 import os
+import json
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -95,9 +97,39 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def tabellen_erstellen():
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS push_subscriptions (
+            id        SERIAL PRIMARY KEY,
+            endpoint  TEXT UNIQUE NOT NULL,
+            p256dh    TEXT NOT NULL,
+            auth      TEXT NOT NULL,
+            heimat    TEXT NOT NULL,
+            erstellt  TIMESTAMPTZ DEFAULT NOW()
+        )
+    """)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+class PushAbo(BaseModel):
+    endpoint: str
+    p256dh: str
+    auth: str
+    heimat: str
+
+class PushHeimat(BaseModel):
+    endpoint: str
+    heimat: str
 
 def db_verbinden():
     conn = psycopg2.connect(os.getenv("DATABASE_URL"))
@@ -311,6 +343,51 @@ def statistik():
         "neuester_artikel": neuester[0] if neuester else None,
         "aeltester_artikel": aeltester[0] if aeltester else None,
     }
+
+
+@app.get("/push-public-key")
+def push_public_key():
+    return {"publicKey": os.getenv("VAPID_PUBLIC_KEY", "")}
+
+
+@app.post("/push-abonnieren")
+def push_abonnieren(abo: PushAbo):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO push_subscriptions (endpoint, p256dh, auth, heimat)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (endpoint) DO UPDATE SET heimat = EXCLUDED.heimat
+    """, (abo.endpoint, abo.p256dh, abo.auth, abo.heimat))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.patch("/push-abonnieren")
+def push_heimat_aktualisieren(daten: PushHeimat):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE push_subscriptions SET heimat = %s WHERE endpoint = %s",
+        (daten.heimat, daten.endpoint)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.delete("/push-abonnieren")
+def push_abbestellen(daten: PushHeimat):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (daten.endpoint,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
 
 
 def _aggregator_ausfuehren():

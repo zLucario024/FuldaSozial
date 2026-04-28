@@ -1,0 +1,17 @@
+{
+  "name": "RegioNachrichten Fulda",
+  "short_name": "RNFulda",
+  "description": "Aktuelle Nachrichten aus Fulda und dem Landkreis",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c0152a",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/Design/rn_logo_mini.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}
