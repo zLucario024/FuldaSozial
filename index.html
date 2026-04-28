@@ -2810,27 +2810,33 @@ async function swRegistrieren() {
 }
 
 async function pushAbonnieren() {
-  if (!_swRegistration) return;
+  if (!_swRegistration) { alert('Benachrichtigungen werden in diesem Browser nicht unterstützt.'); return; }
+
   const perm = await Notification.requestPermission();
-  if (perm !== 'granted') { toast('Benachrichtigungen wurden blockiert.', true); return; }
+  if (perm !== 'granted') { alert('Benachrichtigungen wurden blockiert. Bitte in den Browser-Einstellungen erlauben.'); return; }
 
-  const res = await fetch(`${API}/push-public-key`);
-  const { publicKey } = await res.json();
-  const appKey = Uint8Array.from(atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+  try {
+    const res = await fetch(`${API}/push-public-key`);
+    const { publicKey } = await res.json();
+    if (!publicKey) { alert('Push-Benachrichtigungen sind noch nicht aktiviert (VAPID-Key fehlt).'); return; }
 
-  _pushSubscription = await _swRegistration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: appKey
-  });
+    const appKey = Uint8Array.from(atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+    _pushSubscription = await _swRegistration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: appKey
+    });
 
-  const sub = _pushSubscription.toJSON();
-  await fetch(`${API}/push-abonnieren`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth, heimat: meineHeimat })
-  });
-  pushBellAktualisieren();
-  toast('Benachrichtigungen aktiviert!');
+    const sub = _pushSubscription.toJSON();
+    await fetch(`${API}/push-abonnieren`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth, heimat: meineHeimat })
+    });
+    pushBellAktualisieren();
+  } catch(e) {
+    console.error('Push-Fehler:', e);
+    alert('Benachrichtigungen konnten nicht aktiviert werden: ' + e.message);
+  }
 }
 
 async function pushAbbestellen() {
@@ -2844,7 +2850,6 @@ async function pushAbbestellen() {
     body: JSON.stringify({ endpoint })
   });
   pushBellAktualisieren();
-  toast('Benachrichtigungen deaktiviert.');
 }
 
 function pushBellAktualisieren() {
