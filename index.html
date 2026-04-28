@@ -1293,10 +1293,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
-let erweiterteArtikelGeladen = false;
+let aktuellerOffset = 0, hatMehr = false;
+const SEITEN_GROESSE = 100; // articles fetched per server request
 let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
-const PRO_SEITE = 50;
+const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let meineHeimat = localStorage.getItem('meine-heimat') || '';
 let heimatLetzterKlick = localStorage.getItem('meine-heimat-letzer-klick') || '';
@@ -1695,44 +1696,22 @@ function _deduplizieren(roh) {
 }
 
 async function artikelLaden() {
-  gezeigt = 0; alleArtikel = []; erweiterteArtikelGeladen = false;
+  gezeigt = 0; alleArtikel = []; aktuellerOffset = 0; hatMehr = false;
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
   try {
-    const res = await fetch(`${API}/artikel-hauptseite`);
+    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=0`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     alleArtikel = _deduplizieren(data.artikel || []);
+    aktuellerOffset = alleArtikel.length;
+    hatMehr = data.hat_mehr || false;
     artikelAnzeigen();
     heimatNeuZaehlen();
-    if (!aktivOrt || aktivOrt === 'hessen') erweiterteArtikelLaden();
   } catch(e) {
     document.getElementById('artikel-grid').innerHTML =
       '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ Artikel konnten nicht geladen werden. Bitte Seite neu laden.</p></div>';
     document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
-  }
-}
-
-async function erweiterteArtikelLaden() {
-  if (erweiterteArtikelGeladen) return;
-  erweiterteArtikelGeladen = true;
-  document.getElementById('anzahl-text').textContent = 'Lade weitere Artikel…';
-  try {
-    const res = await fetch(`${API}/artikel?tage=60&limit=3000`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    const vorhandene = new Set(alleArtikel.map(
-      a => (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim()
-    ));
-    const hinzu = (data.artikel || []).filter(a => {
-      const k = (a.quelle || '') + '§' + (a.titel || '').toLowerCase().replace(/\s+/g, ' ').trim();
-      return !vorhandene.has(k);
-    });
-    alleArtikel = [...alleArtikel, ...hinzu].sort((a, b) => b.datum.localeCompare(a.datum));
-    artikelAnzeigen();
-    heimatNeuZaehlen();
-  } catch(_) {
-    erweiterteArtikelGeladen = false;
   }
 }
 
@@ -1786,33 +1765,77 @@ function gefilterteArtikel() {
   return haupt;
 }
 
+function filterIstAktiv() {
+  const von = document.getElementById('datum-von').value;
+  const bis = document.getElementById('datum-bis').value;
+  return !!(suchbegriff || aktivKategorie || aktivTag || aktivQuelle || aktivMeineArtikel ||
+            von || bis || (aktivOrt && aktivOrt !== 'landkreis-fulda' && aktivOrt !== ''));
+}
+
 function artikelAnzeigen() {
   const gefiltert = gefilterteArtikel();
   const grid = document.getElementById('artikel-grid');
   grid.innerHTML = ''; gezeigt = 0;
-  document.getElementById('anzahl-text').textContent =
-    `${Math.min(PRO_SEITE, gefiltert.length)} von ${gefiltert.length} Artikel${gefiltert.length !== 1 ? 'n' : ''}`;
+  const angzeigt = Math.min(PRO_SEITE, gefiltert.length);
+  const anzahlEl = document.getElementById('anzahl-text');
+  if (filterIstAktiv()) {
+    anzahlEl.textContent = gefiltert.length ? `${angzeigt} Artikel` : 'Keine Artikel gefunden';
+  } else {
+    anzahlEl.textContent = '';
+  }
   if (!gefiltert.length) {
     grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel gefunden.</p></div>';
     document.getElementById('mehr-btn').style.display = 'none';
+    document.getElementById('archiv-hinweis').style.display = 'none';
     return;
   }
   gefiltert.slice(0, PRO_SEITE).forEach((a, i) => grid.appendChild(karteErstellen(a, i)));
-  gezeigt = Math.min(PRO_SEITE, gefiltert.length);
-  document.getElementById('mehr-btn').style.display = gezeigt < gefiltert.length ? 'block' : 'none';
-  document.getElementById('archiv-hinweis').style.display = gezeigt >= gefiltert.length && gefiltert.length > 0 ? 'block' : 'none';
+  gezeigt = angzeigt;
+  const nochMehr = gezeigt < gefiltert.length || hatMehr;
+  document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
+  document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
   karteZahlenAktualisieren();
 }
 
-function mehrLaden() {
-  const gefiltert = gefilterteArtikel();
+async function mehrLaden() {
+  const btn = document.getElementById('mehr-btn');
   const grid = document.getElementById('artikel-grid');
-  const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
-  batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
-  gezeigt = Math.min(gezeigt + PRO_SEITE, gefiltert.length);
-  document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length} Artikeln`;
-  const nochMehr = gezeigt < gefiltert.length;
-  document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
+  let gefiltert = gefilterteArtikel();
+
+  // Case A: still have unrendered articles in the local array — just render them
+  if (gezeigt < gefiltert.length) {
+    const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
+    batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
+    gezeigt += batch.length;
+    if (filterIstAktiv()) document.getElementById('anzahl-text').textContent = `${gezeigt} Artikel`;
+    const nochMehr = gezeigt < gefiltert.length || hatMehr;
+    btn.style.display = nochMehr ? 'block' : 'none';
+    document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
+    return;
+  }
+
+  // Case B: local array exhausted — fetch next batch from server
+  if (!hatMehr) return;
+  btn.disabled = true;
+  btn.textContent = 'Lade…';
+  try {
+    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    alleArtikel = _deduplizieren([...alleArtikel, ...(data.artikel || [])]);
+    aktuellerOffset += (data.artikel || []).length;
+    hatMehr = data.hat_mehr || false;
+    gefiltert = gefilterteArtikel();
+    const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
+    batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
+    gezeigt += batch.length;
+    heimatNeuZaehlen();
+  } catch(_) { /* keep button visible so user can retry */ }
+  btn.disabled = false;
+  btn.textContent = 'Mehr laden';
+  const nochMehr = gezeigt < gefilterteArtikel().length || hatMehr;
+  if (filterIstAktiv()) document.getElementById('anzahl-text').textContent = `${gezeigt} Artikel`;
+  btn.style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
 }
 
@@ -1982,7 +2005,6 @@ function ortWaehlen(btn, ort) {
   }
   _ortAlsGesehen(ort);
   if (ort && typeof umami !== 'undefined') umami.track('filter-ort', { ort });
-  if (!ort || ort === 'hessen') erweiterteArtikelLaden();
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
   karteAktivSynchro();
 }
