@@ -7,7 +7,9 @@
       "Bash(schtasks /query /fo LIST /v)",
       "Bash(schtasks /query /fo CSV)",
       "Bash(powershell -Command \"Get-ScheduledTask | Select-Object TaskName | Format-Table\")",
-      "WebFetch(domain:docs.umami.is)"
+      "WebFetch(domain:docs.umami.is)",
+      "Bash(python -c ' *)",
+      "Bash(pip install *)"
     ]
   }
 }
