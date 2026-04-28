@@ -293,9 +293,9 @@ Fulda Nachrichten">
   .heimat-chip.aktiv .heimat-badge { background: rgba(255,255,255,.25); color: #fff; }
   .heimat-edit-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; color: var(--rot); opacity: .7; display: inline-flex; align-items: center; }
   .heimat-edit-btn:hover { opacity: 1; }
-  .push-bell-btn { background: none; border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: .85rem; display: inline-flex; align-items: center; justify-content: center; transition: all .2s; padding: 0; }
-  .push-bell-btn:hover, .push-bell-btn.aktiv { border-color: var(--rot); background: var(--rot); }
-  .push-bell-btn.aktiv { color: white; }
+  .push-bell-btn { background: none; border: 1px solid var(--border); border-radius: 20px; height: 28px; cursor: pointer; font-size: .8rem; display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; transition: all .2s; color: var(--grau-mittel); white-space: nowrap; }
+  .push-bell-btn:hover { border-color: var(--rot); color: var(--rot); }
+  .push-bell-btn.aktiv { border-color: var(--rot); background: var(--rot); color: #fff; font-weight: 600; }
   #heimat-modal { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.55); backdrop-filter: blur(3px); align-items: flex-start; justify-content: center; padding: 60px 1rem 2rem; overflow-y: auto; }
   #heimat-modal.offen { display: flex; }
   #heimat-modal-inhalt { background: var(--weiss); border-radius: 16px; padding: 1.5rem; width: min(600px, 96vw); animation: heimat-einblenden .18s ease; }
@@ -1119,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button id="push-bell" class="push-bell-btn" onclick="(_pushSubscription ? pushAbbestellen : pushAbonnieren)()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none">🔔</button>
+          <button id="push-bell" class="push-bell-btn" onclick="(_pushSubscription ? pushAbbestellen : pushAbonnieren)()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none"><span id="push-bell-icon">🔔</span><span id="push-bell-label">Benachrichtigungen</span></button>
         </span>
       </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
@@ -2852,6 +2852,8 @@ function pushBellAktualisieren() {
   if (!bell) return;
   bell.style.display = meineHeimat ? 'inline-flex' : 'none';
   const aktiv = !!_pushSubscription;
+  document.getElementById('push-bell-icon').textContent = aktiv ? '🔔' : '🔕';
+  document.getElementById('push-bell-label').textContent = aktiv ? 'An' : 'Aus';
   bell.title = aktiv ? 'Benachrichtigungen deaktivieren' : 'Benachrichtigungen aktivieren';
   bell.classList.toggle('aktiv', aktiv);
 }
