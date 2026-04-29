@@ -4,293 +4,1121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nachrichtenarchiv Seite 7 – RegioNachrichten Fulda</title>
-<meta name="description" content="Ältere Nachrichten aus dem Landkreis Fulda und Osthessen – Archiv Seite 7 von 31 (1544 Artikel gesamt).">
+<meta name="description" content="Ältere Nachrichten aus dem Landkreis Fulda und Osthessen – Archiv Seite 7 von 8 (359 Artikel gesamt).">
 <link rel="canonical" href="https://www.rnfulda.de/archiv/seite-7.html">
 <link rel="prev" href="seite-6.html">
 <link rel="next" href="seite-8.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:system-ui,sans-serif;max-width:800px;margin:0 auto;padding:1rem 1.5rem;color:#1a1a1a}
-h1{font-size:1.4rem;margin-bottom:.25rem}
-.sub{color:#666;font-size:.9rem;margin-bottom:1.5rem}
-article{border-bottom:1px solid #e5e5e5;padding:1rem 0}
-article:last-child{border-bottom:none}
-h2{font-size:1rem;margin:0 0 .25rem}
-h2 a{color:#c0392b;text-decoration:none}
-h2 a:hover{text-decoration:underline}
-.meta{font-size:.8rem;color:#666;margin:.25rem 0}
-p{font-size:.875rem;color:#444;margin:.25rem 0 0}
-nav.pagination{display:flex;justify-content:space-between;margin:2rem 0;font-size:.9rem}
-nav.pagination a{color:#c0392b;text-decoration:none}
-footer{margin-top:2rem;border-top:1px solid #e5e5e5;padding-top:1rem;font-size:.8rem;color:#888;text-align:center}
+:root{--rot:#c0152a;--border:#e0e0e0;--weiss:#fff;--schwarz:#111;--grau-dunkel:#333;--grau-mittel:#666;--grau-hell:#f4f4f4;--font-display:'Playfair Display',Georgia,serif;--font-body:'Source Sans 3',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--grau-hell);color:var(--schwarz);min-height:100vh}
+header{background:var(--weiss);border-bottom:1px solid var(--border);padding:0 1.5rem;height:60px;display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--rot);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:20px;height:20px;fill:#fff}
+.logo-text{font-family:var(--font-display);font-size:1.1rem;line-height:1.1}
+.logo-text span:first-child{color:var(--rot)}
+.logo-ort{font-size:.75rem;color:var(--grau-mittel);font-family:var(--font-body);font-weight:500}
+.back-btn{margin-left:auto;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:none;font-family:var(--font-body);font-size:.85rem;font-weight:600;color:var(--grau-dunkel);cursor:pointer;text-decoration:none;transition:border-color .15s,color .15s}
+.back-btn:hover{border-color:var(--rot);color:var(--rot)}
+main{max-width:1200px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+h1{font-family:var(--font-display);font-size:1.5rem;margin-bottom:.2rem}
+.sub{color:var(--grau-mittel);font-size:.875rem;margin-bottom:1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin-bottom:2rem}
+.karte{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--weiss);display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
+.karte:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
+.karte-bild-link{display:block;text-decoration:none}
+.karte-bild{height:80px;display:flex;align-items:flex-end;padding:.6rem;position:relative}
+.badge{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:4px;color:#fff}
+.karte-inhalt{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.5rem}
+.karte-titel-link{text-decoration:none;color:inherit}
+.karte-titel{font-family:var(--font-display);font-size:.95rem;font-weight:700;line-height:1.35;color:var(--schwarz);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.karte-titel-link:hover .karte-titel{color:var(--rot)}
+.karte-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.tag-pill{font-size:.65rem;background:#f0f0f0;color:var(--grau-dunkel);padding:2px 7px;border-radius:10px;border:1px solid var(--border)}
+.karte-meta{display:flex;flex-wrap:wrap;gap:.3rem;font-size:.72rem;color:var(--grau-mittel);align-items:center;padding-top:.4rem;border-top:1px solid var(--border);margin-top:auto}
+.meta-trenner{opacity:.4}
+.karte-footer{padding:.7rem 1rem;border-top:1px solid var(--border)}
+.lese-link{display:flex;align-items:center;gap:.35rem;font-size:.8rem;font-weight:600;color:var(--rot);text-decoration:none}
+.lese-link:hover{text-decoration:underline}
+nav.pagination{display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0;font-size:.875rem}
+nav.pagination a{color:var(--rot);text-decoration:none;font-weight:600}
+nav.pagination a:hover{text-decoration:underline}
+footer{border-top:1px solid var(--border);background:var(--weiss);padding:1.5rem;text-align:center;font-size:.8rem;color:var(--grau-mittel)}
+footer a{color:var(--rot);text-decoration:none}
+@media(max-width:600px){main{padding:1rem 1rem 3rem}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<h1>Nachrichtenarchiv – Landkreis Fulda</h1>
-<p class="sub">Seite 7 von 31 · 1544 archivierte Artikel · <a href="../index.html">Zur Startseite</a></p>
-
-    <article>
-      <h2><a href="https://www.fuldainfo.de/deutsche-wegen-terrorverdachts-in-russland-festgenommen/" target="_blank" rel="noopener">Deutsche wegen Terrorverdachts in Russland festgenommen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>In der russischen Region Stawropol ist eine deutsche Staatsbürgerin festgenommen worden. Der Inlandsgeheimdienst FSB wirft ihr vor, &amp;#8222;im Auftrag ukrainischer Geheimdienste an der Vorbereitung eines [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791866/sind-sie-ploetzlich-millionar-unbekannter-lotto-spieler-aus-fulda-raumt-richtig-ab.html" target="_blank" rel="noopener">Sind Sie plötzlich Millionär? Unbekannter Lotto-Spieler aus Fulda räumt richtig ab</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · landkreis-fulda</p>
-      <p>Wenn sich das ganze Leben auf einen Schlag ändert: Bei der Lottoziehung am vergangenen Samstag hat ein bislang unbekannter Spieler aus dem Landkreis Fulda einen Volltreffer im...</p>
-    </article>
-    <article>
-      <h2><a href="https://www.hs-fulda.de/unsere-hochschule/alle-meldungen/meldungsdetails/detail/preise-im-ideenwettbewerb-vergeben" target="_blank" rel="noopener">Preise im Ideenwettbewerb vergeben</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Hochschule Fulda · landkreis-fulda</p>
-      <p>Spielen und dabei so viel Spaß haben, dass der pädagogische Hintergrund nicht auffällt: Mit dieser Idee hat Diego Lenero die Jury im Ideenwettbewerb der Hochschule Fulda überzeugt.</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791861/tater-festgenommen-17-jahriger-schlagt-scheiben-von-tegut-markt-ein.html" target="_blank" rel="noopener">Täter festgenommen: 17-Jähriger schlägt Scheiben von Tegut-Markt ein</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · landkreis-fulda</p>
-      <p>Wer am Montagmorgen im Tegut-Markt in Neuhof (Kreis Fulda) einkaufen gehen möchte, wird sich vermutlich wundern - denn am späten Freitagabend wurden zwei Scheiben des...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791861/randale-am-freitagabend-scheibe-von-tegut-markt-eingeschlagen.html" target="_blank" rel="noopener">Randale am Freitagabend: Scheibe von Tegut-Markt eingeschlagen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · landkreis-fulda</p>
-      <p>Wer am Montagmorgen im Tegut-Markt in Neuhof (Kreis Fulda) einkaufen gehen möchte, wird sich vermutlich wundern - denn am späten Freitagabend wurden zwei Scheiben des...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791861/randale-am-sonntagabend-scheibe-von-tegut-markt-eingeschlagen.html" target="_blank" rel="noopener">Randale am Sonntagabend: Scheibe von Tegut-Markt eingeschlagen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · landkreis-fulda</p>
-      <p>Wer am Montagmorgen im Tegut-Markt in Neuhof (Kreis Fulda) einkaufen gehen möchte, wird sich vermutlich wundern - denn am späten Sonntagabend wurde eine Scheibe des...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791863/schwimmt-er-endlich-wieder-so-steht-es-um-gestrandeten-timmy.html" target="_blank" rel="noopener">Schwimmt er endlich wieder? So steht es um gestrandeten &quot;Timmy&quot;</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Der vor Poel gestrandete Buckelwal liegt nicht mehr auf der Stelle: Aufnahmen im Netz zeigen, dass das Tier schwimmt und immer wieder die Richtung wechselt. Geleitboote...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791863/schwimmt-er-weiter-so-steht-es-um-gestrandeten-timmy.html" target="_blank" rel="noopener">Schwimmt er weiter? So steht es um gestrandeten &quot;Timmy&quot;</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Der Buckelwal vor Poel erlebt nach Einschätzung von Greenpeace großen Stress. Motorenlärm und viele Aktivitäten setzen dem Tier demnach zu.Nach Einschätzung der...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791860/cdu-wachtersbach-konstituiert-stadtverordnetenfraktion.html" target="_blank" rel="noopener">CDU Wächtersbach konstituiert Stadtverordnetenfraktion</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Nach der zurückliegenden Kommunalwahl hat sich die Stadtverordnetenfraktion der CDU Wächtersbach neu konstituiert. Das Wahlergebnis bringt dabei eine bemerkenswerte...</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/industrie-weniger-zurueckhaltend-bei-investitionen/" target="_blank" rel="noopener">Industrie weniger zurückhaltend bei Investitionen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Die Unternehmen in Deutschland haben ihre Investitionspläne für das laufende Jahr nach oben angepasst. Die vom Münchener Ifo-Institut gemessenen Investitionserwartungen sind im März auf +0,2 [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/ex-kanzleramtschef-altmaier-warnt-vor-scheitern-der-regierung-merz/" target="_blank" rel="noopener">Ex-Kanzleramtschef Altmaier warnt vor Scheitern der Regierung Merz</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Der frühere Kanzleramtschef Peter Altmaier (CDU) warnt angesichts des Streits um die richtigen Reformen und Entlastungsmaßnahmen vor einem Scheitern der Bundesregierung von Kanzler Friedrich Merz [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldaerzeitung.de/fulda/mann-aus-der-rhoen-stirbt-nach-sturz-in-schlucht-auf-mallorca-94269174.html" target="_blank" rel="noopener">Sturz in Schlucht: 67-Jähriger aus Poppenhausen stirbt bei Wanderung auf Mallorca</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldaer Zeitung · landkreis-fulda</p>
-      
-    </article>
-    <article>
-      <h2><a href="https://www.fuldaerzeitung.de/fulda/bild-des-tages-magnolien-und-der-dom-im-sonnenschein-94264565.html" target="_blank" rel="noopener">Bild des Tages: Magnolien und der Dom im Sonnenschein</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldaer Zeitung · landkreis-fulda</p>
-      
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791862/rettungseinsatz-auf-der-a5-person-vermutlich-im-fahrzeug-eingeklemmt.html" target="_blank" rel="noopener">Rettungseinsatz auf der A5: Person vermutlich im Fahrzeug eingeklemmt</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Auf der Bundesautobahn A5 in Fahrtrichtung Süden, ist es zwischen Alsfeld und Homberg am Montagmorgen gegen 7:17 Uhr zu einem schweren Verkehrsunfall gekommen. Nach ersten...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791862/a5-unfall-am-montagmorgen-entwarnung-fuer-eingeklemmte-person.html" target="_blank" rel="noopener">A5-Unfall am Montagmorgen: Entwarnung für eingeklemmte Person</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Auf der Bundesautobahn A5 in Fahrtrichtung Süden, ist es zwischen Alsfeld und Homberg am Montagmorgen gegen 7:17 Uhr zu einem schweren Verkehrsunfall gekommen. Nach ersten...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791862/a5-unfall-im-morgenverkehr-entwarnung-fuer-eingeklemmte-person.html" target="_blank" rel="noopener">A5-Unfall im Morgenverkehr: Entwarnung für eingeklemmte Person</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Auf der Bundesautobahn A5 in Fahrtrichtung Süden, ist es zwischen Alsfeld und Homberg am Montagmorgen gegen 7:17 Uhr zu einem schweren Verkehrsunfall gekommen. Nach ersten...</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/connemann-warnt-vor-scheitern-der-entlastungspraemie/" target="_blank" rel="noopener">Connemann warnt vor Scheitern der Entlastungsprämie</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Die Mittelstands- und Wirtschaftsunion (MIT) fordert mehr Flexibilität bei der von der Koalition geplanten Entlastungsprämie von 1.000 Euro und warnt vor ihrem Scheitern. &amp;#8222;Für Mittelstand [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791859/feuerpause-endet-bald-iran-schiff-geentert-was-wird-aus-verhandlungen.html" target="_blank" rel="noopener">Feuerpause endet bald: Iran-Schiff geentert - Was wird aus Verhandlungen?</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Kurz vor Auslaufen der Feuerpause im Iran-Krieg zeigt sich Trump zu neuen Verhandlungen bereit. Wenig später greift die US-Marine einen iranischen Frachter an. Was wird Teheran...</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791858/ig-jagdhorn-zu-besuch-jagdhorn-klange-vom-schlitzer-hinterturm.html" target="_blank" rel="noopener">&quot;IG Jagdhorn&quot; zu Besuch: Jagdhorn-Klänge vom Schlitzer Hinterturm</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Seit dem 1. April hat der Hinterturm in Schlitz (Vogelsbergkreis) wieder seine Pforte geöffnet und Interessierte aus nah und fern können den 36 Meter hohen Bergfried aus dem...</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldaerzeitung.de/fulda/fuldaer-hilft-bei-first-dates-hotel-der-liebe-auf-die-spruenge-94269171.html" target="_blank" rel="noopener">„Magisches Ambiente“: Ein Fuldaer hilft im „First Dates Hotel“ der Liebe auf die Sprünge</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldaer Zeitung · landkreis-fulda</p>
-      
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/jugendschutz-online-prien-will-mehr-unterstuetzung-fuer-eltern/" target="_blank" rel="noopener">Jugendschutz online: Prien will mehr Unterstützung für Eltern</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Bundesfamilienministerin Karin Prien (CDU) fordert angesichts der Ergebnisse einer Expertenkommission zum Jugendschutz online mehr Unterstützung für Eltern. &amp;#8222;Medienerziehung beginnt nicht in der Schule, sondern im [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/wechselhaft-aber-meist-trocken-in-hessen/" target="_blank" rel="noopener">Wechselhaft, aber meist trocken in Hessen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>In Hessen setzt sich heute überwiegend trockenes Wetter durch, nur im Norden der Region gibt es zeitweise etwas Regen. Während es dort meist stark bewölkt [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/usa-beschiessen-iranisches-containerschiff/" target="_blank" rel="noopener">USA beschießen iranisches Containerschiff</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Die USA haben nach Angaben von US-Präsident Donald Trump am Sonntag ein iranisches Frachtschiff mit Gewalt gestoppt und schließlich übernommen. Die &amp;#8222;Touska&amp;#8220; habe versucht, die [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.fuldainfo.de/klare-mehrheit-fuer-olympiabewerbungen-in-nrw-und-kiel/" target="_blank" rel="noopener">Klare Mehrheit für Olympiabewerbungen in NRW und Kiel</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Fuldainfo · landkreis-fulda</p>
-      <p>Bei Bürgerentscheiden in Nordrhein-Westfalen und Kiel hat sich eine klare Mehrheit der Bürger für die Bewerbung um die Olympischen und Paralympischen Spiele im Rahmen des [Lesen Sie hier mehr...]
-Source</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/eiterfeld-plant-zukunft-auftakt-zum-neuen-entwicklungskonzept.html" target="_blank" rel="noopener">Eiterfeld plant Zukunft: Auftakt zum neuen Entwicklungskonzept</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Eiterfeld (pm/pk) – Die Marktgemeinde Eiterfeld startet offiziell in die Erarbeitung ihres neuen Kommunalen Entwicklungskonzepts (KEK). Unter dem Motto „Transparenz gewährleisten und breite Beteiligung fördern“ sind alle Bürgerinnen und Bürger aus den zwanzig Ortsteilen eingeladen, aktiv an der zukünftigen Ausrichtung ihrer Heimat mitzuwirken und eine gemeinsame Aufbruchstimmung zu erzeugen.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/musikverein-eichenzell-begeistert-mit-fruehlingskonzert.html" target="_blank" rel="noopener">Musikverein Eichenzell begeistert mit Frühlingskonzert</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Eichenzell (sim) – Ein voller Saal, begeisterte Zuhörer und ein abwechslungsreiches Programm: Das Frühlingskonzert des Musikvereins Eichenzell am Samstagabend in der Kulturscheune Eichenzell war ein voller Erfolg. Unter der musikalischen Leitung von Jürgen Vogt und Maximilian Heil präsentierten die Musikerinnen und Musiker ein vielseitiges Repertoire, das von klassischer Blasmusik bis hin zu modernen Hits reichte.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/vortrag-in-der-bibliothek-hommage-an-eta-hoffmann.html" target="_blank" rel="noopener">Vortrag in der Bibliothek: Hommage an E.T.A. Hoffmann</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/pk) – Anlässlich des 250. Geburtstags von E.T.A. Hoffmann lädt die Bibliothek in Kooperation mit der Goethe-Gesellschaft Fulda e.V. zu einem Vortrag von Marlen Borchers aus Gießen ein. Das Thema lautet: „E.T.A. Hoffmanns schaurig-schöne Fantasie- und Traumwelt - keine Chance bei Goethe. Eine Hommage an den Künstler anlässlich seines 250. Geburtstags“.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/maifest-der-dammersbacher-blaskapelle.html" target="_blank" rel="noopener">Maifest der Dammersbacher Blaskapelle</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Dammersbach (pm/pk) – Auch in diesem Jahr lädt die Dammersbacher Blaskapelle am ersten Mai zu ihrem traditionellen Maifest ein. Die Veranstaltung findet wie gewohnt auf dem Anwesen Göller in der Allmuser Straße 15 statt.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/hartman-bleibt-vorsitzende-der-stadtverordnetenversammlung.html" target="_blank" rel="noopener">Hartman bleibt Vorsitzende der Stadtverordnetenversammlung</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (gü) – Die Fuldaer Stadtverordnetenversammlung kam am Montagabend zu ihrer konstituierenden Sitzung zusammen. Als Vorsitzende wurde Margarete Hartmann, die das Amt seit 20 Jahren inne hat, mit 57 von 59 wiedergewählt. Es gab lange anhaltenden Applaus.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/zoeliakiehimmel-auf-erden-aktionstag-auf-dem-kirchhof.html" target="_blank" rel="noopener">„Zöliakie?Himmel auf Erden“ – Aktionstag auf dem Kirchhof</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/gü) – Die Christuskirche Fulda (Innenstadt) lädt am Donnerstag, 30. April, im Rahmen des Projekts „Lebendiger Kirchhof“ zum Aktionstag „Zöliakie?</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/konzert-fuer-klavier-und-marimbaphon-zur-ausstellung-echokabinett.html" target="_blank" rel="noopener">Konzert für Klavier und Marimbaphon zur Ausstellung „Echokabinett“</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/gü) – Im Rahmen der Sonderausstellung „Echokabinett“ im Fuldaer Vonderau-Museum geben am Dienstag, 21. April, um 19 Uhr der bekannte Fuldaer Pianist Frank Tischer (Künstler des Echokabinetts), zusammen mit dem Hannoveraner Jazz-Schlagzeuger und Perkussionisten Jo Doll an der Marimba, ein gemeinsames Konzert in der Museumskapelle.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/olaf-schubert-begeistert-in-der-orangerie-mit-jetzt-oder-now-fotos.html" target="_blank" rel="noopener">Olaf Schubert begeistert in der Orangerie mit „Jetzt oder now!“ – Fotos</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/jah) – Ein restlos ausverkauftes Haus, schallendes Gelächter und minutenlanger Applaus: Am Samstagabend verwandelte Olaf Schubert die Fuldaer Orangerie in eine Hochburg des feinsinnigen Humors. Mit seinem aktuellen Programm „Jetzt oder now!“ landete der Comedian aus Plauen vom ersten Moment an eine Punktlandung beim Publikum.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/zwischen-strafrecht-und-netzwerken-unternehmertreffen-in-huenfeld.html" target="_blank" rel="noopener">Zwischen Strafrecht und Netzwerken – Unternehmertreffen in Hünfeld</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Hünfeld – Von Justin Klenner – Zum Netzwerken fanden sich am Montagabend etwa 100 Unternehmer aus Stadt und Region im Alten Lokschuppen in Hünfeld zusammen. Die Stadt Hünfeld sowie die Allianz-Versicherung Michael Wehner (Generalvertretung) hatten zum 24. Unternehmertreffen eingeladen. Nach den Grußworten von Bürgermeister Benjamin Tschesnok, Kreishandwerksmeister Thorsten Krämer, dem Ersten Kreisbeigeordneten Frederik Schmitt sowie Allianz-Generalvertreter Michael Wehner klärte Holger Wirthwein</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/fuer-ernstfall-geruestet-katastrophenschutz-tag-an-der-von-galen-schule-1.html" target="_blank" rel="noopener">Für Ernstfall gerüstet: Katastrophenschutz-Tag an der Von-Galen-Schule</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Eichenzell (pm/gü) – Kurz vor den Osterferien kam sich ein Besucher der Von-Galen-Schule Eichenzell vor wie am Set zu einem Hollywood-Blockbuster: Auf dem Schulhof waren zahlreiche Einsatzfahrzeuge verteilt, zudem waren sehr viele Helfer in ihrer Einsatzkleidung vor Ort. Im Unterschied zum Filmset gab es beim Katastrophenschutztag keine Kameras, und es wurde sehr ruhig und geordnet agiert.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/die-partei-hat-immer-recht-ausstellung-zum-ddr-alltag-im-bonifatiushaus.html" target="_blank" rel="noopener">„Die Partei hat immer recht“: Ausstellung zum DDR-Alltag im Bonifatiushaus</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/pk) – Im Bonifatiushaus ist noch bis zum 25. Juni die Ausstellung „Die Partei hat immer recht. Die SED im Alltag der DDR“ zu sehen. Mit der Wende wurde die Geschichte für die auf Marxismus/Leninismus fußende Sozialistische Einheitspartei Deutschlands (SED) der DDR zum entscheidenden Wendepunkt. Deren Parteidoktrin entpuppte sich letztlich als „leere Worthülse“. Mit der geschichtlichen Entwicklung und dem Einfluss der SED im „anderen Teil Deutschlands“ beschäftigt sich derzeit die Ausst</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/cdu-gruene-und-fdpfggfreiewaehler-arbeiten-in-fulda-zusammen.html" target="_blank" rel="noopener">CDU, Grüne und FDP/FGG/FreieWähler arbeiten in Fulda zusammen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/gü) – Im Vorfeld der konstituierenden Sitzung der Stadtverordnetenversammlung gab es viele Treffen zwischen den Fraktionen und Gruppierungen der bürgerlichen Mitte. Immer ging es um die Herausforderungen und Themen der kommenden Wahlperiode. Die größte Schnittmenge für eine verlässliche Partnerschaft ergab sich in den Gesprächen zwischen CDU, Bündnis 90/Die Grünen sowie der neu gebildeten Fraktion FDP/FGG/Freie Wähler. Dies ist die Grundlage für die am Montag anstehenden personellen un</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/bildergalerie-3-von-der-stimme-fuldas-im-s-club.html" target="_blank" rel="noopener">Bildergalerie 3 von der Stimme Fuldas im S-Club</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/fruehlingsmarkt-am-umweltzentrum-fulda-verkauf-und-beratung-2.html" target="_blank" rel="noopener">Frühlingsmarkt am Umweltzentrum Fulda – Verkauf und Beratung</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (jk/pm) – Entdecken, Tauschen und Genießen: Der beliebte Frühlingsmarkt am Fuldaer Umweltzentrum lockte am Sonntag trotz eher durchwachsenen Wetters wieder einige Besucher an. 37 Initiativen und Aussteller präsentierten eine bunte Vielfalt an Informationen, Pflanzen und liebevoll hergestellte Produkte. Die Gäste erwartete ein lebendiges Fest rund um die Themen Nachhaltigkeit, Gartenkultur und kreatives Handwerk.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/fuehrungswechsel-bei-leben-arbeiten-in-poppenhausen.html" target="_blank" rel="noopener">Führungswechsel bei „Leben &amp; Arbeiten in Poppenhausen“</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Poppenhausen (pm/gü) – Bei der Jahreshauptversammlung im Rathaus blickte der Verein „Leben &amp; Arbeiten in Poppenhausen e.V.“ auf ein Jahrzehnt erfolgreicher Arbeit zurück. Nach zehn Jahren an der Spitze übergab Frank Unger das Amt des ersten Vorsitzenden an Michael Sapper. Das Gründungsmitglied wurde von der Versammlung einstimmig gewählt.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/vip-in-fulda-oezcan-cosar-nimmt-promi-kult-aufs-korn-fotos.html" target="_blank" rel="noopener">„VIP“ in Fulda: Özcan Cosar nimmt Promi-Kult aufs Korn – Fotos</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (jah) – Pointiert, energiegeladen und mit klarer Botschaft: Am Samstagabend sorgte Özcan Cosar in der Esperantohalle für beste Stimmung und regte zugleich zum Nachdenken an. Mit seinem neuen Programm „VIP“ traf der Comedian von Beginn an den Nerv des Publikums. Vor zahlreichen Besucherinnen und Besuchern nahm Cosar den vermeintlichen Glanz der „Very Important Persons“ humorvoll auseinander und stellte dabei eine zentrale Frage: Wer ist hier eigentlich wirklich wichtig?</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/versorgungsluecken-schliessen-fachtag-fuer-inklusive-medizin.html" target="_blank" rel="noopener">Versorgungslücken schließen: Fachtag für Inklusive Medizin</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/pk) – Menschen mit geistiger Behinderung sterben in Deutschland im Schnitt zwanzig Jahre früher als der Rest der Bevölkerung. Ursache sind oft strukturelle Hürden wie Zeitdruck, fehlende Vergütungsmodelle und mangelnde Barrierefreiheit. Um diese Lücke zu schließen, lädt der Zitronenfalter am Dienstag, 28. April, zum „Fachtag Inklusive Medizin“ nach Fulda ein. Ziel ist es, gemeinsam mit Wissenschaft und Politik konkrete Impulse für eine barrierefreie Gesundheitsversorgung zu setzen.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/die-blitzer-und-spritpreise-in-osthessen-im-ueberblick-update-7-uhr-2.html" target="_blank" rel="noopener">Die Blitzer und Spritpreise in Osthessen im Überblick – update 7 Uhr</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Wir berichten täglich aktuell über Radarkontrollen und Benzinpreise auf den osthessischen Straßen – und Sie können mitmachen. Die Blitzer und Spritpreise im Überblick:</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/ein-dreifaches-f-in-der-fuldaer-stadtpolitik-dreier-koalition-gegruendet.html" target="_blank" rel="noopener">Dreifaches „F“ in der Fuldaer Stadtpolitik - Dreier-Koalition gegründet</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/sim) – Eine neue Dreier-Koalition wird in der kommenden Legislaturperiode in der Stadtverordnetenversammlung Fulda zusammenarbeiten, um die Zukunft der Stadt aktiv mitzugestalten. Die Freie Demokratische Partei (FDP), die Freie Wähler sowie die Wählergemeinschaft FGG – Fulda Gemeinsam Gestalten haben sich auf eine gemeinsame Zusammenarbeit verständigt.</p>
-    </article>
-    <article>
-      <h2><a href="http://osthessen-news.de/n11791794/luft-wird-duenner-so-kampfen-speditionen-im-landkreis-mit-den-dieselpreisen.html" target="_blank" rel="noopener">Luft wird dünner: So kämpfen Speditionen im Landkreis mit den Dieselpreisen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-News · osthessen</p>
-      <p>Jeden Tag auf dem Weg zur Arbeit sieht man sie: die immer noch hohen Spritpreise. Oft wird empfohlen, nach Möglichkeit ins Homeoffice auszuweichen. Für viele Berufsgruppen ist...</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/buehne-frei-fuer-alle-das-radom-wird-zur-fotogalerie-der-rhoen.html" target="_blank" rel="noopener">Bühne frei für alle: Das Radom wird zur Fotogalerie der Rhön</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/pk) – Mit dem neuen Rhön Photo Award erhält die Rhön eine kreative Bühne, die Natur, Perspektiven und persönliche Blickwinkel eindrucksvoll verbindet. Der Wettbewerb richtet sich an Hobby- und Profifotografen gleichermaßen und lädt dazu ein, die Einzigartigkeit der Region durch die eigene Linse sichtbar zu machen. Herzstück des Formats ist eine Ausstellung im Radom auf der Wasserkuppe, eines der markantesten Wahrzeichen der Rhön.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/politik-dialog-in-der-aula-sigmar-gabriel-stellt-sich-fuldaer-schuelern.html" target="_blank" rel="noopener">Politik-Dialog in der Aula: Sigmar Gabriel stellt sich Fuldaer Schülern</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pk) – Hoher Besuch an der Freiherr-vom-Stein-Schule: Der ehemalige Vizekanzler, Bundesminister und SPD-Vorsitzende Sigmar Gabriel stand am Montag im Rahmen einer Podiumsdiskussion Rede und Antwort. Moderiert von fünf Schülern eines Leistungskurses Politik und Wirtschaft, gab Gabriel in der voll besetzten Aula tiefe Einblicke in sein politisches Denken – auch das Publikum hatte die Gelegenheit, Fragen zu stellen.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/l14zwo-mistet-aus-hausflohmarkt-vor-dem-umzug.html" target="_blank" rel="noopener">L14zwo mistet aus – Hausflohmarkt vor dem Umzug</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (pm/gü) – Das soziokulturelle Zentrum L14zwo ist ein offener Ort für Begegnung, Kreativität und Heimat von vielen Initiativen. Mit vielen Veranstaltungen und Angeboten, wie Reparieren, Tauschen, Treffen, Vernetzen und Kreativ werden, bietet es ein breites Spektrum für alle Altersgruppen und in den vielfältigsten Themenbereichen. Vor dem Umzug in die Löherstraße gibt noch jede Menge verschiedene Dinge im Haus, die ausgemistet werden: Deshalb findet am Samstag, 25. April von 11 bis 16 Uhr ei</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/fwg-eiterfeld-hat-sich-neu-aufgestellt-moeller-bleibt-vorsitzender.html" target="_blank" rel="noopener">FWG Eiterfeld hat sich neu aufgestellt – Möller bleibt Vorsitzender</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Eiterfeld (pm/gü) – Die FWG-Fraktion in der Gemeindevertretung der Marktgemeinde Eiterfeld hat sich konstituiert. Die FWG Eiterfeld bedankte sich zunächst herzlich bei allen Bürgern für das Vertrauen bei der Kommunalwahl am 15. März. Mit einem Stimmenanteil von 35,25 Prozent bleibt die FWG eine starke kommunalpolitische Kraft, mit elf Sitzen in der Gemeindevertretung und betont die Bedeutung einer sachorientierten und konstruktiven Zusammenarbeit in den kommenden fünf Jahren.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/jahreshauptversammlung-des-gesangvereins-hofbieber-ehrungen.html" target="_blank" rel="noopener">Jahreshauptversammlung des Gesangvereins Hofbieber - Ehrungen</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Hofbieber (pm/gü) – Die erste Vorsitzende des Gesangvereins Hofbieber, Brigitte Ebert, konnte eine stattliche Anzahl von Vereinsmitgliedern zur Jahreshauptversammlung begrüßen, ein besonderer Gruß galt den anwesenden Ehrenmitgliedern Barbara Müller-Engelhard, Theresia Sauerbier, Helmut Bleuel und Christoph Hosenfeld.</p>
-    </article>
-    <article>
-      <h2><a href="https://www.osthessen-zeitung.de/einzelansicht/news/2026/april/spektakulaerer-kranhub-am-hexenturm-aussentreppe-eingesetzt.html" target="_blank" rel="noopener">Spektakulärer Kranhub am Hexenturm: Außentreppe eingesetzt</a></h2>
-      <p class="meta"><time datetime="2026-04-20">20.04.2026</time> · Osthessen-Zeitung · osthessen</p>
-      <p>Fulda (sim) – Ein eindrucksvolles Bild bot sich am Montagmorgen am Hexenturm in Fulda: Unter den Blicken zahlreicher Interessierter wurde die neue Außentreppe des historischen Bauwerks per Kran millimetergenau eingesetzt. Damit wurde ein weiterer zentraler Bauabschnitt der laufenden Sanierung erfolgreich abgeschlossen.</p>
-    </article>
-<nav class="pagination">
-  <span><a href="seite-6.html" rel="prev">← Neuere</a></span>
-  <span>Seite 7 / 31</span>
-  <span><a href="seite-8.html" rel="next">Ältere →</a></span>
-</nav>
-<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv-Übersicht</a> · <a href="../impressum.html">Impressum</a></footer>
+<header>
+  <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg></div>
+  <div class="logo-text">Regio<span>Nachrichten</span><span class="logo-ort">Fulda</span></div>
+  <a href="../index.html" class="back-btn"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="15 18 9 12 15 6"/></svg> Startseite</a>
+</header>
+<main>
+  <h1>Nachrichtenarchiv</h1>
+  <p class="sub">Seite 7 von 8 · 359 archivierte Artikel · <a href="../archiv.html" style="color:var(--rot)">Archiv-Übersicht</a></p>
+  <div class="grid">
+<div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/heimpleite-gegen-havelse-sv-wehen-wiesbaden-endgueltig-im-niemandsland-angekommen-v1,svww-havelse-106.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/heimpleite-gegen-havelse-sv-wehen-wiesbaden-endgueltig-im-niemandsland-angekommen-v1,svww-havelse-106.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Heimpleite gegen Havelse: SV Wehen Wiesbaden endgültig im Niemandsland angekommen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">SV Wehen Wiesbaden</span><span class="tag-pill">Havelse</span><span class="tag-pill">Niederlage</span><span class="tag-pill">Abstiegskampf</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/heimpleite-gegen-havelse-sv-wehen-wiesbaden-endgueltig-im-niemandsland-angekommen-v1,svww-havelse-106.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/kita-erzieher-aus-wiesbaden-soll-kinder-sexuell-missbraucht-haben-v1,missbrauch-erzieher-wiesbaden-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#0284c718">
+      <span class="badge" style="background:#0284c7">↗ Bildung &amp; Familie</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/kita-erzieher-aus-wiesbaden-soll-kinder-sexuell-missbraucht-haben-v1,missbrauch-erzieher-wiesbaden-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Kita-Erzieher aus Wiesbaden soll Kinder sexuell missbraucht haben</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Wiesbaden</span><span class="tag-pill">Kita-Erzieher</span><span class="tag-pill">Kindesmissbrauch</span><span class="tag-pill">Ermittlungen</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/kita-erzieher-aus-wiesbaden-soll-kinder-sexuell-missbraucht-haben-v1,missbrauch-erzieher-wiesbaden-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/fokus-auf-frankfurt-lufthansa-flugbegleiter-streiken-am-freitag-v2,flugbegleiter-104.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/fokus-auf-frankfurt-lufthansa-flugbegleiter-streiken-am-freitag-v2,flugbegleiter-104.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Fokus auf Frankfurt: Lufthansa-Flugbegleiter streiken am Freitag</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Lufthansa</span><span class="tag-pill">Streik</span><span class="tag-pill">Flugbegleiter</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/fokus-auf-frankfurt-lufthansa-flugbegleiter-streiken-am-freitag-v2,flugbegleiter-104.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/forschung-spezialflugzeug-untersucht-oberrheingraben-auf-erdwaerme-potenzial-v1,messfluege-oberrheingraben-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/forschung-spezialflugzeug-untersucht-oberrheingraben-auf-erdwaerme-potenzial-v1,messfluege-oberrheingraben-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Forschung: Spezialflugzeug untersucht Oberrheingraben auf Erdwärme-Potenzial</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Oberrheingraben</span><span class="tag-pill">Erdwärme</span><span class="tag-pill">Forschungsflugzeug</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/forschung-spezialflugzeug-untersucht-oberrheingraben-auf-erdwaerme-potenzial-v1,messfluege-oberrheingraben-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/mehr-sport/frankfurt-marathon/frankfurt-marathon-vor-neuen-zeiten-v1,marathon-konkurrenz-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/frankfurt-marathon/frankfurt-marathon-vor-neuen-zeiten-v1,marathon-konkurrenz-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Frankfurt Marathon vor neuen Zeiten</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Marathon</span><span class="tag-pill">Laufsport</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/frankfurt-marathon/frankfurt-marathon-vor-neuen-zeiten-v1,marathon-konkurrenz-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/hanau-25-jaehriger-stirbt-wochen-nach-messerattacke-in-linienbus-v1,hanau-25-messerattacke-verstorben-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#d9770618">
+      <span class="badge" style="background:#d97706">↗ Kultur &amp; Freizeit</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/hanau-25-jaehriger-stirbt-wochen-nach-messerattacke-in-linienbus-v1,hanau-25-messerattacke-verstorben-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Hanau: 25-Jähriger stirbt Wochen nach Messerattacke in Linienbus</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hanau</span><span class="tag-pill">Messerattacke</span><span class="tag-pill">Linienbus</span><span class="tag-pill">Todesfoll</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/hanau-25-jaehriger-stirbt-wochen-nach-messerattacke-in-linienbus-v1,hanau-25-messerattacke-verstorben-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/diebe-schlagen-bei-giessener-tafel-zu-v1,einbruch-tafel-giessen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/diebe-schlagen-bei-giessener-tafel-zu-v1,einbruch-tafel-giessen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Diebe schlagen bei Gießener Tafel zu</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Gießen</span><span class="tag-pill">Tafel</span><span class="tag-pill">Diebstahl</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/diebe-schlagen-bei-giessener-tafel-zu-v1,einbruch-tafel-giessen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/pistols-and-bombs---scherz-mit-folgen-am-frankfurter-flughafen-v1,flughafen-bombenscherz-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/pistols-and-bombs---scherz-mit-folgen-am-frankfurter-flughafen-v1,flughafen-bombenscherz-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">&quot;Pistols and bombs&quot; - Scherz mit Folgen am Frankfurter Flughafen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Flughafen</span><span class="tag-pill">Sicherheit</span><span class="tag-pill">Bedrohung</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/pistols-and-bombs---scherz-mit-folgen-am-frankfurter-flughafen-v1,flughafen-bombenscherz-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/oelpreis-bricht-ein---wird-der-spritpreis-in-hessen-billiger-v1,oelpreise-fallen-spritpreise-hessen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/oelpreis-bricht-ein---wird-der-spritpreis-in-hessen-billiger-v1,oelpreise-fallen-spritpreise-hessen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Ölpreis bricht ein - wird der Spritpreis in Hessen billiger?</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Ölpreis</span><span class="tag-pill">Spritpreis</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/oelpreis-bricht-ein---wird-der-spritpreis-in-hessen-billiger-v1,oelpreise-fallen-spritpreise-hessen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/mehr-sport/greta-steinbrenner-bei-der-trampolin-em-filigran-ins-finale-v1,trampolin-em-steinbrenner-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/greta-steinbrenner-bei-der-trampolin-em-filigran-ins-finale-v1,trampolin-em-steinbrenner-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Greta Steinbrenner bei der Trampolin-EM: Filigran ins Finale</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Greta Steinbrenner</span><span class="tag-pill">Trampolin</span><span class="tag-pill">EM</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/greta-steinbrenner-bei-der-trampolin-em-filigran-ins-finale-v1,trampolin-em-steinbrenner-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/politik/kommunalwahlen/kommunalwahl-staatsanwaltschaft-ermittelt-wegen-moeglichen-wahlbetrugs-in-frankfurt-v1,verfahren--wahlbetrug-frankfurt-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#1e429f18">
+      <span class="badge" style="background:#1e429f">↗ Politik &amp; Verwaltung</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/politik/kommunalwahlen/kommunalwahl-staatsanwaltschaft-ermittelt-wegen-moeglichen-wahlbetrugs-in-frankfurt-v1,verfahren--wahlbetrug-frankfurt-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Kommunalwahl: Staatsanwaltschaft ermittelt wegen möglichen Wahlbetrugs in Frankfurt</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Kommunalwahl</span><span class="tag-pill">Staatsanwaltschaft</span><span class="tag-pill">Wahlbetrug</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/politik/kommunalwahlen/kommunalwahl-staatsanwaltschaft-ermittelt-wegen-moeglichen-wahlbetrugs-in-frankfurt-v1,verfahren--wahlbetrug-frankfurt-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/kultur/arolsen-archives-politikwissenschaftler-moritz-wein-wird-neuer-direktor-v1,arolsen-archives-moritz-wein-direktor-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#1e429f18">
+      <span class="badge" style="background:#1e429f">↗ Politik &amp; Verwaltung</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/kultur/arolsen-archives-politikwissenschaftler-moritz-wein-wird-neuer-direktor-v1,arolsen-archives-moritz-wein-direktor-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Arolsen Archives: Politikwissenschaftler Moritz Wein wird neuer Direktor</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Arolsen Archives</span><span class="tag-pill">Moritz Wein</span><span class="tag-pill">Direktor</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/kultur/arolsen-archives-politikwissenschaftler-moritz-wein-wird-neuer-direktor-v1,arolsen-archives-moritz-wein-direktor-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/ranstadt-millionenschaden-bei-scheunenbrand-auf-aussiedlerhof-v1,brand-scheune-ranstadt-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/ranstadt-millionenschaden-bei-scheunenbrand-auf-aussiedlerhof-v1,brand-scheune-ranstadt-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Ranstadt: Millionenschaden bei Scheunenbrand auf Aussiedlerhof</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Ranstadt</span><span class="tag-pill">Scheunenbrand</span><span class="tag-pill">Aussiedlerhof</span><span class="tag-pill">Millionenschaden</span><span class="tag-pill">Feuer</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/ranstadt-millionenschaden-bei-scheunenbrand-auf-aussiedlerhof-v1,brand-scheune-ranstadt-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-mit-kraftakt-ins-viertelfinale-das-kleine-handballwunder-geschafft-v1,mt-aufholjagd-ehf-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-mit-kraftakt-ins-viertelfinale-das-kleine-handballwunder-geschafft-v1,mt-aufholjagd-ehf-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">MT Melsungen mit Kraftakt ins Viertelfinale: Das &quot;kleine Handballwunder&quot; geschafft</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Malsfeld</span><span class="tag-pill">Poststelle</span><span class="tag-pill">Filiale</span><span class="tag-pill">Proteste</span><span class="tag-pill">Wiedereröffnung</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-mit-kraftakt-ins-viertelfinale-das-kleine-handballwunder-geschafft-v1,mt-aufholjagd-ehf-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/post-in-malsfeld-filiale-oeffnet-nach-protesten-wieder-v1,malsfeld-filialen-deutsche-post-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/post-in-malsfeld-filiale-oeffnet-nach-protesten-wieder-v1,malsfeld-filialen-deutsche-post-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Post in Malsfeld: Filiale öffnet nach Protesten wieder</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Malsfeld</span><span class="tag-pill">Post</span><span class="tag-pill">Filiale</span><span class="tag-pill">Proteste</span><span class="tag-pill">Wiedereröffnung</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/post-in-malsfeld-filiale-oeffnet-nach-protesten-wieder-v1,malsfeld-filialen-deutsche-post-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/b255-bei-marburg-mutter-stirbt-bei-unfall---tochter-schwer-verletzt-v2,unfall-marburg-108.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/b255-bei-marburg-mutter-stirbt-bei-unfall---tochter-schwer-verletzt-v2,unfall-marburg-108.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">B255 bei Marburg: Mutter stirbt bei Unfall - Tochter schwer verletzt</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Wetter</span><span class="tag-pill">Sommer</span><span class="tag-pill">Prognose</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/b255-bei-marburg-mutter-stirbt-bei-unfall---tochter-schwer-verletzt-v2,unfall-marburg-108.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-bis-zum-ende-der-woche-v4,wetter-fruehling-120.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#15803d18">
+      <span class="badge" style="background:#15803d">↗ Natur &amp; Umwelt</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-bis-zum-ende-der-woche-v4,wetter-fruehling-120.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Wetter in Hessen: Ein Hauch von Sommer bis zum Ende der Woche</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Wetter</span><span class="tag-pill">Sommer</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-bis-zum-ende-der-woche-v4,wetter-fruehling-120.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/darmstadt-98/sv-darmstadt-98-vor-entscheidenden-wochen---abhaken-und-vollgas-geben-v1,darmstadt-richter-saisonfinale-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/darmstadt-98/sv-darmstadt-98-vor-entscheidenden-wochen---abhaken-und-vollgas-geben-v1,darmstadt-richter-saisonfinale-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">SV Darmstadt 98 vor entscheidenden Wochen - Abhaken und Vollgas geben</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">MT Melsungen</span><span class="tag-pill">Handball</span><span class="tag-pill">Viertelfinale</span><span class="tag-pill">Handballwunder</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-08">08.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/darmstadt-98/sv-darmstadt-98-vor-entscheidenden-wochen---abhaken-und-vollgas-geben-v1,darmstadt-richter-saisonfinale-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-zieht-ueberzeugend-ins-viertelfinale-der-european-league-ein-v1,melsungen-viertelfinale-europa-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-zieht-ueberzeugend-ins-viertelfinale-der-european-league-ein-v1,melsungen-viertelfinale-europa-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">MT Melsungen zieht überzeugend ins Viertelfinale der European League ein</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">MT Melsungen</span><span class="tag-pill">Handball</span><span class="tag-pill">European League</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-melsungen-zieht-ueberzeugend-ins-viertelfinale-der-european-league-ein-v1,melsungen-viertelfinale-europa-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/freizeit/kirschbluete-in-hessen-gestartet-die-schoensten-ausflugsziele-im-ueberblick-v1,kirschblueten-locken-hessen-ueberblick-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/freizeit/kirschbluete-in-hessen-gestartet-die-schoensten-ausflugsziele-im-ueberblick-v1,kirschblueten-locken-hessen-ueberblick-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Kirschblüte in Hessen gestartet: Die schönsten Ausflugsziele im Überblick</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Kirschblüte</span><span class="tag-pill">Ausflugsziele</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/freizeit/kirschbluete-in-hessen-gestartet-die-schoensten-ausflugsziele-im-ueberblick-v1,kirschblueten-locken-hessen-ueberblick-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/landwirte-bekommen-ausgleich-fuer-biberschaeden--v1,biber-schaeden-ausgleich-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#065f4618">
+      <span class="badge" style="background:#065f46">↗ Wirtschaft &amp; Arbeit</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/landwirte-bekommen-ausgleich-fuer-biberschaeden--v1,biber-schaeden-ausgleich-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Landwirte bekommen Ausgleich für Biberschäden</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Landwirtschaft</span><span class="tag-pill">Biberschäden</span><span class="tag-pill">Ausgleichszahlungen</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/landwirte-bekommen-ausgleich-fuer-biberschaeden--v1,biber-schaeden-ausgleich-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/mann-stirbt-in-kleingarten-in-floersheim-v1,floersheim-toter-kleingarten-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/mann-stirbt-in-kleingarten-in-floersheim-v1,floersheim-toter-kleingarten-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Mann stirbt in Kleingarten in Flörsheim</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Flörsheim</span><span class="tag-pill">Kleingarten</span><span class="tag-pill">Todesfall</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/mann-stirbt-in-kleingarten-in-floersheim-v1,floersheim-toter-kleingarten-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/newsletter/hessen-am-abend-schuesse-in-giessen---und-der-kampf-gegen-deepfake-pornos-v1,hessen-am-abend-dienstag-230.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/newsletter/hessen-am-abend-schuesse-in-giessen---und-der-kampf-gegen-deepfake-pornos-v1,hessen-am-abend-dienstag-230.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Hessen am Abend: Schüsse in Gießen - und der Kampf gegen Deepfake-Pornos</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Gießen</span><span class="tag-pill">Schüsse</span><span class="tag-pill">Deepfake-Pornos</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/newsletter/hessen-am-abend-schuesse-in-giessen---und-der-kampf-gegen-deepfake-pornos-v1,hessen-am-abend-dienstag-230.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/riera-verzicht-auf-uzun-irritiert-das-bruechige-eintracht-gebilde-v1,eintracht-uzun-spieler-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/riera-verzicht-auf-uzun-irritiert-das-bruechige-eintracht-gebilde-v1,eintracht-uzun-spieler-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Riera-Verzicht auf Uzun irritiert: Das brüchige Eintracht-Gebilde</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Eintracht Frankfurt</span><span class="tag-pill">Uzun</span><span class="tag-pill">Fußball</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/riera-verzicht-auf-uzun-irritiert-das-bruechige-eintracht-gebilde-v1,eintracht-uzun-spieler-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/gesellschaft/zyklon-b-frankfurt-und-das-gas-von-auschwitz-v1,zyklon-b-frankfurt-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/gesellschaft/zyklon-b-frankfurt-und-das-gas-von-auschwitz-v1,zyklon-b-frankfurt-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Zyklon B: Frankfurt und das Gas von Auschwitz</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Zyklon B</span><span class="tag-pill">Auschwitz</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/gesellschaft/zyklon-b-frankfurt-und-das-gas-von-auschwitz-v1,zyklon-b-frankfurt-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/geld-aus-rollator-geklaut-und-treppe-heruntergestossen-83-jaehriger-stirbt-nach-ueberfall-v1,83-jaehriger-gestossen-tot-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/geld-aus-rollator-geklaut-und-treppe-heruntergestossen-83-jaehriger-stirbt-nach-ueberfall-v1,83-jaehriger-gestossen-tot-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Geld aus Rollator geklaut und Treppe heruntergestoßen: 83-Jähriger stirbt nach Überfall</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Überfall</span><span class="tag-pill">Seniorengewalt</span><span class="tag-pill">Flörsheim</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/geld-aus-rollator-geklaut-und-treppe-heruntergestossen-83-jaehriger-stirbt-nach-ueberfall-v1,83-jaehriger-gestossen-tot-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/basketball/bc-marburg-im-halbfinale-diese-reise-ist-noch-nicht-zu-ende-v1,bc-marburg-im-halbfinale-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/basketball/bc-marburg-im-halbfinale-diese-reise-ist-noch-nicht-zu-ende-v1,bc-marburg-im-halbfinale-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">BC Marburg im Halbfinale!  &quot;Diese Reise ist noch nicht zu Ende&quot;</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">BC Marburg</span><span class="tag-pill">Basketball</span><span class="tag-pill">Halbfinale</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/basketball/bc-marburg-im-halbfinale-diese-reise-ist-noch-nicht-zu-ende-v1,bc-marburg-im-halbfinale-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/wohnen-ohne-barrieren-ich-will-zuhause-nicht-kaempfen-muessen-v1,barrierefreies-umbauen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#1e429f18">
+      <span class="badge" style="background:#1e429f">↗ Politik &amp; Verwaltung</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/wohnen-ohne-barrieren-ich-will-zuhause-nicht-kaempfen-muessen-v1,barrierefreies-umbauen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Wohnen ohne Barrieren: &quot;Ich will zuhause nicht kämpfen müssen&quot;</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Barrierefreies Wohnen</span><span class="tag-pill">Behindertenpolitik</span><span class="tag-pill">Lebensqualität</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/wohnen-ohne-barrieren-ich-will-zuhause-nicht-kaempfen-muessen-v1,barrierefreies-umbauen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/unbekannte-schiessen-auf-cafe-in-giessen-v1,schuesse-cafe-giessen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/unbekannte-schiessen-auf-cafe-in-giessen-v1,schuesse-cafe-giessen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Unbekannte schießen auf Café in Gießen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Gießen</span><span class="tag-pill">Café</span><span class="tag-pill">Schießerei</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/unbekannte-schiessen-auf-cafe-in-giessen-v1,schuesse-cafe-giessen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/politik/ehemaliger-post-minister-christian-schwarz-schilling-ist-tot-v2,schwarz-schilling-tot-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#1e429f18">
+      <span class="badge" style="background:#1e429f">↗ Politik &amp; Verwaltung</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/politik/ehemaliger-post-minister-christian-schwarz-schilling-ist-tot-v2,schwarz-schilling-tot-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Ehemaliger Post-Minister Christian Schwarz-Schilling ist tot</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Christian Schwarz-Schilling</span><span class="tag-pill">Post-Minister</span><span class="tag-pill">Nachruf</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/politik/ehemaliger-post-minister-christian-schwarz-schilling-ist-tot-v2,schwarz-schilling-tot-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/eintracht-frankfurt-news-ticker-dahoud-verlaesst-die-eintracht-im-sommer,bundesliga-ticker-104.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/eintracht-frankfurt-news-ticker-dahoud-verlaesst-die-eintracht-im-sommer,bundesliga-ticker-104.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">News zu Eintracht Frankfurt</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Eintracht Frankfurt</span><span class="tag-pill">Fußball</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/eintracht-frankfurt-news-ticker-dahoud-verlaesst-die-eintracht-im-sommer,bundesliga-ticker-104.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/eishockey/ec-bad-nauheim-umbruch-mit-oha-effekt-v1,ec-bad-nauheim-114.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/eishockey/ec-bad-nauheim-umbruch-mit-oha-effekt-v1,ec-bad-nauheim-114.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">EC Bad Nauheim: Umbruch mit Oha-Effekt</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">EC Bad Nauheim</span><span class="tag-pill">Eishockey</span><span class="tag-pill">Umbruch</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/eishockey/ec-bad-nauheim-umbruch-mit-oha-effekt-v1,ec-bad-nauheim-114.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/deepfake-pornos-ermittler-in-hessen-stossen-an-ihre-grenzen-v1,deepfake-pornos-ermittlungen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/deepfake-pornos-ermittler-in-hessen-stossen-an-ihre-grenzen-v1,deepfake-pornos-ermittlungen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Deepfake-Pornos: Ermittler in Hessen stoßen an ihre Grenzen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Deepfake-Pornos</span><span class="tag-pill">Hessen</span><span class="tag-pill">Ermittler</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/deepfake-pornos-ermittler-in-hessen-stossen-an-ihre-grenzen-v1,deepfake-pornos-ermittlungen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/morgenticker/tatverdaechtiger-nach-messer-attacke-festgenommen--hessen-am-morgen-die-nachrichten-im-ticker,hessen-am-morgen-dienstag-1038.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/morgenticker/tatverdaechtiger-nach-messer-attacke-festgenommen--hessen-am-morgen-die-nachrichten-im-ticker,hessen-am-morgen-dienstag-1038.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Hessen am Morgen: Die Nachrichten im Ticker</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Nachrichten</span><span class="tag-pill">Ticker</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/morgenticker/tatverdaechtiger-nach-messer-attacke-festgenommen--hessen-am-morgen-die-nachrichten-im-ticker,hessen-am-morgen-dienstag-1038.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-v2,wetter-fruehling-120.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#15803d18">
+      <span class="badge" style="background:#15803d">↗ Natur &amp; Umwelt</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-v2,wetter-fruehling-120.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Wetter in Hessen: Ein Hauch von Sommer</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Wetter</span><span class="tag-pill">Hessen</span><span class="tag-pill">Sommer</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/wetter-in-hessen-ein-hauch-von-sommer-v2,wetter-fruehling-120.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/haben-kinderfussball-gespielt-sv-wehen-wiesbaden-kann-aufstieg-abhaken-v1,svww-nach-aachen-102.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/haben-kinderfussball-gespielt-sv-wehen-wiesbaden-kann-aufstieg-abhaken-v1,svww-nach-aachen-102.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">&quot;Haben Kinderfußball gespielt&quot;: SV Wehen Wiesbaden kann Aufstieg abhaken</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">SV Wehen Wiesbaden</span><span class="tag-pill">Fußball</span><span class="tag-pill">Aufstieg</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-07">07.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/wehen-wiesbaden/haben-kinderfussball-gespielt-sv-wehen-wiesbaden-kann-aufstieg-abhaken-v1,svww-nach-aachen-102.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/eishockey/knapper-sieg-gegen-bietigheim-kassel-huskies-gehen-in-halbfinal-serie-in-fuehrung-v1,huskies-bietigheim-110.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/eishockey/knapper-sieg-gegen-bietigheim-kassel-huskies-gehen-in-halbfinal-serie-in-fuehrung-v1,huskies-bietigheim-110.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Knapper Sieg gegen Bietigheim: Kassel Huskies gehen in Halbfinal-Serie in Führung</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Kassel Huskies</span><span class="tag-pill">Basketball</span><span class="tag-pill">Halbfinale</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/eishockey/knapper-sieg-gegen-bietigheim-kassel-huskies-gehen-in-halbfinal-serie-in-fuehrung-v1,huskies-bietigheim-110.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/basketball/halbfinal-einzug-perfekt-bc-marburg-schafft-ueberraschung-gegen-saarlouis-v1,bcm-saarlouis-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#92400e18">
+      <span class="badge" style="background:#92400e">↗ Verkehr &amp; Bau</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/basketball/halbfinal-einzug-perfekt-bc-marburg-schafft-ueberraschung-gegen-saarlouis-v1,bcm-saarlouis-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Halbfinal-Einzug perfekt: BC Marburg schafft Überraschung gegen Saarlouis</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">BC Marburg</span><span class="tag-pill">Basketball</span><span class="tag-pill">Saarlouis</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/basketball/halbfinal-einzug-perfekt-bc-marburg-schafft-ueberraschung-gegen-saarlouis-v1,bcm-saarlouis-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/gesellschaft/20-todestag-gedenken-an-nsu-opfer-halit-yozgat-in-kassel-v1,halit-yozgat-gedenken-102.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/gesellschaft/20-todestag-gedenken-an-nsu-opfer-halit-yozgat-in-kassel-v1,halit-yozgat-gedenken-102.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">20. Todestag: Gedenken an NSU-Opfer Halit Yozgat in Kassel</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Kassel</span><span class="tag-pill">NSU</span><span class="tag-pill">Halit Yozgat</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/gesellschaft/20-todestag-gedenken-an-nsu-opfer-halit-yozgat-in-kassel-v1,halit-yozgat-gedenken-102.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/gesellschaft/ostermaersche-enden-mit-friedensprotesten-am-frankfurter-roemerberg-v1,ostermaersche-montag-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/gesellschaft/ostermaersche-enden-mit-friedensprotesten-am-frankfurter-roemerberg-v1,ostermaersche-montag-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Ostermärsche enden mit Friedensprotesten am Frankfurter Römerberg</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt</span><span class="tag-pill">Ostermarsch</span><span class="tag-pill">Friedensproteste</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/gesellschaft/ostermaersche-enden-mit-friedensprotesten-am-frankfurter-roemerberg-v1,ostermaersche-montag-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-geht-mit-daenischer-power-ins-alles-oder-nichts-spiel-gegen-die-daenen-v1,melsungen-rueckspiel-playoffs-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-geht-mit-daenischer-power-ins-alles-oder-nichts-spiel-gegen-die-daenen-v1,melsungen-rueckspiel-playoffs-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">MT geht mit dänischer Power ins &quot;Alles-oder-nichts-Spiel&quot; gegen die Dänen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">MT Melsungen</span><span class="tag-pill">Handball</span><span class="tag-pill">Dänemark</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/handball/mt-melsungen/mt-geht-mit-daenischer-power-ins-alles-oder-nichts-spiel-gegen-die-daenen-v1,melsungen-rueckspiel-playoffs-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/mehr-sport/sabine-winter-aus-bad-soden-laesst-die-tischtennis-weltspitze-verzweifeln-v1,tischtennis-winter-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/sabine-winter-aus-bad-soden-laesst-die-tischtennis-weltspitze-verzweifeln-v1,tischtennis-winter-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Sabine Winter aus Bad Soden lässt die Tischtennis-Weltspitze verzweifeln</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Bad Soden</span><span class="tag-pill">Sabine Winter</span><span class="tag-pill">Tischtennis</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/mehr-sport/sabine-winter-aus-bad-soden-laesst-die-tischtennis-weltspitze-verzweifeln-v1,tischtennis-winter-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/gesellschaft/kassel-anti-gewalt-training-fuer-kita-kinder-soll-taeter-verhindern-v1,jugendgewalt-kita-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/gesellschaft/kassel-anti-gewalt-training-fuer-kita-kinder-soll-taeter-verhindern-v1,jugendgewalt-kita-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Kassel: Anti-Gewalt-Training für Kita-Kinder soll Täter verhindern</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Kassel</span><span class="tag-pill">Kita</span><span class="tag-pill">Anti-Gewalt-Training</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/gesellschaft/kassel-anti-gewalt-training-fuer-kita-kinder-soll-taeter-verhindern-v1,jugendgewalt-kita-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/fuehrung-verspielt-seltsame-pk-eintracht-frankfurt-und-riera-erzeugen-kopfschuetteln-v1,eintracht-riera-koeln-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/fuehrung-verspielt-seltsame-pk-eintracht-frankfurt-und-riera-erzeugen-kopfschuetteln-v1,eintracht-riera-koeln-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Führung verspielt, seltsame PK: Eintracht Frankfurt und Riera erzeugen Kopfschütteln</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Eintracht Frankfurt</span><span class="tag-pill">Riera</span><span class="tag-pill">Niederlagen</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-06">06.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/fuehrung-verspielt-seltsame-pk-eintracht-frankfurt-und-riera-erzeugen-kopfschuetteln-v1,eintracht-riera-koeln-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/stimmen-zum-eintracht-unentschieden-das-schlimme-kam-nach-unserem-zweiten-tor-v1,einracht-koeln-stimmen-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/stimmen-zum-eintracht-unentschieden-das-schlimme-kam-nach-unserem-zweiten-tor-v1,einracht-koeln-stimmen-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Stimmen zum Eintracht-Unentschieden: &quot;Das Schlimme kam nach unserem zweiten Tor&quot;</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Eintracht Frankfurt</span><span class="tag-pill">Fußball</span><span class="tag-pill">Unentschieden</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-05">05.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/fussball/eintracht-frankfurt/stimmen-zum-eintracht-unentschieden-das-schlimme-kam-nach-unserem-zweiten-tor-v1,einracht-koeln-stimmen-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/sport/basketball/skyliners-frankfurt/basketball-bundesliga-mini-serie-der-skyliners-frankfurt-endet-in-hamburg-v1,skyliners-hamburg-118.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#7e3af218">
+      <span class="badge" style="background:#7e3af2">↗ Sport</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/sport/basketball/skyliners-frankfurt/basketball-bundesliga-mini-serie-der-skyliners-frankfurt-endet-in-hamburg-v1,skyliners-hamburg-118.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Basketball-Bundesliga: Mini-Serie der Skyliners Frankfurt endet in Hamburg</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt Skyliners</span><span class="tag-pill">Basketball-Bundesliga</span><span class="tag-pill">Hamburg</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-05">05.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/sport/basketball/skyliners-frankfurt/basketball-bundesliga-mini-serie-der-skyliners-frankfurt-endet-in-hamburg-v1,skyliners-hamburg-118.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/wirtschaft/umbau-im-frankfurter-hauptbahnhof-erste-geschaefte-eroeffnen-im-juni-v1,umbau-hauptbahnhof-frankfurt-geschafte-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#065f4618">
+      <span class="badge" style="background:#065f46">↗ Wirtschaft &amp; Arbeit</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/wirtschaft/umbau-im-frankfurter-hauptbahnhof-erste-geschaefte-eroeffnen-im-juni-v1,umbau-hauptbahnhof-frankfurt-geschafte-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Umbau im Frankfurter Hauptbahnhof: Erste Geschäfte eröffnen im Juni</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Frankfurt Hauptbahnhof</span><span class="tag-pill">Umbau</span><span class="tag-pill">Einzelhandel</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-05">05.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/wirtschaft/umbau-im-frankfurter-hauptbahnhof-erste-geschaefte-eroeffnen-im-juni-v1,umbau-hauptbahnhof-frankfurt-geschafte-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/gesellschaft/neubau-im-eilverfahren-in-nidderau-entsteht-die-schnellste-schule-deutschlands-v1,schulbau-nidderau-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#0284c718">
+      <span class="badge" style="background:#0284c7">↗ Bildung &amp; Familie</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/gesellschaft/neubau-im-eilverfahren-in-nidderau-entsteht-die-schnellste-schule-deutschlands-v1,schulbau-nidderau-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Neubau im Eilverfahren: In Nidderau entsteht die &quot;schnellste Schule Deutschlands&quot;</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Nidderau</span><span class="tag-pill">Schulneubau</span><span class="tag-pill">Eilverfahren</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-05">05.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/gesellschaft/neubau-im-eilverfahren-in-nidderau-entsteht-die-schnellste-schule-deutschlands-v1,schulbau-nidderau-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/kultur/von-den-hesselbachs-ueber-badesalz-bis-hood-comedy---spass-made-in-hessen--v1,80-jahre-hessencomedy-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#6b728018">
+      <span class="badge" style="background:#6b7280">↗ Sonstiges</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/kultur/von-den-hesselbachs-ueber-badesalz-bis-hood-comedy---spass-made-in-hessen--v1,80-jahre-hessencomedy-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">Von den Hesselbachs über Badesalz bis Hood Comedy - Spaß made in Hessen</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Comedians</span><span class="tag-pill">Unterhaltung</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-05">05.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/kultur/von-den-hesselbachs-ueber-badesalz-bis-hood-comedy---spass-made-in-hessen--v1,80-jahre-hessencomedy-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div><div class="karte">
+  <a href="https://www.hessenschau.de/panorama/in-hinterhoefen-machen-taeter-fettige-beute--v1,altfett-diebstahl-100.html" target="_blank" rel="noopener" class="karte-bild-link">
+    <div class="karte-bild" style="background:#c5303018">
+      <span class="badge" style="background:#c53030">↗ Vorfälle</span>
+    </div>
+  </a>
+  <div class="karte-inhalt">
+    <a href="https://www.hessenschau.de/panorama/in-hinterhoefen-machen-taeter-fettige-beute--v1,altfett-diebstahl-100.html" target="_blank" rel="noopener" class="karte-titel-link">
+      <div class="karte-titel">In Hinterhöfen machen Täter fettige Beute</div>
+    </a>
+    <div class="karte-tags"><span class="tag-pill">Hessen</span><span class="tag-pill">Einbrüche</span><span class="tag-pill">Kriminelles</span></div>
+    <div class="karte-meta">
+      <svg viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px;stroke:#666;fill:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <time datetime="2026-04-04">04.04.2026</time>
+      <span class="meta-trenner">·</span>
+      <span>Hessenschau Alle Hessen</span>
+    </div>
+  </div>
+  <div class="karte-footer">
+    <a href="https://www.hessenschau.de/panorama/in-hinterhoefen-machen-taeter-fettige-beute--v1,altfett-diebstahl-100.html" target="_blank" rel="noopener" class="lese-link">Ganzen Artikel lesen <svg viewBox="0 0 24 24" stroke-width="2" style="width:13px;height:13px;stroke:currentColor;fill:none"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</div>
+  </div>
+  <nav class="pagination">
+    <span><a href="seite-6.html" rel="prev">← Neuere</a></span>
+    <span style="color:var(--grau-mittel)">Seite 7 / 8</span>
+    <span><a href="seite-8.html" rel="next">Ältere →</a></span>
+  </nav>
+</main>
+<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></footer>
 </body>
 </html>

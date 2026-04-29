@@ -242,8 +242,11 @@ def datum_parsen(datum_str):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         dt = parsedate_to_datetime(datum_str)
-        dt_berlin = dt.astimezone(ZoneInfo("Europe/Berlin"))
-        return dt_berlin.strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            dt_local = dt.astimezone(ZoneInfo("Europe/Berlin"))
+        except Exception:
+            dt_local = dt.astimezone(timezone(timedelta(hours=2)))
+        return dt_local.strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
         print(f"  WARNUNG: Datum konnte nicht geparst werden ({datum_str}): {e}")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
