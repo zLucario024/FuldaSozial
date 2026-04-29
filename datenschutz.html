@@ -100,18 +100,18 @@
 
   <h2>2. Allgemeines zur Datenverarbeitung</h2>
   <p>
-    RegioNachrichten Fulda ist ein Nachrichtenaggregatordienst. Wir erfassen keine personenbezogenen Daten der Websitebesucher durch eigene Mechanismen. Es existieren:
+    RegioNachrichten Fulda ist ein Nachrichtenaggregatordienst. Wir halten die Datenerhebung auf das technisch notwendige Minimum beschränkt. Es existieren:
   </p>
   <ul>
     <li>keine Benutzerkonten oder Registrierung</li>
     <li>keine Kommentarfunktion</li>
     <li>keine Kontaktformulare</li>
     <li>keine Werbe- oder Tracking-Cookies</li>
-    <li>keine Analyse- oder Tracking-Tools (z.&nbsp;B. Google Analytics)</li>
+    <li>keine Analyse- oder Tracking-Tools wie Google Analytics</li>
     <li>keine eingebetteten sozialen Netzwerke</li>
   </ul>
   <p>
-    Die einzige Datenverarbeitung, die beim Besuch dieser Website stattfindet, ist das technisch notwendige Speichern von Server-Log-Dateien durch unseren Hosting-Anbieter (siehe Abschnitt 3).
+    Personenbezogene Daten werden ausschließlich in folgenden Fällen verarbeitet: durch technisch notwendige Server-Log-Dateien des Hosting-Anbieters (siehe Abschnitt 3) sowie – sofern Sie Push-Benachrichtigungen aktivieren – durch die Speicherung Ihrer Push-Subscription-Kennung (siehe Abschnitt&nbsp;4a).
   </p>
 
   <hr>
@@ -140,7 +140,32 @@
 
   <hr>
 
-  <h2>4. Besucherstatistik (Umami)</h2>
+  <h2>4. Push-Benachrichtigungen</h2>
+  <p>
+    Wenn Sie die Push-Benachrichtigungsfunktion aktivieren (Glocken-Symbol), wird in Ihrem Browser ein Abonnement bei Ihrem Browserhersteller (z.&nbsp;B. Google Chrome, Mozilla Firefox) angelegt. Dabei entstehen folgende Daten, die wir speichern:
+  </p>
+  <ul>
+    <li><strong>Endpoint-URL</strong>: eine durch Ihren Browserhersteller generierte, pseudonyme URL, über die Nachrichten an Ihr Gerät zugestellt werden</li>
+    <li><strong>Verschlüsselungsschlüssel</strong> (p256dh, auth): technisch notwendige Schlüssel zur Ende-zu-Ende-Verschlüsselung der Nachricht</li>
+    <li><strong>Heimat</strong>: die von Ihnen gewählte Region (z.&nbsp;B. „Flieden"), für die Sie Benachrichtigungen wünschen</li>
+  </ul>
+  <p>
+    Diese Daten werden in unserer Datenbank bei Supabase (EU-Region) gespeichert und ausschließlich zur Zustellung von Benachrichtigungen über neue Artikel in Ihrer gewählten Region verwendet. Es wird kein Name, keine E-Mail-Adresse und keine IP-Adresse gespeichert. Der Endpoint enthält keinerlei Rückschlüsse auf Ihre Identität.
+  </p>
+  <p>
+    <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Sie können die Einwilligung jederzeit widerrufen, indem Sie erneut auf das Glocken-Symbol klicken oder Benachrichtigungen in den Browser-Einstellungen deaktivieren. Nach dem Widerruf werden Ihre Daten automatisch aus unserer Datenbank gelöscht.
+  </p>
+
+  <hr>
+
+  <h2>5. Datenbankhosting (Supabase)</h2>
+  <p>
+    Unsere Artikeldatenbank sowie die Push-Subscription-Daten werden bei <strong>Supabase Inc.</strong> (970 Toa Payoh North, Singapur) gehostet, mit Datenspeicherung in der EU (Region Frankfurt, AWS eu-central-1). Mit Supabase besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO (unterzeichnet März 2026). Datenübertragungen in Drittländer erfolgen auf Basis von EU-Standardvertragsklauseln. Weitere Informationen: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>
+  </p>
+
+  <hr>
+
+  <h2>6. Besucherstatistik (Umami Analytics)</h2>
   <p>
     Diese Website verwendet <strong>Umami Analytics</strong> (Umami Software Inc., USA), um Besucherzahlen und grundlegende Nutzungsaktivität zu erfassen. Umami ist auf Datenschutz ausgelegt und arbeitet dabei vollständig anonymisiert:
   </p>
@@ -157,14 +182,41 @@
 
   <hr>
 
-  <h2>5. Schriftarten (Self-hosted Fonts)</h2>
+  <h2>7. Auftragsverarbeitung (Art. 28 DSGVO)</h2>
+  <p>
+    Für den Betrieb dieser Website setzen wir externe Dienstleister ein, die personenbezogene Daten in unserem Auftrag verarbeiten. Mit allen Dienstleistern wurden Auftragsverarbeitungsverträge (AVV) gemäß Art. 28 DSGVO geschlossen:
+  </p>
+
+  <h3>Render Inc. – Webhosting</h3>
+  <p>
+    450 Mission Street, San Francisco, CA 94105, USA. Render hostet unsere Website und API. Datenübertragungen in die USA erfolgen auf Basis des EU-US Data Privacy Framework. AVV abgeschlossen 2025. Datenschutz: <a href="https://render.com/privacy" target="_blank" rel="noopener">render.com/privacy</a>
+  </p>
+
+  <h3>Supabase Inc. – Datenbankhosting</h3>
+  <p>
+    970 Toa Payoh North, Singapur; Datenspeicherung in der EU (Frankfurt, AWS eu-central-1). Supabase hostet unsere Artikeldatenbank und Push-Subscription-Daten. Datenübertragungen in Drittländer erfolgen auf Basis von EU-Standardvertragsklauseln. AVV abgeschlossen März 2026. Datenschutz: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>
+  </p>
+
+  <h3>GitHub Inc. (Microsoft) – CI/CD und Code-Hosting</h3>
+  <p>
+    88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. GitHub Actions führt den Nachrichtenaggregator automatisch aus. Dabei werden keine Nutzerdaten verarbeitet; lediglich der Quellcode und Aggregator-Logs liegen auf GitHub. Datenübertragungen in die USA erfolgen auf Basis des EU-US Data Privacy Framework. AVV (Data Protection Agreement) abgeschlossen Oktober 2025. Datenschutz: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener">github.com/privacy</a>
+  </p>
+
+  <h3>Umami Software Inc. – Besucherstatistik</h3>
+  <p>
+    USA. Umami verarbeitet anonymisierte Besuchsdaten (keine personenbezogenen Daten, keine Cookies). AVV abgeschlossen 2025. Datenschutz: <a href="https://umami.is/privacy" target="_blank" rel="noopener">umami.is/privacy</a>
+  </p>
+
+  <hr>
+
+  <h2>8. Schriftarten (Self-hosted Fonts)</h2>
   <p>
     Diese Website verwendet die Schriftarten <strong>Playfair Display</strong> und <strong>Source Sans 3</strong>. Diese Schriftarten sind lokal auf unserem Server gespeichert und werden direkt von dort an Ihren Browser ausgeliefert. Es findet <strong>keine Verbindung zu externen Servern</strong> (z.&nbsp;B. Google Fonts) statt. Beim Laden der Schriftarten werden keine personenbezogenen Daten an Dritte übertragen.
   </p>
 
   <hr>
 
-  <h2>6. RSS-Feeds und Nachrichtenquellen</h2>
+  <h2>9. RSS-Feeds und Nachrichtenquellen</h2>
   <p>
     Unser Aggregatordienst ruft regelmäßig öffentlich zugängliche RSS-Feeds von Nachrichtenanbietern ab (z.&nbsp;B. Hessenschau). Diese Abrufe erfolgen ausschließlich <strong>serverseitig</strong> – Ihre IP-Adresse oder sonstige Browserdaten werden dabei nicht an die Quellwebsites übermittelt. Wir speichern lediglich Artikeltitel und die URL zur Originalquelle in unserer Datenbank.
   </p>
@@ -174,14 +226,14 @@
 
   <hr>
 
-  <h2>7. Externe Links</h2>
+  <h2>10. Externe Links</h2>
   <p>
     Unsere Website enthält Links zu externen Websites (Nachrichtenartikel auf den Originalquellen). Mit dem Anklicken solcher Links verlassen Sie unser Angebot. Für die Inhalte und Datenschutzpraktiken der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
   </p>
 
   <hr>
 
-  <h2>8. Ihre Rechte als betroffene Person</h2>
+  <h2>11. Ihre Rechte als betroffene Person</h2>
   <p>Ihnen stehen gemäß DSGVO folgende Rechte zu:</p>
   <ul>
     <li><strong>Auskunft</strong> (Art. 15 DSGVO): Sie können Auskunft über die zu Ihrer Person gespeicherten Daten verlangen.</li>
@@ -192,12 +244,12 @@
     <li><strong>Widerspruch</strong> (Art. 21 DSGVO): Sie können der Verarbeitung auf Basis berechtigter Interessen widersprechen.</li>
   </ul>
   <p>
-    Da wir selbst keine personenbezogenen Daten unserer Nutzer erheben oder speichern, werden die meisten dieser Rechte faktisch nicht anwendbar sein. Für Anfragen wenden Sie sich bitte an: <a href="mailto:adrian.jestaedt@gmail.com"><span>adrian.jestaedt@gmail.com</span></a>
+    Falls Sie Push-Benachrichtigungen aktiviert haben, können Sie Auskunft über die gespeicherten Daten (Endpoint, Heimat) verlangen oder deren Löschung fordern – alternativ deaktivieren Sie die Benachrichtigungen einfach direkt über die Website, wodurch Ihre Daten automatisch gelöscht werden. Für alle Anfragen wenden Sie sich bitte an: <a href="mailto:adrian.jestaedt@gmail.com"><span>adrian.jestaedt@gmail.com</span></a>
   </p>
 
   <hr>
 
-  <h2>9. Beschwerderecht bei der Aufsichtsbehörde</h2>
+  <h2>12. Beschwerderecht bei der Aufsichtsbehörde</h2>
   <p>
     Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde zu beschweren. Die für uns zuständige Aufsichtsbehörde ist:
   </p>
@@ -212,7 +264,7 @@
 
   <hr>
 
-  <h2>10. Freiwillige Unterstützung (Ko-fi)</h2>
+  <h2>13. Freiwillige Unterstützung (Ko-fi)</h2>
   <p>
     Für freiwillige Unterstützungen verlinken wir auf <strong>Ko-fi</strong> (Ko-fi Labs Inc., USA).
     Bei einer Spende gelten die Datenschutzbestimmungen von <a href="https://ko-fi.com/privacy" target="_blank" rel="noopener">ko-fi.com</a>.
