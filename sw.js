@@ -5,7 +5,7 @@ self.addEventListener('push', event => {
     self.registration.showNotification(d.title, {
       body: d.body,
       icon: d.icon,
-      badge: d.icon,
+      badge: 'https://www.rnfulda.de/Design/rn_logo_mini.jpg',
       tag: d.tag,       // same tag replaces older notification for the same article
       renotify: true,
       data: { url: d.url }

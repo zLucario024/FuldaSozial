@@ -13,6 +13,7 @@ import anthropic
 import re
 import os
 import json
+from urllib.parse import quote
 from collections import defaultdict
 from difflib import SequenceMatcher
 from html import unescape as html_unescape
@@ -90,7 +91,7 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
         kat = kategorie_bestimmen(artikel.get('titel', ''), artikel.get('tags', ''))
         emoji = KATEGORIE_EMOJI.get(kat, '📰')
         wappen_name = WAPPEN_NAMEN[region]
-        icon_url = f"{SITE_URL}/Design/Wappen/{wappen_name}.png"
+        icon_url = f"{SITE_URL}/Design/Wappen/{quote(wappen_name)}.png"
 
         payload = json.dumps({
             "title": f"{emoji} Neues aus {wappen_name}",
