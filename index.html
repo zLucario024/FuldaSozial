@@ -283,6 +283,8 @@ Fulda Nachrichten">
 
   .karte { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--weiss); display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; animation: einblenden .3s ease both; }
   .karte:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
+  @keyframes push-highlight { 0%,100% { box-shadow: 0 0 0 0 rgba(192,21,42,0); } 25% { box-shadow: 0 0 0 5px rgba(192,21,42,.6), 0 0 24px 8px rgba(192,21,42,.25); } }
+  .karte.push-highlight { border-color: var(--rot); animation: einblenden .3s ease both, push-highlight 2s ease 0.4s 2; }
   @keyframes einblenden { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
   /* ── Meine Heimat ── */
@@ -1802,6 +1804,7 @@ function artikelAnzeigen() {
   document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
   karteZahlenAktualisieren();
+  pushHighlightAnzeigen();
 }
 
 async function mehrLaden() {
@@ -1852,6 +1855,7 @@ function karteErstellen(artikel, index) {
   const div = document.createElement('div');
   div.className = 'karte';
   div.style.animationDelay = `${(index % PRO_SEITE) * 30}ms`;
+  if (artikel.hash) div.dataset.hash = artikel.hash;
 
   // Tags mit Typ-Klassifizierung
   let tagsHTML = '';
@@ -2728,6 +2732,7 @@ function filterAusUrlLesen() {
     if (robots) robots.content = 'noindex, follow';
   }
   if (params.has('suche')) { suchbegriff = params.get('suche').toLowerCase(); document.getElementById('suche').value = suchbegriff; }
+  if (params.has('highlight')) window._pushHighlightHash = params.get('highlight');
   filterLeistAktualisieren();
 }
 
@@ -2850,6 +2855,16 @@ async function pushAbbestellen() {
     body: JSON.stringify({ endpoint })
   });
   pushBellAktualisieren();
+}
+
+function pushHighlightAnzeigen() {
+  const hash = window._pushHighlightHash;
+  if (!hash) return;
+  const karte = document.querySelector(`.karte[data-hash="${hash}"]`);
+  if (!karte) return;
+  karte.classList.add('push-highlight');
+  setTimeout(() => karte.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+  window._pushHighlightHash = null;
 }
 
 function pushBellAktualisieren() {

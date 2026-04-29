@@ -93,12 +93,13 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
         wappen_name = WAPPEN_NAMEN[region]
         icon_url = f"{SITE_URL}/Design/Wappen/{quote(wappen_name)}.png"
 
+        site_url = f"{SITE_URL}/?ort={quote(region)}&highlight={artikel['hash']}"
         payload = json.dumps({
             "title": f"{emoji} Neues aus {wappen_name}",
             "body":  artikel['titel'][:120],
             "icon":  icon_url,
             "tag":   artikel['hash'],
-            "url":   artikel['link'],
+            "url":   site_url,
         })
 
         cursor.execute(
