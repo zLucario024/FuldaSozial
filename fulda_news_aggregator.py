@@ -116,8 +116,12 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
                 )
                 gesendet += 1
             except WebPushException as e:
-                if e.response and e.response.status_code == 410:
+                status = e.response.status_code if e.response else None
+                if status in (404, 410) or status is None:
                     zu_loeschen.append(endpoint)
+                fehler += 1
+            except Exception:
+                zu_loeschen.append(endpoint)
                 fehler += 1
 
     for endpoint in zu_loeschen:
