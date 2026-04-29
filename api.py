@@ -193,26 +193,16 @@ def artikel_abrufen(
 
 
 @app.get("/artikel-hauptseite")
-def artikel_hauptseite(limit: int = Query(100), offset: int = Query(0)):
-    """Main page feed with pagination:
-    - Gemeinde/Landkreis/Stadtteil articles: permanent
-    - Hessen/Osthessen articles: up to 14 days
-    - Everything else: up to 7 days (while AI tagging is pending)
-    """
-    limit = min(max(limit, 1), 200)
-    query = """
-        SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
-        FROM artikel
-        WHERE region = ANY(%s)
-           OR (region = ANY(%s) AND datum >= TO_CHAR(NOW() - INTERVAL '14 days', 'YYYY-MM-DD HH24:MI:SS'))
-           OR datum >= TO_CHAR(NOW() - INTERVAL '7 days', 'YYYY-MM-DD HH24:MI:SS')
-        ORDER BY datum DESC
-        LIMIT %s OFFSET %s
-    """
+def artikel_hauptseite(limit: int = Query(200, ge=1, le=500), offset: int = Query(0, ge=0), days: int = Query(1, ge=1, le=30)):
     conn = db_verbinden()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # Fetch one extra row to detect if more pages exist (avoids a COUNT(*) query)
-    cursor.execute(query, (list(_REGIONEN_SQL), list(REGIONEN_HESSEN), limit + 1, offset))
+    cursor.execute("""
+        SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
+        FROM artikel
+        WHERE datum >= TO_CHAR(NOW() - %s * INTERVAL '1 day', 'YYYY-MM-DD HH24:MI:SS')
+        ORDER BY datum DESC
+        LIMIT %s OFFSET %s
+    """, (days, limit + 1, offset))
     rows = cursor.fetchall()
     hat_mehr = len(rows) > limit
     rows = rows[:limit]

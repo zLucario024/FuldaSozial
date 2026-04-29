@@ -1301,7 +1301,9 @@ document.addEventListener('DOMContentLoaded', function() {
 const API = 'https://fuldasozial.onrender.com';
 let alleArtikel = [], gezeigt = 0;
 let aktuellerOffset = 0, hatMehr = false;
-const SEITEN_GROESSE = 100; // articles fetched per server request
+let ladeModusTage = 1;        // 1 = last 24h (default), 30 = last 30 days (filter mode)
+let _ladeController = null;   // AbortController for in-flight fetch
+const SEITEN_GROESSE = 200;   // articles fetched per server request
 let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
 const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
@@ -1704,20 +1706,28 @@ function _deduplizieren(roh) {
   return [...gesehen.values()].map(v => v.a);
 }
 
-async function artikelLaden() {
+async function artikelLaden(tage = 1) {
+  if (_ladeController) _ladeController.abort();
+  _ladeController = new AbortController();
+  const ctrl = _ladeController;
   gezeigt = 0; alleArtikel = []; aktuellerOffset = 0; hatMehr = false;
   document.getElementById('artikel-grid').innerHTML =
     '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
   try {
-    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=0`);
+    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=0&days=${tage}`, { signal: ctrl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+    ladeModusTage = tage;
     alleArtikel = _deduplizieren(data.artikel || []);
     aktuellerOffset = alleArtikel.length;
     hatMehr = data.hat_mehr || false;
+    _ladeController = null;
     artikelAnzeigen();
     heimatNeuZaehlen();
   } catch(e) {
+    if (e.name === 'AbortError') return;
+    ladeModusTage = tage;
+    _ladeController = null;
     document.getElementById('artikel-grid').innerHTML =
       '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ Artikel konnten nicht geladen werden. Bitte Seite neu laden.</p></div>';
     document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
@@ -1782,13 +1792,20 @@ function filterIstAktiv() {
 }
 
 function artikelAnzeigen() {
+  // Auto-switch data window: 30 days when filter active, 1 day when not
+  if (filterIstAktiv() && ladeModusTage < 30) { artikelLaden(30); return; }
+  if (!filterIstAktiv() && ladeModusTage > 1)  { artikelLaden(1);  return; }
+
   const gefiltert = gefilterteArtikel();
   const grid = document.getElementById('artikel-grid');
   grid.innerHTML = ''; gezeigt = 0;
   const angzeigt = Math.min(PRO_SEITE, gefiltert.length);
   const anzahlEl = document.getElementById('anzahl-text');
   if (filterIstAktiv()) {
-    anzahlEl.textContent = gefiltert.length ? `${angzeigt} Artikel` : 'Keine Artikel gefunden';
+    const suffix = hatMehr ? '+' : '';
+    anzahlEl.textContent = gefiltert.length
+      ? `${angzeigt} von ${gefiltert.length}${suffix} Artikeln`
+      : 'Keine Artikel gefunden';
   } else {
     anzahlEl.textContent = '';
   }
@@ -1817,7 +1834,10 @@ async function mehrLaden() {
     const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
     batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
     gezeigt += batch.length;
-    if (filterIstAktiv()) document.getElementById('anzahl-text').textContent = `${gezeigt} Artikel`;
+    if (filterIstAktiv()) {
+      const suffix = hatMehr ? '+' : '';
+      document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length}${suffix} Artikeln`;
+    }
     const nochMehr = gezeigt < gefiltert.length || hatMehr;
     btn.style.display = nochMehr ? 'block' : 'none';
     document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
@@ -1829,7 +1849,7 @@ async function mehrLaden() {
   btn.disabled = true;
   btn.textContent = 'Lade…';
   try {
-    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}`);
+    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}&days=${ladeModusTage}`);
     if (!res.ok) throw new Error();
     const data = await res.json();
     alleArtikel = _deduplizieren([...alleArtikel, ...(data.artikel || [])]);
@@ -1844,7 +1864,11 @@ async function mehrLaden() {
   btn.disabled = false;
   btn.textContent = 'Mehr laden';
   const nochMehr = gezeigt < gefilterteArtikel().length || hatMehr;
-  if (filterIstAktiv()) document.getElementById('anzahl-text').textContent = `${gezeigt} Artikel`;
+  if (filterIstAktiv()) {
+    const total = gefilterteArtikel().length;
+    const suffix = hatMehr ? '+' : '';
+    document.getElementById('anzahl-text').textContent = `${gezeigt} von ${total}${suffix} Artikeln`;
+  }
   btn.style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
 }
