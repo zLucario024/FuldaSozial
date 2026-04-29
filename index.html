@@ -1464,8 +1464,8 @@ function ortMatch(text, ort) {
 const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
-    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug'],
-    keys: ['vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
+    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug', 'diebstahl'],
+    keys: ['vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1496,7 +1496,7 @@ const KATEGORIEN = {
   'Wirtschaft & Arbeit': {
     farbe: '#14532d', hell: '#f0fdf4',
     strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos', 'kreishandwerkschaft'],
-    keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune', 'tegut', 'verbraucher'],
+    keys: ['deutsche post','wirtschaft','unternehmen','unternehmer','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune', 'tegut', 'verbraucher'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0fdf4"/>
       <line x1="144" y1="44" x2="144" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
       <line x1="144" y1="118" x2="272" y2="118" stroke="#14532d" stroke-width="2" stroke-linecap="round" opacity=".2"/>
@@ -1522,7 +1522,7 @@ const KATEGORIEN = {
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
     strong: ['kultur', 'fördermittel','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst', 'tradition', 'fotoshooting', 'l14zwo', 'flohmarkt'],
-    keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal', 'hessentag', 'freibad', 'freibäder', 'dialog'],
+    keys: ['nachhaltigkeit','konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal', 'hessentag', 'freibad', 'freibäder', 'dialog'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
       <ellipse cx="222" cy="113" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 222 113)"/>
@@ -1552,7 +1552,7 @@ const KATEGORIEN = {
   'Natur & Umwelt': {
     farbe: '#166534', hell: '#dcfce7',
     strong: ['natur','umwelt','klima','naturschutz','hochwasser','überschwemmung'],
-    keys: ['wetter','wald','rhön','naturschutz','tier','papagei','spargel', 'katze', 'schlange', 'überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser', 'biber', 'weiher', 'blitzeinschlag', 'blitzeinschläge', 'himmel', 'nachthimmel', 'astronomie'],
+    keys: ['wandern','alpen','wetter','wald','rhön','naturschutz','tier','papagei','spargel', 'katze', 'schlange', 'überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser', 'biber', 'weiher', 'blitzeinschlag', 'blitzeinschläge', 'himmel', 'nachthimmel', 'astronomie'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#dcfce7"/>
       <!-- Trunk -->
       <path d="M197,148 Q196,130 194,118 Q192,108 200,100 Q208,108 206,118 Q204,130 203,148 Z" fill="#5c3d1a" opacity=".55"/>
@@ -1576,7 +1576,7 @@ const KATEGORIEN = {
   },
   'Verkehr & Bau': {
     farbe: '#92400e', hell: '#fef3c7',
-    strong: ['verkehr','baustelle','sperrung','autobahn','öpnv','stau'],
+    strong: ['sperrung','autobahn','öpnv','stau'],
     keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof', 'tankstelle', 'flugverkehr', 'flughafen', 'fußgängerzone', 'abriss', 'k72', 'blitzen', 'a7', 'lufthansa', 'mobilfunk'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fef3c7"/>
       <path d="M148,122 L168,46 L232,46 L252,122 Z" fill="#92400e" opacity=".07"/>
@@ -1822,6 +1822,8 @@ function artikelAnzeigen() {
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
   karteZahlenAktualisieren();
   pushHighlightAnzeigen();
+  // Auto-fill: if filter active and initial results are sparse, fetch more without requiring a click
+  if (filterIstAktiv() && hatMehr && gezeigt < PRO_SEITE) mehrLaden();
 }
 
 async function mehrLaden() {
@@ -1844,30 +1846,33 @@ async function mehrLaden() {
     return;
   }
 
-  // Case B: local array exhausted — fetch next batch from server
+  // Case B: keep fetching server pages until we have PRO_SEITE new matching articles or run out
   if (!hatMehr) return;
   btn.disabled = true;
   btn.textContent = 'Lade…';
+  let runden = 0;
   try {
-    const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}&days=${ladeModusTage}`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    alleArtikel = _deduplizieren([...alleArtikel, ...(data.artikel || [])]);
-    aktuellerOffset += (data.artikel || []).length;
-    hatMehr = data.hat_mehr || false;
-    gefiltert = gefilterteArtikel();
-    const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
-    batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
-    gezeigt += batch.length;
-    heimatNeuZaehlen();
+    while (hatMehr && gefilterteArtikel().length - gezeigt < PRO_SEITE && runden < 15) {
+      const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}&days=${ladeModusTage}`);
+      if (!res.ok) break;
+      const data = await res.json();
+      alleArtikel = _deduplizieren([...alleArtikel, ...(data.artikel || [])]);
+      aktuellerOffset += (data.artikel || []).length;
+      hatMehr = data.hat_mehr || false;
+      runden++;
+    }
   } catch(_) { /* keep button visible so user can retry */ }
+  gefiltert = gefilterteArtikel();
+  const batch = gefiltert.slice(gezeigt, gezeigt + PRO_SEITE);
+  batch.forEach((a, i) => grid.appendChild(karteErstellen(a, gezeigt + i)));
+  gezeigt += batch.length;
+  heimatNeuZaehlen();
   btn.disabled = false;
   btn.textContent = 'Mehr laden';
-  const nochMehr = gezeigt < gefilterteArtikel().length || hatMehr;
+  const nochMehr = gezeigt < gefiltert.length || hatMehr;
   if (filterIstAktiv()) {
-    const total = gefilterteArtikel().length;
     const suffix = hatMehr ? '+' : '';
-    document.getElementById('anzahl-text').textContent = `${gezeigt} von ${total}${suffix} Artikeln`;
+    document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length}${suffix} Artikeln`;
   }
   btn.style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
