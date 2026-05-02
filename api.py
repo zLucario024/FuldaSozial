@@ -11,6 +11,7 @@ import os
 import json
 import psycopg2
 import psycopg2.extras
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -88,22 +89,13 @@ BEKANNTE_REGIONEN = {
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
 
-app = FastAPI(
-    title="Fulda News API",
-    description="Regionale Nachrichten aus dem Landkreis Fulda",
-    version="1.0.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+def db_verbinden():
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    return conn
 
 
-@app.on_event("startup")
-def tabellen_erstellen():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     try:
         conn = db_verbinden()
         cursor = conn.cursor()
@@ -130,6 +122,22 @@ def tabellen_erstellen():
         conn.close()
     except Exception as e:
         print(f"Startup: Tabellen konnten nicht erstellt werden: {e}")
+    yield
+
+
+app = FastAPI(
+    title="Fulda News API",
+    description="Regionale Nachrichten aus dem Landkreis Fulda",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class PushAbo(BaseModel):
@@ -145,10 +153,6 @@ class PushHeimat(BaseModel):
 class FcmAbo(BaseModel):
     fcm_token: str
     heimat: str
-
-def db_verbinden():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    return conn
 
 
 @app.get("/")
