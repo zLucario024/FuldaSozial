@@ -73,15 +73,55 @@ def kategorie_bestimmen(titel, tags):
     return 'Sonstiges'
 
 
+def _fcm_access_token():
+    """Get a short-lived OAuth2 bearer token for the FCM HTTP v1 API."""
+    import google.auth.transport.requests
+    from google.oauth2 import service_account
+    sa_json = os.getenv("FIREBASE_SERVICE_ACCOUNT")
+    if not sa_json:
+        return None
+    creds = service_account.Credentials.from_service_account_info(
+        json.loads(sa_json),
+        scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+    )
+    creds.refresh(google.auth.transport.requests.Request())
+    return creds.token
+
+
+def _fcm_senden(token, title, body, url, tag):
+    project_id = os.getenv("FIREBASE_PROJECT_ID")
+    access_token = _fcm_access_token()
+    if not access_token or not project_id:
+        return None
+    payload = {
+        "message": {
+            "token": token,
+            "notification": {"title": title, "body": body},
+            "android": {
+                "notification": {
+                    "icon": "ic_notification",
+                    "color": "#c0152a",
+                    "channel_id": "rnfulda_news",
+                    "tag": tag,
+                }
+            },
+            "data": {"url": url, "tag": tag},
+        }
+    }
+    return requests.post(
+        f"https://fcm.googleapis.com/v1/projects/{project_id}/messages:send",
+        json=payload,
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=10,
+    )
+
+
 def benachrichtigungen_senden(conn, neue_artikel_info):
     private_key = os.getenv("VAPID_PRIVATE_KEY")
-    if not private_key:
-        return
-
     cursor = conn.cursor()
-    gesendet = 0
-    fehler = 0
-    zu_loeschen = []
+    web_gesendet = web_fehler = fcm_gesendet = fcm_fehler = 0
+    web_loeschen = []
+    fcm_loeschen = []
 
     for artikel in neue_artikel_info:
         region = (artikel.get('region') or '').lower()
@@ -92,45 +132,68 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
         emoji = KATEGORIE_EMOJI.get(kat, '📰')
         wappen_name = WAPPEN_NAMEN[region]
         icon_url = f"{SITE_URL}/Design/Wappen/{quote(wappen_name)}.png"
-
         site_url = f"{SITE_URL}/?ort={quote(region)}&highlight={artikel['hash']}"
-        payload = json.dumps({
-            "title": f"{emoji} Neues aus {wappen_name}",
-            "body":  artikel['titel'][:120],
-            "icon":  icon_url,
-            "tag":   artikel['hash'],
-            "url":   site_url,
-        })
+        title = f"{emoji} Neues aus {wappen_name}"
+        body = artikel['titel'][:120]
+        tag = artikel['hash']
 
+        # --- Web Push ---
+        if private_key:
+            web_payload = json.dumps({
+                "title": title, "body": body, "icon": icon_url, "tag": tag, "url": site_url,
+            })
+            cursor.execute(
+                "SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE heimat = %s",
+                (region,)
+            )
+            for endpoint, p256dh, auth in cursor.fetchall():
+                try:
+                    webpush(
+                        subscription_info={"endpoint": endpoint, "keys": {"p256dh": p256dh, "auth": auth}},
+                        data=web_payload,
+                        vapid_private_key=private_key,
+                        vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'adrian.jestaedt@gmail.com')}"},
+                    )
+                    web_gesendet += 1
+                except WebPushException as e:
+                    status = e.response.status_code if e.response else None
+                    if status in (404, 410) or status is None:
+                        web_loeschen.append(endpoint)
+                    web_fehler += 1
+                except Exception:
+                    web_loeschen.append(endpoint)
+                    web_fehler += 1
+
+        # --- FCM (Android) ---
         cursor.execute(
-            "SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE heimat = %s",
+            "SELECT fcm_token FROM fcm_subscriptions WHERE heimat = %s",
             (region,)
         )
-        for endpoint, p256dh, auth in cursor.fetchall():
+        for (fcm_token,) in cursor.fetchall():
             try:
-                webpush(
-                    subscription_info={"endpoint": endpoint, "keys": {"p256dh": p256dh, "auth": auth}},
-                    data=payload,
-                    vapid_private_key=private_key,
-                    vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'adrian.jestaedt@gmail.com')}"},
-                )
-                gesendet += 1
-            except WebPushException as e:
-                status = e.response.status_code if e.response else None
-                if status in (404, 410) or status is None:
-                    zu_loeschen.append(endpoint)
-                fehler += 1
+                resp = _fcm_senden(fcm_token, title, body, site_url, tag)
+                if resp is None:
+                    break  # FCM not configured, skip all
+                if resp.status_code == 200:
+                    fcm_gesendet += 1
+                else:
+                    err = resp.json().get("error", {})
+                    if err.get("status") in ("UNREGISTERED", "INVALID_ARGUMENT"):
+                        fcm_loeschen.append(fcm_token)
+                    fcm_fehler += 1
             except Exception:
-                zu_loeschen.append(endpoint)
-                fehler += 1
+                fcm_fehler += 1
 
-    for endpoint in zu_loeschen:
-        cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (endpoint,))
-    if zu_loeschen:
+    for ep in web_loeschen:
+        cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (ep,))
+    for tok in fcm_loeschen:
+        cursor.execute("DELETE FROM fcm_subscriptions WHERE fcm_token = %s", (tok,))
+    if web_loeschen or fcm_loeschen:
         conn.commit()
 
     cursor.close()
-    print(f"  Push-Benachrichtigungen: {gesendet} gesendet, {fehler} Fehler, {len(zu_loeschen)} abgelaufen")
+    print(f"  Web Push: {web_gesendet} gesendet, {web_fehler} Fehler, {len(web_loeschen)} abgelaufen")
+    print(f"  FCM:      {fcm_gesendet} gesendet, {fcm_fehler} Fehler, {len(fcm_loeschen)} abgelaufen")
 
 
 FEEDS = [

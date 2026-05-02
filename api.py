@@ -116,6 +116,14 @@ def tabellen_erstellen():
             erstellt  TIMESTAMPTZ DEFAULT NOW()
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS fcm_subscriptions (
+            id        SERIAL PRIMARY KEY,
+            fcm_token TEXT UNIQUE NOT NULL,
+            heimat    TEXT NOT NULL,
+            erstellt  TIMESTAMPTZ DEFAULT NOW()
+        )
+    """)
     conn.commit()
     cursor.close()
     conn.close()
@@ -129,6 +137,10 @@ class PushAbo(BaseModel):
 
 class PushHeimat(BaseModel):
     endpoint: str
+    heimat: str
+
+class FcmAbo(BaseModel):
+    fcm_token: str
     heimat: str
 
 def db_verbinden():
@@ -374,6 +386,46 @@ def push_abbestellen(daten: PushHeimat):
     conn = db_verbinden()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (daten.endpoint,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.post("/fcm-abonnieren")
+def fcm_abonnieren(abo: FcmAbo):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO fcm_subscriptions (fcm_token, heimat)
+        VALUES (%s, %s)
+        ON CONFLICT (fcm_token) DO UPDATE SET heimat = EXCLUDED.heimat
+    """, (abo.fcm_token, abo.heimat))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.patch("/fcm-abonnieren")
+def fcm_heimat_aktualisieren(abo: FcmAbo):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE fcm_subscriptions SET heimat = %s WHERE fcm_token = %s",
+        (abo.heimat, abo.fcm_token)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+@app.delete("/fcm-abonnieren")
+def fcm_abbestellen(abo: FcmAbo):
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM fcm_subscriptions WHERE fcm_token = %s", (abo.fcm_token,))
     conn.commit()
     cursor.close()
     conn.close()

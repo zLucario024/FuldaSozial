@@ -2473,6 +2473,8 @@ function heimatWaehlen(ort) {
       body: JSON.stringify({ endpoint: _pushSubscription.endpoint, heimat: ort })
     });
   }
+  // Notify native Android app so it can register/update FCM subscription
+  if (window.Android?.setHeimat) window.Android.setHeimat(ort || '');
   pushBellAktualisieren();
   heimatPickerSchliessen();
   heimatKlick();
