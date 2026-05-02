@@ -94,8 +94,17 @@ else:
     import google.auth.transport.requests
     from google.oauth2 import service_account
 
+    # Accept either a JSON string or a file path to the service account JSON
+    if sa_json.strip().startswith("{"):
+        sa_info = json.loads(sa_json)
+    else:
+        with open(sa_json.strip()) as f:
+            sa_info = json.load(f)
+        if not project_id:
+            project_id = sa_info.get("project_id")
+
     creds = service_account.Credentials.from_service_account_info(
-        json.loads(sa_json),
+        sa_info,
         scopes=["https://www.googleapis.com/auth/firebase.messaging"],
     )
     creds.refresh(google.auth.transport.requests.Request())

@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 Notes.html
 .env
+firebase-service-account.json
+rn-fulda-firebase-adminsdk-fbsvc-ca2ab30c1a.json
