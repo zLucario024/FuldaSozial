@@ -88,7 +88,7 @@ def _fcm_access_token():
     return creds.token
 
 
-def _fcm_senden(token, title, body, url, tag):
+def _fcm_senden(token, title, body, url, tag, icon_url=""):
     project_id = os.getenv("FIREBASE_PROJECT_ID")
     access_token = _fcm_access_token()
     if not access_token or not project_id:
@@ -105,7 +105,7 @@ def _fcm_senden(token, title, body, url, tag):
                     "tag": tag,
                 }
             },
-            "data": {"url": url, "tag": tag},
+            "data": {"url": url, "tag": tag, "icon_url": icon_url},
         }
     }
     return requests.post(
@@ -171,7 +171,7 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
         )
         for (fcm_token,) in cursor.fetchall():
             try:
-                resp = _fcm_senden(fcm_token, title, body, site_url, tag)
+                resp = _fcm_senden(fcm_token, title, body, site_url, tag, icon_url)
                 if resp is None:
                     break  # FCM not configured, skip all
                 if resp.status_code == 200:

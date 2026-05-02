@@ -130,7 +130,7 @@ else:
                         "tag": hash_,
                     }
                 },
-                "data": {"url": site_url, "tag": hash_},
+                "data": {"url": site_url, "tag": hash_, "icon_url": icon_url},
             }
         }
         resp = requests.post(

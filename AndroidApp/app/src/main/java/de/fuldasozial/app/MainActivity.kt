@@ -28,8 +28,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val appUrl  = "https://www.fuldasozial.de"
-    private val appHost = "fuldasozial.de"
+    private val appUrl  = "https://www.rnfulda.de"
+    private val appHost = "rnfulda.de"
 
     private val notifPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()

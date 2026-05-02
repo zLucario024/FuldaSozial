@@ -3,6 +3,8 @@ package de.rnfulda.app
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -23,10 +25,16 @@ class FcmService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val title = message.notification?.title ?: message.data["title"] ?: return
-        val body  = message.notification?.body  ?: message.data["body"]  ?: ""
-        val url   = message.data["url"] ?: ""
-        val tag   = message.data["tag"] ?: title
+        val title    = message.notification?.title ?: message.data["title"] ?: return
+        val body     = message.notification?.body  ?: message.data["body"]  ?: ""
+        val url      = message.data["url"] ?: ""
+        val tag      = message.data["tag"] ?: title
+        val iconUrl  = message.data["icon_url"] ?: ""
+
+        val largeIcon: Bitmap? = iconUrl.takeIf { it.isNotBlank() }?.let {
+            try { URL(it).openStream().use { s -> BitmapFactory.decodeStream(s) } }
+            catch (_: Exception) { null }
+        }
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -39,6 +47,7 @@ class FcmService : FirebaseMessagingService() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
+            .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
