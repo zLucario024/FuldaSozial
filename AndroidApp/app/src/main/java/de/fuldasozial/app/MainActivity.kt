@@ -145,12 +145,31 @@ class MainActivity : AppCompatActivity() {
         fun setHeimat(ort: String) {
             heimatSpeichern(ort)
         }
+
+        @JavascriptInterface
+        fun toggleBenachrichtigungen() {
+            val prefs  = getSharedPreferences(FcmService.PREFS, MODE_PRIVATE)
+            val aktiv  = prefs.getBoolean(KEY_NOTIF_ENABLED, false)
+            val token  = prefs.getString(FcmService.KEY_TOKEN, null) ?: return
+            val heimat = prefs.getString(FcmService.KEY_HEIMAT, null) ?: return
+            prefs.edit().putBoolean(KEY_NOTIF_ENABLED, !aktiv).apply()
+            CoroutineScope(Dispatchers.IO).launch {
+                if (aktiv) FcmService.apiAbmelden(token, heimat)
+                else       FcmService.apiRegistrieren(token, heimat)
+            }
+        }
+
+        @JavascriptInterface
+        fun istBenachrichtigungenAktiv(): Boolean =
+            getSharedPreferences(FcmService.PREFS, MODE_PRIVATE)
+                .getBoolean(KEY_NOTIF_ENABLED, false)
     }
 
     private fun heimatSpeichern(heimat: String) {
         val prefs = getSharedPreferences(FcmService.PREFS, MODE_PRIVATE)
         val gespeichert = prefs.getString(FcmService.KEY_HEIMAT, null)
         prefs.edit().putString(FcmService.KEY_HEIMAT, heimat).apply()
+        if (!prefs.getBoolean(KEY_NOTIF_ENABLED, false)) return
         val token = prefs.getString(FcmService.KEY_TOKEN, null) ?: return
         CoroutineScope(Dispatchers.IO).launch {
             if (gespeichert != heimat) FcmService.apiHeimatAktualisieren(token, heimat)
@@ -173,6 +192,8 @@ class MainActivity : AppCompatActivity() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
             val prefs = getSharedPreferences(FcmService.PREFS, MODE_PRIVATE)
             prefs.edit().putString(FcmService.KEY_TOKEN, token).apply()
+            // Only re-register if user had previously opted in
+            if (!prefs.getBoolean(KEY_NOTIF_ENABLED, false)) return@addOnSuccessListener
             val heimat = prefs.getString(FcmService.KEY_HEIMAT, null) ?: return@addOnSuccessListener
             CoroutineScope(Dispatchers.IO).launch { FcmService.apiRegistrieren(token, heimat) }
         }
@@ -222,6 +243,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_URL = "url"
+        const val EXTRA_URL        = "url"
+        const val KEY_NOTIF_ENABLED = "notif_enabled"
     }
 }

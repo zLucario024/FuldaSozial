@@ -66,6 +66,10 @@ class FcmService : FirebaseMessagingService() {
             "PATCH", """{"fcm_token":"$token","heimat":"$heimat"}"""
         )
 
+        fun apiAbmelden(token: String, heimat: String) = apiAnfrage(
+            "DELETE", """{"fcm_token":"$token","heimat":"$heimat"}"""
+        )
+
         private fun apiAnfrage(method: String, body: String) {
             try {
                 val conn = URL("$API/fcm-abonnieren").openConnection() as HttpURLConnection

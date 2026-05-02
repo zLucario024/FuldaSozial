@@ -1121,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <button class="heimat-edit-btn" id="heimat-edit-btn" onclick="heimatPickerOeffnen()" style="display:none" title="Heimat ändern" aria-label="Heimat ändern">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button id="push-bell" class="push-bell-btn" onclick="(_pushSubscription ? pushAbbestellen : pushAbonnieren)()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none"><span id="push-bell-icon">🔔</span><span id="push-bell-label">Benachrichtigungen</span></button>
+          <button id="push-bell" class="push-bell-btn" onclick="bellKlick()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none"><span id="push-bell-icon">🔔</span><span id="push-bell-label">Benachrichtigungen</span></button>
         </span>
       </span>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
@@ -2898,11 +2898,22 @@ function pushHighlightAnzeigen() {
   window._pushHighlightHash = null;
 }
 
+function bellKlick() {
+  if (window.Android?.toggleBenachrichtigungen) {
+    window.Android.toggleBenachrichtigungen();
+    setTimeout(pushBellAktualisieren, 200); // let native side update state first
+  } else {
+    (_pushSubscription ? pushAbbestellen : pushAbonnieren)();
+  }
+}
+
 function pushBellAktualisieren() {
   const bell = document.getElementById('push-bell');
   if (!bell) return;
   bell.style.display = meineHeimat ? 'inline-flex' : 'none';
-  const aktiv = !!_pushSubscription;
+  const aktiv = window.Android?.istBenachrichtigungenAktiv
+    ? window.Android.istBenachrichtigungenAktiv()
+    : !!_pushSubscription;
   document.getElementById('push-bell-icon').textContent = aktiv ? '🔔' : '🔕';
   document.getElementById('push-bell-label').textContent = aktiv ? 'An' : 'Aus';
   bell.title = aktiv ? 'Benachrichtigungen deaktivieren' : 'Benachrichtigungen aktivieren';
