@@ -114,35 +114,66 @@ def _fcm_senden(token, title, body, url, tag, icon_url=""):
     )
 
 
-def benachrichtigungen_senden(conn, neue_artikel_info):
+def benachrichtigungen_senden(conn, cutoff_iso):
+    """Subscriber-centric push: for each unique Heimat in the subscription tables,
+    find the most recent new article mentioning that place (region, tags, or title),
+    then send one notification to all subscribers with that Heimat."""
     private_key = os.getenv("VAPID_PRIVATE_KEY")
     cursor = conn.cursor()
+
+    # Collect all unique heimat values that are in WAPPEN_NAMEN
+    cursor.execute("""
+        SELECT heimat FROM push_subscriptions
+        UNION
+        SELECT heimat FROM fcm_subscriptions
+    """)
+    alle_heimaten = [r[0] for r in cursor.fetchall() if r[0] and r[0] in WAPPEN_NAMEN]
+
+    if not alle_heimaten:
+        print("  Keine Abonnenten mit bekanntem Heimat-Ort vorhanden.")
+        cursor.close()
+        return
+
     web_gesendet = web_fehler = fcm_gesendet = fcm_fehler = 0
     web_loeschen = []
     fcm_loeschen = []
 
-    for artikel in neue_artikel_info:
-        region = (artikel.get('region') or '').lower()
-        if region not in WAPPEN_NAMEN:
+    for heimat in alle_heimaten:
+        # Most recent article that mentions this Heimat in region, tags or title
+        cursor.execute("""
+            SELECT hash, titel, link, region, tags FROM artikel
+            WHERE gespeichert >= %s
+              AND (
+                region = %s
+                OR LOWER(tags)  LIKE %s
+                OR LOWER(titel) LIKE %s
+              )
+            ORDER BY id DESC LIMIT 1
+        """, (cutoff_iso, heimat, f'%{heimat}%', f'%{heimat}%'))
+        row = cursor.fetchone()
+        if not row:
             continue
 
-        kat = kategorie_bestimmen(artikel.get('titel', ''), artikel.get('tags', ''))
+        hash_, titel, link, region, tags = row
+        kat = kategorie_bestimmen(titel, tags)
         emoji = KATEGORIE_EMOJI.get(kat, '📰')
-        wappen_name = WAPPEN_NAMEN[region]
+        wappen_name = WAPPEN_NAMEN[heimat]
         icon_url = f"{SITE_URL}/Design/Wappen/{quote(wappen_name)}.png"
-        site_url = f"{SITE_URL}/?ort={quote(region)}&highlight={artikel['hash']}"
-        title = f"{emoji} Neues aus {wappen_name}"
-        body = artikel['titel'][:120]
-        tag = artikel['hash']
+        site_url = f"{SITE_URL}/?ort={quote(heimat)}&highlight={hash_}"
+        title_text = f"{emoji} Neues aus {wappen_name}"
+        body = titel[:120]
+
+        print(f"  [{heimat}] '{titel[:60]}…'")
 
         # --- Web Push ---
         if private_key:
             web_payload = json.dumps({
-                "title": title, "body": body, "icon": icon_url, "tag": tag, "url": site_url,
+                "title": title_text, "body": body, "icon": icon_url,
+                "tag": hash_, "url": site_url,
             })
             cursor.execute(
                 "SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE heimat = %s",
-                (region,)
+                (heimat,)
             )
             for endpoint, p256dh, auth in cursor.fetchall():
                 try:
@@ -165,13 +196,13 @@ def benachrichtigungen_senden(conn, neue_artikel_info):
         # --- FCM (Android) ---
         cursor.execute(
             "SELECT fcm_token FROM fcm_subscriptions WHERE heimat = %s",
-            (region,)
+            (heimat,)
         )
         for (fcm_token,) in cursor.fetchall():
             try:
-                resp = _fcm_senden(fcm_token, title, body, site_url, tag, icon_url)
+                resp = _fcm_senden(fcm_token, title_text, body, site_url, hash_, icon_url)
                 if resp is None:
-                    break  # FCM not configured, skip all
+                    break  # FCM not configured
                 if resp.status_code == 200:
                     fcm_gesendet += 1
                 else:
@@ -828,15 +859,10 @@ def main():
 
     print(f"\n{'=' * 55}")
     print("PUSH-BENACHRICHTIGUNGEN")
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT hash, titel, link, region, tags FROM artikel
-        WHERE gespeichert >= TO_CHAR(NOW() - INTERVAL '30 minutes', 'YYYY-MM-DD HH24:MI:SS')
-        ORDER BY id DESC
-    """)
-    neue_artikel_info = [dict(zip(['hash', 'titel', 'link', 'region', 'tags'], r)) for r in cursor.fetchall()]
-    cursor.close()
-    benachrichtigungen_senden(conn, neue_artikel_info)
+    # 70-minute window: slightly more than the 1-hour cron interval so no articles are missed.
+    # Duplicate notifications are prevented at the device level by the push `tag` (= article hash).
+    cutoff = (datetime.now() - timedelta(minutes=70)).strftime('%Y-%m-%d %H:%M:%S')
+    benachrichtigungen_senden(conn, cutoff)
 
     print(f"\n{'=' * 55}")
     print("ARCHIV")
