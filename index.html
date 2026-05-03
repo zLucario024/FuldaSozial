@@ -1788,8 +1788,10 @@ function gefilterteArtikel() {
               .some(([, ortsteile]) => ortsteile.some(o => ortMatch(text, o)));
         if (!hatGemeinde) return false;
       } else {
+        const r = (a.region || '').toLowerCase();
+        const regionOk = r === aktivOrt;
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
-        if (!ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
+        if (!regionOk && !ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
         if (ausschluss && ausschluss.some(a => ortMatch(text, a))) return false;
       }
