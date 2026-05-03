@@ -121,16 +121,14 @@ else:
         payload = {
             "message": {
                 "token": fcm_token,
-                "notification": {"title": title, "body": body},
-                "android": {
-                    "notification": {
-                        "icon": "ic_notification",
-                        "color": "#c0152a",
-                        "channel_id": "rnfulda_news",
-                        "tag": hash_,
-                    }
+                "android": {"priority": "high"},
+                "data": {
+                    "title": title,
+                    "body": body,
+                    "url": site_url,
+                    "tag": hash_,
+                    "icon_url": icon_url,
                 },
-                "data": {"url": site_url, "tag": hash_, "icon_url": icon_url},
             }
         }
         resp = requests.post(

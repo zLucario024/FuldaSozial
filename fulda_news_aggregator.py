@@ -96,16 +96,14 @@ def _fcm_senden(token, title, body, url, tag, icon_url=""):
     payload = {
         "message": {
             "token": token,
-            "notification": {"title": title, "body": body},
-            "android": {
-                "notification": {
-                    "icon": "ic_notification",
-                    "color": "#c0152a",
-                    "channel_id": "rnfulda_news",
-                    "tag": tag,
-                }
+            "android": {"priority": "high"},
+            "data": {
+                "title": title,
+                "body": body,
+                "url": url,
+                "tag": tag,
+                "icon_url": icon_url,
             },
-            "data": {"url": url, "tag": tag, "icon_url": icon_url},
         }
     }
     return requests.post(
