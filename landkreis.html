@@ -87,6 +87,14 @@
   html.dark-mode .baustelle-text p { color: #d4a830; }
   html.dark-mode .gemeinde-karte { background: var(--weiss); border-color: var(--border); }
   html.dark-mode .gemeinde-karte.landkreis { background: var(--rot-hell); border-color: var(--rot); }
+  html.dark-mode .gemeinde-karte--aktiv { border-color: var(--rot); }
+
+  /* Active Gemeinde card */
+  .gemeinde-karte--aktiv { border-color: var(--rot); }
+  .neu-badge { display: inline-block; font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--rot); color: #fff; padding: 2px 7px; border-radius: 20px; vertical-align: middle; margin-left: 5px; }
+  .gemeinde-beschreibung { font-size: .85rem; color: var(--grau-mittel); margin: .35rem 0 .75rem; line-height: 1.5; }
+  .gemeinde-mehr-btn { display: inline-block; font-size: .85rem; font-weight: 600; color: var(--rot); text-decoration: none; border: 1px solid var(--rot); border-radius: 20px; padding: 5px 14px; transition: background .15s, color .15s; }
+  .gemeinde-mehr-btn:hover { background: var(--rot); color: #fff; }
 
   @media (max-width: 600px) {
     main { padding: 2rem 1rem 3rem; }
@@ -215,12 +223,16 @@
       </div>
       <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
     </div>
-    <div class="gemeinde-karte">
+    <div class="gemeinde-karte gemeinde-karte--aktiv">
       <div class="gemeinde-header">
-        <div class="gemeinde-name">Gemeinde Flieden</div>
-        <img class="gemeinde-wappen" src="Design/Wappen/Flieden.png" alt="Wappen Gemeinde Flieden">
+        <div>
+          <div class="gemeinde-name">Gemeinde Flieden <span class="neu-badge">Neu</span></div>
+        </div>
+        <img class="gemeinde-wappen" src="Design/Wappen/Flieden.png" alt="Wappen Gemeinde Flieden"
+             onclick="wappenOeffnen(this.src,'Gemeinde Flieden')">
       </div>
-      <div class="gemeinde-platzhalter">Beschreibung folgt in Kürze</div>
+      <p class="gemeinde-beschreibung">~5.900 Einwohner · 5 Ortsteile · Kinzigtal</p>
+      <a href="flieden.html" class="gemeinde-mehr-btn">Erfahre mehr über Flieden →</a>
     </div>
     <div class="gemeinde-karte">
       <div class="gemeinde-header">
