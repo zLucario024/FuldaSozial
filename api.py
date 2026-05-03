@@ -11,7 +11,6 @@ import os
 import json
 import psycopg2
 import psycopg2.extras
-from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -94,42 +93,10 @@ def db_verbinden():
     return conn
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        conn = db_verbinden()
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS push_subscriptions (
-                id        SERIAL PRIMARY KEY,
-                endpoint  TEXT UNIQUE NOT NULL,
-                p256dh    TEXT NOT NULL,
-                auth      TEXT NOT NULL,
-                heimat    TEXT NOT NULL,
-                erstellt  TIMESTAMPTZ DEFAULT NOW()
-            )
-        """)
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS fcm_subscriptions (
-                id        SERIAL PRIMARY KEY,
-                fcm_token TEXT UNIQUE NOT NULL,
-                heimat    TEXT NOT NULL,
-                erstellt  TIMESTAMPTZ DEFAULT NOW()
-            )
-        """)
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        print(f"Startup: Tabellen konnten nicht erstellt werden: {e}")
-    yield
-
-
 app = FastAPI(
     title="Fulda News API",
     description="Regionale Nachrichten aus dem Landkreis Fulda",
     version="1.0.0",
-    lifespan=lifespan,
 )
 
 app.add_middleware(
