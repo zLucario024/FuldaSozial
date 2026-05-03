@@ -273,11 +273,16 @@ async function laden(seite) {
   if (region) url += `&region=${encodeURIComponent(region)}`;
 
   const liste = document.getElementById('artikel-liste');
-  liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1"><span class="spinner"></span>Wird geladen…</p>';
+  liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1"><span class="spinner"></span><span id="archiv-lade-hinweis">Wird geladen…</span></p>';
   document.getElementById('pagination').innerHTML = '';
+  const langsam = setTimeout(() => {
+    const h = document.getElementById('archiv-lade-hinweis');
+    if (h) h.textContent = 'Das dauert länger als üblich – der Server startet gerade. Bitte einen Moment warten…';
+  }, 8000);
 
   try {
     const res  = await fetch(url);
+    clearTimeout(langsam);
     const data = await res.json();
     const artikel = data.artikel || [];
     seitenGesamt  = data.seiten_gesamt || 1;
@@ -318,7 +323,9 @@ async function laden(seite) {
 
     renderPagination(gesamt);
   } catch(e) {
-    liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1">Archiv konnte nicht geladen werden. Bitte versuche es später.</p>';
+    clearTimeout(langsam);
+    liste.innerHTML = '<p class="lade-text" style="grid-column:1/-1">Archiv konnte nicht geladen werden.'
+      + '<br><button onclick="laden()" style="margin-top:.75rem;padding:.6rem 1.4rem;background:#c0152a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem">Erneut versuchen</button></p>';
     zeigStatischeLinks();
   }
 }

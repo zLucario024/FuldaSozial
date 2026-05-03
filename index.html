@@ -1731,10 +1731,15 @@ async function artikelLaden(tage = 1) {
   _ladeController = new AbortController();
   const ctrl = _ladeController;
   gezeigt = 0; alleArtikel = []; aktuellerOffset = 0; hatMehr = false;
-  document.getElementById('artikel-grid').innerHTML =
-    '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span>Artikel werden geladen...</span></div>';
+  const grid = document.getElementById('artikel-grid');
+  grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1"><div class="spinner"></div><span id="lade-hinweis">Artikel werden geladen...</span></div>';
+  const langsam = setTimeout(() => {
+    const h = document.getElementById('lade-hinweis');
+    if (h) h.textContent = 'Das dauert länger als üblich – der Server startet gerade. Bitte einen Moment warten…';
+  }, 8000);
   try {
     const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=0&days=${tage}`, { signal: ctrl.signal });
+    clearTimeout(langsam);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     ladeModusTage = tage;
@@ -1745,11 +1750,14 @@ async function artikelLaden(tage = 1) {
     artikelAnzeigen();
     heimatNeuZaehlen();
   } catch(e) {
+    clearTimeout(langsam);
     if (e.name === 'AbortError') return;
     ladeModusTage = tage;
     _ladeController = null;
-    document.getElementById('artikel-grid').innerHTML =
-      '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ Artikel konnten nicht geladen werden. Bitte Seite neu laden.</p></div>';
+    grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+      + '<p>⚠️ Artikel konnten nicht geladen werden.</p>'
+      + `<button onclick="artikelLaden(${tage})" style="margin-top:.5rem;padding:.6rem 1.4rem;background:var(--rot);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem">Erneut versuchen</button>`
+      + '</div>';
     document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
   }
 }
