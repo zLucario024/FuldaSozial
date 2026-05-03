@@ -295,6 +295,13 @@ def html_session_erstellen():
 # Quellen, deren RSS-Beschreibung Sidebar-/Infobox-Inhalte enthält → Meta-Tag direkt vom Artikel holen
 QUELLEN_META_DESC = {'osthessen-news.de'}
 
+def auf_zwei_saetze(text: str) -> str:
+    """Kürzt Text auf maximal zwei Sätze."""
+    if not text:
+        return text
+    saetze = re.split(r'(?<=[.!?])\s+', text.strip())
+    return ' '.join(saetze[:2])
+
 def meta_beschreibung_holen(url):
     """Holt <meta name='description'> direkt aus dem Artikel-HTML."""
     try:
@@ -302,7 +309,7 @@ def meta_beschreibung_holen(url):
         m = re.search(r'<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']', r.text, re.IGNORECASE)
         if not m:
             m = re.search(r'<meta[^>]+content=["\'](.*?)["\'][^>]+name=["\']description["\']', r.text, re.IGNORECASE)
-        return m.group(1).strip()[:500] if m else ""
+        return auf_zwei_saetze(m.group(1).strip()) if m else ""
     except Exception:
         return ""
 
@@ -419,7 +426,7 @@ def feed_verarbeiten(feed, conn):
         datum        = datum_parsen(entry.get("published", ""))
         hash_wert    = artikel_hash(link)
         beschreibung = entry.get("summary", "") or entry.get("description", "") or ""
-        beschreibung = re.sub(r'<[^>]+>', '', beschreibung).strip()[:500]
+        beschreibung = auf_zwei_saetze(re.sub(r'<[^>]+>', '', beschreibung).strip())
         if any(dom in link for dom in QUELLEN_META_DESC):
             meta = meta_beschreibung_holen(link)
             if meta:
@@ -562,7 +569,7 @@ def oz_artikel_holen(url, base_url):
             datum = None
 
         teaser_m = re.search(r'itemprop="description"[^>]*>(.*?)</span>', teil, re.DOTALL)
-        beschreibung = re.sub(r'<[^>]+>', '', teaser_m.group(1)).strip()[:500] if teaser_m else ""
+        beschreibung = auf_zwei_saetze(re.sub(r'<[^>]+>', '', teaser_m.group(1)).strip()) if teaser_m else ""
         beschreibung = html_unescape(beschreibung)
 
         if titel:
@@ -609,7 +616,7 @@ def hs_fulda_artikel_holen(url, base_url):
             gesehen.add(link)
             nach = r.text[match.end():match.end() + 600]
             teaser_m = re.search(r'<p[^>]*>([^<]+)</p>', nach)
-            beschreibung = html_unescape(teaser_m.group(1)).strip()[:500] if teaser_m else ""
+            beschreibung = auf_zwei_saetze(html_unescape(teaser_m.group(1)).strip()) if teaser_m else ""
             artikel.append((titel, link, None, beschreibung))
 
     # Ansatz 2: Falls keine Links im HTML – Titel aus h3 lesen, Slug generieren
@@ -625,7 +632,7 @@ def hs_fulda_artikel_holen(url, base_url):
                 gesehen.add(link)
                 nach = r.text[match.end():match.end() + 600]
                 teaser_m = re.search(r'<p[^>]*>([^<]+)</p>', nach)
-                beschreibung = html_unescape(teaser_m.group(1)).strip()[:500] if teaser_m else ""
+                beschreibung = auf_zwei_saetze(html_unescape(teaser_m.group(1)).strip()) if teaser_m else ""
                 artikel.append((titel, link, None, beschreibung))
 
     return artikel
