@@ -1326,6 +1326,8 @@ let _ladeController = null;   // AbortController for in-flight fetch
 const SEITEN_GROESSE = 200;   // articles fetched per server request
 let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
+let archivOrtErgebnisse = [];
+let _archivOrtQuery = '';
 const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let meineHeimat = localStorage.getItem('meine-heimat') || '';
@@ -1791,7 +1793,11 @@ function gefilterteArtikel() {
         const r = (a.region || '').toLowerCase();
         const regionOk = r === aktivOrt;
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
-        if (!regionOk && !ortMatch(text, aktivOrt) && !ortsteile.some(o => ortMatch(text, o))) return false;
+        const istDorf = ortsteile.length === 0 && Object.values(GEMEINDE_ORTSTEILE).some(l => l.includes(aktivOrt));
+        const textOk = istDorf
+          ? text.includes(aktivOrt)
+          : (ortMatch(text, aktivOrt) || ortsteile.some(o => ortMatch(text, o)));
+        if (!regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
         if (ausschluss && ausschluss.some(a => ortMatch(text, a))) return false;
       }
@@ -1811,6 +1817,12 @@ function gefilterteArtikel() {
   if (suchbegriff && archivSuchErgebnisse.length) {
     const bekannteLinks = new Set(haupt.map(a => a.link));
     const archivNeu = archivSuchErgebnisse.filter(a => !bekannteLinks.has(a.link));
+    return [...haupt, ...archivNeu];
+  }
+  // Merge silent Ort-archive results (no search box required)
+  if (aktivOrt && _archivOrtQuery === aktivOrt && archivOrtErgebnisse.length) {
+    const bekannteLinks = new Set(haupt.map(a => a.link));
+    const archivNeu = archivOrtErgebnisse.filter(a => !bekannteLinks.has(a.link));
     return [...haupt, ...archivNeu];
   }
   return haupt;
@@ -1841,7 +1853,29 @@ function artikelAnzeigen() {
     anzahlEl.textContent = '';
   }
   if (!gefiltert.length) {
-    grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel gefunden.</p></div>';
+    const istSpezifischesOrt = aktivOrt && !['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt);
+    if (istSpezifischesOrt && _archivOrtQuery !== aktivOrt) {
+      if (hatMehr) {
+        // More local pages to check — fetch them first, archive search triggers after
+        grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+          + '<div class="spinner"></div>'
+          + '<span>Suche nach Artikeln…</span></div>';
+        document.getElementById('mehr-btn').style.display = 'none';
+        document.getElementById('archiv-hinweis').style.display = 'none';
+        mehrLaden();
+        return;
+      }
+      grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+        + '<div class="spinner"></div>'
+        + '<span>Suche im Archiv nach älteren Artikeln…</span></div>';
+      document.getElementById('mehr-btn').style.display = 'none';
+      document.getElementById('archiv-hinweis').style.display = 'none';
+      ortArchivSuche(aktivOrt);
+      return;
+    }
+    const ortName = aktivOrt && !['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt) ? ` zu „${aktivOrt}"` : '';
+    grid.innerHTML = `<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel${ortName} gefunden.</p>`
+      + `<p style="font-size:.85rem;color:var(--text-muted);margin-top:.25rem">In der Suche findest du Artikel aus dem gesamten Archiv.</p></div>`;
     document.getElementById('mehr-btn').style.display = 'none';
     document.getElementById('archiv-hinweis').style.display = 'none';
     return;
@@ -1855,6 +1889,7 @@ function artikelAnzeigen() {
   pushHighlightAnzeigen();
   // Auto-fill: if filter active and initial results are sparse, fetch more without requiring a click
   if (hatMehr && gezeigt < PRO_SEITE) mehrLaden();
+  else _pruefOrtArchiv();
 }
 
 async function mehrLaden() {
@@ -1907,6 +1942,7 @@ async function mehrLaden() {
   }
   btn.style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
+  _pruefOrtArchiv();
 }
 
 function karteErstellen(artikel, index) {
@@ -2067,6 +2103,7 @@ function ortWaehlen(btn, ort) {
   }
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   if (btn) btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
+  if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; }
   aktivOrt = ort;
   if (!btn || !btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
@@ -2635,12 +2672,31 @@ async function archivSuche(snap) {
   } catch(e) { /* archive unavailable – silent */ }
 }
 
+async function ortArchivSuche(ort) {
+  _archivOrtQuery = ort;
+  try {
+    const res = await fetch(`${API}/archiv?suche=${encodeURIComponent(ort)}&limit=50`);
+    const data = await res.json();
+    if (ort !== aktivOrt) return; // discard if Ort changed while in flight
+    archivOrtErgebnisse = data.artikel || [];
+    artikelAnzeigen();
+  } catch(_) { if (ort === aktivOrt) artikelAnzeigen(); }
+}
+
+function _pruefOrtArchiv() {
+  if (!aktivOrt || ['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt)) return;
+  if (_archivOrtQuery === aktivOrt) return;
+  if (gefilterteArtikel().length >= PRO_SEITE) return;
+  ortArchivSuche(aktivOrt);
+}
+
 function sucheLöschen() {
   document.getElementById('suche').value = '';
   sucheAktualisieren();
 }
 
 function ortFilterLeeren() {
+  archivOrtErgebnisse = []; _archivOrtQuery = '';
   aktivOrt = '';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelector('#ort-chips .chip').classList.add('aktiv');
