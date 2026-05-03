@@ -1529,7 +1529,7 @@ const KATEGORIEN = {
   'Sport': {
     farbe: '#c2410c', hell: '#fff7ed',
     strong: ['sport','fußball','handball','liga','meisterschaft','turnier','leichtathletik'],
-    keys: ['sport','leichtathletik', 'fußball','handball','tennis','turnier', 'champions league', 'europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft', 'playoff', 'basketball', 'bvb', 'schwimmen', 'finale', 'eishockey', 'sg barockstadt', 'sgb'],
+    keys: ['football','sport','leichtathletik', 'fußball','handball','tennis','turnier', 'champions league', 'europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft', 'playoff', 'basketball', 'bvb', 'schwimmen', 'finale', 'eishockey', 'sg barockstadt', 'sgb'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff7ed"/>
       <path d="M174,52 L226,52 L220,88 Q200,100 180,88 Z" fill="#c2410c" opacity=".13"/>
       <path d="M174,52 L226,52 L220,88 Q200,100 180,88 Z" fill="none" stroke="#c2410c" stroke-width="3" stroke-linejoin="round"/>
@@ -1542,7 +1542,7 @@ const KATEGORIEN = {
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
     strong: ['kultur', 'fördermittel','konzert', 'music','führung', 'festival','ausstellung','theater','museum','kunst', 'tradition', 'fotoshooting', 'l14zwo', 'flohmarkt'],
-    keys: ['nachhaltigkeit','konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal', 'hessentag', 'freibad', 'freibäder', 'dialog'],
+    keys: ['muttertag','flashmob','nachhaltigkeit','konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal', 'hessentag', 'freibad', 'freibäder', 'dialog'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
       <ellipse cx="182" cy="106" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 182 106)"/>
       <ellipse cx="222" cy="113" rx="15" ry="10" fill="#6d28d9" opacity=".55" transform="rotate(-20 222 113)"/>
@@ -1760,9 +1760,11 @@ function gefilterteArtikel() {
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
       if (aktivOrt === 'landkreis-fulda') {
-        const istLandkreis = ORTE_LANDKREIS.some(o => ortMatch(text, o))
+        const r = (a.region || '').toLowerCase();
+        const regionOk = r && r !== 'hessen' && r !== 'osthessen';
+        const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
-        if (!istLandkreis) return false;
+        if (!regionOk && !textOk) return false;
       } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
@@ -1812,9 +1814,8 @@ function filterIstAktiv() {
 }
 
 function artikelAnzeigen() {
-  // Auto-switch data window: 30 days when filter active, 1 day when not
+  // Load 30-day window the first time a filter is applied
   if (filterIstAktiv() && ladeModusTage < 30) { artikelLaden(30); return; }
-  if (!filterIstAktiv() && ladeModusTage > 1)  { artikelLaden(1);  return; }
 
   const gefiltert = gefilterteArtikel();
   const grid = document.getElementById('artikel-grid');
@@ -1843,7 +1844,7 @@ function artikelAnzeigen() {
   karteZahlenAktualisieren();
   pushHighlightAnzeigen();
   // Auto-fill: if filter active and initial results are sparse, fetch more without requiring a click
-  if (filterIstAktiv() && hatMehr && gezeigt < PRO_SEITE) mehrLaden();
+  if (hatMehr && gezeigt < PRO_SEITE) mehrLaden();
 }
 
 async function mehrLaden() {
@@ -1869,10 +1870,10 @@ async function mehrLaden() {
   // Case B: keep fetching server pages until we have PRO_SEITE new matching articles or run out
   if (!hatMehr) return;
   btn.disabled = true;
-  btn.textContent = 'Lade…';
+  btn.textContent = alleArtikel.length > 2000 ? 'Lade… (viele Artikel, kann einen Moment dauern)' : 'Lade…';
   let runden = 0;
   try {
-    while (hatMehr && gefilterteArtikel().length - gezeigt < PRO_SEITE && runden < 15) {
+    while (hatMehr && gefilterteArtikel().length - gezeigt < PRO_SEITE && runden < 5) {
       const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}&days=${ladeModusTage}`);
       if (!res.ok) break;
       const data = await res.json();
