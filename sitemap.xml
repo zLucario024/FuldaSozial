@@ -188,7 +188,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (896 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (910 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://www.rnfulda.de/?tag=1.%20Mai</loc>
     <changefreq>daily</changefreq>
@@ -580,6 +580,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Benzinpreise</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Bergpark%20Wilhelmsh%C3%B6he</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -631,6 +636,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Bildergalerie</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Bildung</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1040,6 +1050,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Ebersburg</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Edeka</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -1136,6 +1151,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Energiepreise</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Energiesteuer</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1311,6 +1331,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Festnahme</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Festspiele</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -1576,6 +1601,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=F%C3%BChrungsteam</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Garage</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -2140,7 +2170,17 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Kaisersaalterrasse</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Kalbach</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Kardiologie</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -2800,6 +2840,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Mitfahrerin</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Mittelhessen</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -3131,6 +3176,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Petersberger%20Stra%C3%9Fe</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Pfefferspray</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -3655,6 +3705,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Seniorin</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Sicherheit</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -3701,6 +3756,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Sonnenschein</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Soziale%20Medien</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -3846,6 +3906,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=Steuerreform</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=Stiftsruine</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -4136,6 +4201,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=U21</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=US-Truppenabzug</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
