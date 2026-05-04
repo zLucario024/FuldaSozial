@@ -407,9 +407,11 @@ def fcm_abbestellen(abo: FcmAbo):
 
 
 def _aggregator_ausfuehren():
+    from datetime import datetime, timedelta
     import fulda_news_aggregator as agg
     conn = agg.db_verbinden()
     agg.datenbank_einrichten(conn)
+    agg._region_retroaktiv_korrigieren(conn)
     for feed in agg.FEEDS:
         agg.feed_verarbeiten(feed, conn)
     for quelle in agg.HTML_QUELLEN:
@@ -417,6 +419,8 @@ def _aggregator_ausfuehren():
     agg.deduplizieren(conn)
     agg.archiv_generieren(conn)
     agg.sitemap_generieren(conn)
+    cutoff = (datetime.now() - timedelta(minutes=70)).strftime('%Y-%m-%d %H:%M:%S')
+    agg.benachrichtigungen_senden(conn, cutoff)
     conn.close()
 
 
