@@ -39,6 +39,37 @@ WAPPEN_NAMEN = {
     'landkreis-fulda': 'Landkreis Fulda',
 }
 
+# Hessian cities/districts outside Landkreis Fulda.
+# If an article tagged with one of these has region='landkreis-fulda', demote to 'hessen'.
+_HESSISCHE_FREMDE = frozenset({
+    'frankfurt', 'frankfurt am main', 'wiesbaden', 'kassel', 'darmstadt',
+    'gießen', 'offenbach', 'hanau', 'marburg', 'limburg', 'bad homburg',
+    'rüsselsheim', 'friedberg', 'bad nauheim', 'langen', 'dreieich',
+    'bensheim', 'heppenheim', 'michelstadt', 'erbach', 'viernheim',
+    'vogelsbergkreis', 'vogelsberg', 'main-kinzig-kreis', 'main-kinzig',
+    'hersfeld-rotenburg', 'bad hersfeld', 'rotenburg an der fulda',
+    'lahn-dill-kreis', 'lahn-dill', 'wetteraukreis', 'wetterau',
+    'odenwaldkreis', 'odenwald', 'rheingau-taunus-kreis', 'rheingau',
+    'hochtaunuskreis', 'hochtaunus', 'groß-gerau', 'darmstadt-dieburg',
+    'bergstraße', 'waldeck-frankenberg', 'schwalm-eder-kreis', 'schwalm-eder',
+    'werra-meißner-kreis', 'werra-meißner', 'kassel-land', 'fulda-oda',
+})
+
+# Cities and regions clearly outside Hessen.
+# Articles from landkreis-fulda feeds tagged with these get demoted to 'bundesweit'.
+_BUNDESWEITE_ORTE = frozenset({
+    'berlin', 'hamburg', 'münchen', 'köln', 'stuttgart', 'düsseldorf',
+    'leipzig', 'dresden', 'hannover', 'bremen', 'nürnberg', 'dortmund',
+    'essen', 'bochum', 'wuppertal', 'bielefeld', 'bonn', 'mannheim',
+    'karlsruhe', 'augsburg', 'münster', 'aachen', 'freiburg', 'kiel',
+    'lübeck', 'erfurt', 'rostock', 'mainz', 'saarbrücken', 'potsdam',
+    'magdeburg', 'schwerin', 'chemnitz', 'halle', 'duisburg', 'gelsenkirchen',
+    'niedersachsen', 'nordrhein-westfalen', 'nrw', 'rheinland-pfalz',
+    'sachsen', 'thüringen', 'sachsen-anhalt', 'mecklenburg-vorpommern',
+    'schleswig-holstein', 'saarland', 'brandenburg', 'bayern',
+    'baden-württemberg', 'bundesregierung', 'bundestag', 'bundesrat',
+})
+
 KATEGORIE_EMOJI = {
     'Vorfälle':             '🚨',
     'Politik & Verwaltung': '🏛️',
@@ -948,17 +979,19 @@ _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
 
 
 def _region_retroaktiv_korrigieren(conn):
-    """One-time pass: fix existing articles whose tags contain a known Gemeinde/Stadtteil
-    but whose region is still set to a broad value (hessen, osthessen, landkreis-fulda, etc.).
-    Safe to run on every aggregator start — only updates rows that need it."""
+    """Two-pass retroactive region fix — safe to run on every aggregator start.
+    Pass 1 (upgrade): broad-region articles whose tags name a Fulda-area place → specific region.
+    Pass 2 (downgrade): landkreis-fulda articles whose tags name a foreign city → hessen/bundesweit."""
     cursor = conn.cursor()
+
+    # --- Pass 1: Upgrade broad → specific Fulda region ---
     cursor.execute(
         "SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''"
         " AND (region IS NULL OR region NOT IN %s)",
         (_BEKANNTE_SET_SQL,)
     )
     rows = cursor.fetchall()
-    updated = 0
+    upgraded = 0
     for hash_wert, tags_str in rows:
         for tag in tags_str.split('·'):
             tag_norm = tag.strip().lower()
@@ -967,35 +1000,87 @@ def _region_retroaktiv_korrigieren(conn):
                     "UPDATE artikel SET region = %s WHERE hash = %s",
                     (tag_norm, hash_wert)
                 )
-                updated += 1
+                upgraded += 1
                 break
+
+    # --- Pass 2: Downgrade landkreis-fulda → hessen/bundesweit for foreign-city articles ---
+    cursor.execute(
+        "SELECT hash, tags FROM artikel WHERE region = 'landkreis-fulda'"
+        " AND tags IS NOT NULL AND tags != ''"
+    )
+    rows = cursor.fetchall()
+    downgraded = 0
+    for hash_wert, tags_str in rows:
+        tags = [t.strip().lower() for t in tags_str.split('·')]
+        # If any tag is a known Fulda-area region, the article belongs here — leave it
+        if any(t in _BEKANNTE_SET for t in tags):
+            continue
+        new_region = None
+        for t in tags:
+            if t in _BUNDESWEITE_ORTE:
+                new_region = 'bundesweit'
+                break
+        if new_region is None:
+            for t in tags:
+                if t in _HESSISCHE_FREMDE:
+                    new_region = 'hessen'
+                    break
+        if new_region:
+            cursor.execute(
+                "UPDATE artikel SET region = %s WHERE hash = %s",
+                (new_region, hash_wert)
+            )
+            downgraded += 1
+
     conn.commit()
     cursor.close()
-    if updated:
-        print(f"  Regionen korrigiert (retroaktiv): {updated} Artikel")
+    if upgraded:
+        print(f"  Regionen korrigiert (retroaktiv): {upgraded} Artikel")
+    if downgraded:
+        print(f"  Fremdregionen abgestuft: {downgraded} Artikel")
 
 
 def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
-    """Upgrades an article's region to a specific Gemeinde/Stadtteil/Ortsteil
-    when the AI-assigned tags contain a matching known-region name.
-    This prevents Hessen/Osthessen articles that were tagged with a local
-    place name from being archived after 14 days."""
+    """Upgrades or downgrades region based on AI-assigned tags for newly fetched articles.
+    - Upgrade: broad region + Fulda-area tag → specific region (keeps article permanently)
+    - Downgrade: landkreis-fulda + foreign-city tag → hessen or bundesweit"""
     BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
     for hash_wert, _ in neue_artikel:
         cursor.execute("SELECT tags, region FROM artikel WHERE hash = %s", (hash_wert,))
         row = cursor.fetchone()
         if not row or not row[0]:
             continue
-        if row[1] not in BROAD:
+        tags_str, current_region = row[0], row[1]
+        if current_region not in BROAD:
             continue
-        for tag in row[0].split('·'):
-            tag_norm = tag.strip().lower()
-            if tag_norm in _BEKANNTE_SET:
-                cursor.execute(
-                    "UPDATE artikel SET region = %s WHERE hash = %s",
-                    (tag_norm, hash_wert)
-                )
+
+        tags = [t.strip().lower() for t in tags_str.split('·')]
+
+        # Try upgrade first: a Fulda-area tag takes full precedence
+        upgraded = False
+        for t in tags:
+            if t in _BEKANNTE_SET:
+                cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (t, hash_wert))
+                upgraded = True
                 break
+        if upgraded:
+            continue
+
+        # Downgrade: landkreis-fulda articles tagged with a foreign city
+        if current_region == 'landkreis-fulda':
+            new_region = None
+            for t in tags:
+                if t in _BUNDESWEITE_ORTE:
+                    new_region = 'bundesweit'
+                    break
+            if new_region is None:
+                for t in tags:
+                    if t in _HESSISCHE_FREMDE:
+                        new_region = 'hessen'
+                        break
+            if new_region:
+                cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (new_region, hash_wert))
+
     conn.commit()
 
 
