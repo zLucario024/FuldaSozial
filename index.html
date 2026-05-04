@@ -2126,6 +2126,7 @@ function kategorieAusKarte(kat) {
 function ortAusTag(ort, el) {
   const ortLower = ort.toLowerCase();
   if (aktivOrt === ortLower) { ortFilterLeeren(); return; }
+  _kategorieZurueck();
   aktivOrt = ortLower;
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   const matching = [...document.querySelectorAll('#ort-chips .chip')]
@@ -2156,7 +2157,7 @@ function ortWaehlen(btn, ort) {
   }
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   if (btn) btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
-  if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; }
+  if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; _kategorieZurueck(); }
   aktivOrt = ort;
   if (!btn || !btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
@@ -2246,7 +2247,7 @@ function karteKlick(ort, el) {
   const chip = [...document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${ort}'`));
   if (chip) ortWaehlen(chip, ort);
-  else { _ortAlsGesehen(ort); aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
+  else { _ortAlsGesehen(ort); _kategorieZurueck(); aktivOrt = ort; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
   const _mobil1 = document.getElementById('karte-mobil-modal').classList.contains('aktiv');
   if (_mobil1) setTimeout(karteModalSchliessen, 350);
   scrollZuArtikeln(_mobil1 ? 420 : 50);
@@ -2324,14 +2325,14 @@ function stadtteileToggle(btn) {
       .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
     document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
     if (lkChip) lkChip.classList.add('aktiv-ort');
-    aktivOrt = 'landkreis-fulda';
+    _kategorieZurueck(); aktivOrt = 'landkreis-fulda';
     urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro();
   } else {
     // first click → open list, filter to Stadt Fulda
     _stadtteileToggle(true);
     document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
     if (btn) btn.classList.add('aktiv-ort');
-    aktivOrt = 'fulda';
+    _kategorieZurueck(); aktivOrt = 'fulda';
     urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro();
   }
 }
@@ -2341,7 +2342,7 @@ function stadtteileKlick(stadtteil, el) {
   const chip = [...document.querySelectorAll('#stadtteile-chips .chip')]
     .find(c => (c.getAttribute('onclick') || '').includes(`'${stadtteil}'`));
   if (chip) ortWaehlen(chip, stadtteil);
-  else { aktivOrt = stadtteil; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
+  else { _kategorieZurueck(); aktivOrt = stadtteil; urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen(); karteAktivSynchro(); }
   document.querySelectorAll('#fulda-overlay .gem.aktiv').forEach(g => g.classList.remove('aktiv'));
   if (el) el.classList.add('aktiv');
   const _mobil3 = document.getElementById('karte-mobil-modal').classList.contains('aktiv');
@@ -2756,10 +2757,15 @@ function ortFilterLeeren() {
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
-function kategorieFilterLeeren() {
+function _kategorieZurueck() {
+  if (!aktivKategorie) return;
   aktivKategorie = '';
   document.querySelectorAll('#kategorie-chips .chip').forEach(c => c.classList.remove('aktiv'));
   document.querySelector('#kategorie-chips .chip').classList.add('aktiv');
+}
+
+function kategorieFilterLeeren() {
+  _kategorieZurueck();
   urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
 }
 
