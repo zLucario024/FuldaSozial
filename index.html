@@ -1413,6 +1413,17 @@ window.addEventListener('scroll', () => {
   btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
 });
 
+// ── STÄDTE DIE NICHT ZUM LANDKREIS GEHÖREN ──
+// Artikel, deren Titel eine dieser Städte nennt aber keinen Landkreis-Ort,
+// werden aus der Landkreis-Fulda-Ansicht ausgeschlossen.
+// → Einfach hier ergänzen wenn eine fremde Stadt durchrutscht.
+const LANDKREIS_FREMDE = [
+  'leipzig','berlin','hamburg','münchen','köln','frankfurt','stuttgart',
+  'düsseldorf','dortmund','hannover','bremen','dresden','nürnberg',
+  'kassel','gießen','wiesbaden','darmstadt','marburg','erfurt',
+  'mainz','magdeburg','potsdam','rostock','kiel','saarbrücken',
+];
+
 // ── ORTE LANDKREIS FULDA ──
 const ORTE_LANDKREIS = [
   'fulda','hünfeld','künzell','petersberg','neuhof','eichenzell','flieden',
@@ -1517,7 +1528,7 @@ const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
     strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug', 'diebstahl'],
-    keys: ['vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
+    keys: ['raub','vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1795,7 +1806,7 @@ async function artikelLaden(tage = 1) {
 }
 
 function gefilterteArtikel() {
-  const haupt = alleArtikel.filter(a => {
+  function passt(a) {
     const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
@@ -1805,6 +1816,14 @@ function gefilterteArtikel() {
         const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
         if (!specificGemeinde && !textOk) return false;
+        if (!specificGemeinde) {
+          const titel = (a.titel || '').toLowerCase();
+          const titelTags = (titel + ' ' + (a.tags || '')).toLowerCase();
+          const hatFremde = LANDKREIS_FREMDE.some(o => ortMatch(titelTags, o));
+          const hatLokal = ORTE_LANDKREIS.some(o => ortMatch(titel, o))
+            || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(titel, o));
+          if (hatFremde && !hatLokal) return false;
+        }
       } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
@@ -1841,18 +1860,20 @@ function gefilterteArtikel() {
     if (von && a.datum < von) return false;
     if (bis && a.datum > bis + ' 23:59:59') return false;
     return true;
-  });
+  }
+
+  const haupt = alleArtikel.filter(passt);
 
   // When searching, append archive results not already in the main list
   if (suchbegriff && archivSuchErgebnisse.length) {
     const bekannteLinks = new Set(haupt.map(a => a.link));
-    const archivNeu = archivSuchErgebnisse.filter(a => !bekannteLinks.has(a.link));
+    const archivNeu = archivSuchErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
     return [...haupt, ...archivNeu];
   }
   // Merge silent Ort-archive results (no search box required)
   if (aktivOrt && _archivOrtQuery === aktivOrt && archivOrtErgebnisse.length) {
     const bekannteLinks = new Set(haupt.map(a => a.link));
-    const archivNeu = archivOrtErgebnisse.filter(a => !bekannteLinks.has(a.link));
+    const archivNeu = archivOrtErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
     return [...haupt, ...archivNeu];
   }
   return haupt;

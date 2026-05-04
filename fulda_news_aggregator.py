@@ -784,7 +784,7 @@ def deduplizieren(conn):
     Zwei Pässe:
     1. Exakte Duplikate (gleicher Titel + gleiche Quelle) → behalte den mit mehr Tags.
     2. Ähnliche Titel (≥ 0.85 Ähnlichkeit) gleicher Quelle → behalte den neueren/reicheren
-       (fängt Tippfehler-Korrekturen wie 'Ladesvater' → 'Landesvater' ab).
+       (fängt Korrekturen wie 'Amokfahrt?' → 'Unfall' oder Tippfehler ab).
     """
     cursor = conn.cursor()
     geloescht_gesamt = 0
@@ -844,7 +844,7 @@ def deduplizieren(conn):
                 if len(titel_a) < 12 or len(titel_b) < 12:
                     continue
                 aehnlich = SequenceMatcher(None, titel_a.lower(), titel_b.lower()).ratio()
-                if aehnlich >= 0.95:
+                if aehnlich >= 0.85:
                     fuzzy_paare += 1
                     # Behalte den mit mehr Tags; bei Gleichstand den neueren (höhere id = später gespeichert)
                     if _tag_anzahl(tags_a) >= _tag_anzahl(tags_b):

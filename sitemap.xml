@@ -188,7 +188,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Dynamische Tag-Seiten (910 Tags mit ≥3 Artikeln) -->
+  <!-- Dynamische Tag-Seiten (912 Tags mit ≥3 Artikeln) -->
   <url>
     <loc>https://www.rnfulda.de/?tag=1.%20Mai</loc>
     <changefreq>daily</changefreq>
@@ -4015,6 +4015,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.rnfulda.de/?tag=Tante%20Enso</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.rnfulda.de/?tag=Tanz</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -4711,6 +4716,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/?tag=hessenschau</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/?tag=tegut</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
