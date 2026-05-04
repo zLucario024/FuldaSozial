@@ -877,6 +877,7 @@ def main():
 
     conn = db_verbinden()
     datenbank_einrichten(conn)
+    _ortsteil_region_reparieren(conn)
     _region_retroaktiv_korrigieren(conn)
 
     gesamt_neu = 0
@@ -1006,6 +1007,42 @@ BEKANNTE_REGIONEN = (
 
 _BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
 _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
+
+
+def _ortsteil_region_reparieren(conn):
+    """One-time repair: articles from broad (hessen/osthessen/landkreis-fulda) feeds that were
+    wrongly promoted to Ortsteil-level regions by a retroactive correction run are reset to
+    their feed's original region. Safe to run repeatedly — does nothing once all rows are fixed."""
+    GEMEINDEN = set(WAPPEN_NAMEN.keys()) | {'landkreis-fulda'}
+    ortsteile_tuple = tuple(_BEKANNTE_SET - GEMEINDEN)
+    if not ortsteile_tuple:
+        return
+
+    # Mapping feed name → original region
+    QUELLE_REGION = {
+        'Hessenschau Alle Hessen':  'hessen',
+        'Hessenschau Osthessen':    'osthessen',
+        'Osthessen-News':           'osthessen',
+        'Osthessen-Zeitung':        'osthessen',
+        'Fuldainfo':                'landkreis-fulda',
+        'Landkreis Fulda':          'landkreis-fulda',
+        'Presseportal Fulda':       'landkreis-fulda',
+        'Marktkorb':                'landkreis-fulda',
+        'Fuldaer Zeitung':          'landkreis-fulda',
+    }
+
+    cursor = conn.cursor()
+    fixed = 0
+    for quelle_name, ursprung in QUELLE_REGION.items():
+        cursor.execute(
+            "UPDATE artikel SET region = %s WHERE region = ANY(%s) AND quelle = %s",
+            (ursprung, list(ortsteile_tuple), quelle_name)
+        )
+        fixed += cursor.rowcount
+    conn.commit()
+    cursor.close()
+    if fixed:
+        print(f"  Ortsteil-Fehlklassifikationen repariert: {fixed} Artikel zurückgesetzt")
 
 
 def _region_retroaktiv_korrigieren(conn):
