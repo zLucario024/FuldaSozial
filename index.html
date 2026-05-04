@@ -1812,11 +1812,14 @@ function gefilterteArtikel() {
     if (aktivOrt) {
       if (aktivOrt === 'landkreis-fulda') {
         const r = (a.region || '').toLowerCase();
-        const specificGemeinde = r && r !== 'hessen' && r !== 'osthessen' && r !== 'landkreis-fulda';
+        const regionOk = r && r !== 'hessen' && r !== 'osthessen';
         const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
-        if (!specificGemeinde && !textOk) return false;
-        if (!specificGemeinde) {
+        if (!regionOk && !textOk) return false;
+        // Exclude articles whose title+tags name a foreign city but no Landkreis place in the title.
+        // Only applied to 'osthessen' articles (Osthessen-News covers broad regional/national topics).
+        // 'landkreis-fulda' sources (Marktkorb, Fuldainfo, …) are local and trusted unconditionally.
+        if (r === 'osthessen') {
           const titel = (a.titel || '').toLowerCase();
           const titelTags = (titel + ' ' + (a.tags || '')).toLowerCase();
           const hatFremde = LANDKREIS_FREMDE.some(o => ortMatch(titelTags, o));
