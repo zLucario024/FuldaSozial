@@ -1801,10 +1801,10 @@ function gefilterteArtikel() {
     if (aktivOrt) {
       if (aktivOrt === 'landkreis-fulda') {
         const r = (a.region || '').toLowerCase();
-        const regionOk = r && r !== 'hessen' && r !== 'osthessen';
+        const specificGemeinde = r && r !== 'hessen' && r !== 'osthessen' && r !== 'landkreis-fulda';
         const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
-        if (!regionOk && !textOk) return false;
+        if (!specificGemeinde && !textOk) return false;
       } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));

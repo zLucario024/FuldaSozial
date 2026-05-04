@@ -877,7 +877,6 @@ def main():
 
     conn = db_verbinden()
     datenbank_einrichten(conn)
-    _ortsteil_region_reparieren(conn)
     _region_retroaktiv_korrigieren(conn)
 
     gesamt_neu = 0
@@ -1009,56 +1008,31 @@ _BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
 _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
 
 
-def _ortsteil_region_reparieren(conn):
-    """One-time repair: articles from broad (hessen/osthessen/landkreis-fulda) feeds that were
-    wrongly promoted to Ortsteil-level regions by a retroactive correction run are reset to
-    their feed's original region. Safe to run repeatedly — does nothing once all rows are fixed."""
-    GEMEINDEN = set(WAPPEN_NAMEN.keys()) | {'landkreis-fulda'}
-    ortsteile_tuple = tuple(_BEKANNTE_SET - GEMEINDEN)
-    if not ortsteile_tuple:
-        return
-
-    # Mapping feed name → original region
-    QUELLE_REGION = {
-        'Hessenschau Alle Hessen':  'hessen',
-        'Hessenschau Osthessen':    'osthessen',
-        'Osthessen-News':           'osthessen',
-        'Osthessen-Zeitung':        'osthessen',
-        'Fuldainfo':                'landkreis-fulda',
-        'Landkreis Fulda':          'landkreis-fulda',
-        'Presseportal Fulda':       'landkreis-fulda',
-        'Marktkorb':                'landkreis-fulda',
-        'Fuldaer Zeitung':          'landkreis-fulda',
-    }
-
-    cursor = conn.cursor()
-    fixed = 0
-    for quelle_name, ursprung in QUELLE_REGION.items():
-        cursor.execute(
-            "UPDATE artikel SET region = %s WHERE region = ANY(%s) AND quelle = %s",
-            (ursprung, list(ortsteile_tuple), quelle_name)
-        )
-        fixed += cursor.rowcount
-    conn.commit()
-    cursor.close()
-    if fixed:
-        print(f"  Ortsteil-Fehlklassifikationen repariert: {fixed} Artikel zurückgesetzt")
-
-
 def _region_retroaktiv_korrigieren(conn):
-    """Two-pass retroactive region fix — safe to run on every aggregator start.
-    Pass 1 (upgrade): broad-region articles whose tags name a Fulda-area place → specific region.
-    Pass 2 (downgrade): landkreis-fulda articles whose tags name a foreign city → hessen/bundesweit."""
+    """Fix existing articles whose tags contain a known Gemeinde/Stadtteil
+    but whose region is still set to a broad value (hessen, osthessen, landkreis-fulda, etc.).
+    Safe to run on every aggregator start — only updates rows that need it."""
     cursor = conn.cursor()
 
-    # --- Pass 1: Upgrade broad → specific Fulda region ---
+    # Repair: articles that were wrongly promoted to Ortsteil-level regions
+    # (e.g. 'rückers', 'löschenrod') by a one-off retroactive run are reset to
+    # 'landkreis-fulda'. Ortsteil filtering in the frontend works via text-matching anyway.
+    GEMEINDEN = tuple(WAPPEN_NAMEN.keys()) + ('landkreis-fulda', 'hessen', 'osthessen')
+    cursor.execute(
+        "UPDATE artikel SET region = 'landkreis-fulda'"
+        " WHERE region NOT IN %s AND region IS NOT NULL AND region != ''",
+        (GEMEINDEN,)
+    )
+    if cursor.rowcount:
+        print(f"  Ortsteil-Regionen zurückgesetzt: {cursor.rowcount} Artikel")
+
     cursor.execute(
         "SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''"
         " AND (region IS NULL OR region NOT IN %s)",
         (_BEKANNTE_SET_SQL,)
     )
     rows = cursor.fetchall()
-    upgraded = 0
+    updated = 0
     for hash_wert, tags_str in rows:
         for tag in tags_str.split('·'):
             tag_norm = tag.strip().lower()
@@ -1067,87 +1041,35 @@ def _region_retroaktiv_korrigieren(conn):
                     "UPDATE artikel SET region = %s WHERE hash = %s",
                     (tag_norm, hash_wert)
                 )
-                upgraded += 1
+                updated += 1
                 break
-
-    # --- Pass 2: Downgrade landkreis-fulda → hessen/bundesweit for foreign-city articles ---
-    cursor.execute(
-        "SELECT hash, tags FROM artikel WHERE region = 'landkreis-fulda'"
-        " AND tags IS NOT NULL AND tags != ''"
-    )
-    rows = cursor.fetchall()
-    downgraded = 0
-    for hash_wert, tags_str in rows:
-        tags = [t.strip().lower() for t in tags_str.split('·')]
-        # If any tag is a known Fulda-area region, the article belongs here — leave it
-        if any(t in _BEKANNTE_SET for t in tags):
-            continue
-        new_region = None
-        for t in tags:
-            if t in _BUNDESWEITE_ORTE:
-                new_region = 'bundesweit'
-                break
-        if new_region is None:
-            for t in tags:
-                if t in _HESSISCHE_FREMDE:
-                    new_region = 'hessen'
-                    break
-        if new_region:
-            cursor.execute(
-                "UPDATE artikel SET region = %s WHERE hash = %s",
-                (new_region, hash_wert)
-            )
-            downgraded += 1
-
     conn.commit()
     cursor.close()
-    if upgraded:
-        print(f"  Regionen korrigiert (retroaktiv): {upgraded} Artikel")
-    if downgraded:
-        print(f"  Fremdregionen abgestuft: {downgraded} Artikel")
+    if updated:
+        print(f"  Regionen korrigiert (retroaktiv): {updated} Artikel")
 
 
 def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
-    """Upgrades or downgrades region based on AI-assigned tags for newly fetched articles.
-    - Upgrade: broad region + Fulda-area tag → specific region (keeps article permanently)
-    - Downgrade: landkreis-fulda + foreign-city tag → hessen or bundesweit"""
+    """Upgrades an article's region to a specific Gemeinde/Stadtteil/Ortsteil
+    when the AI-assigned tags contain a matching known-region name.
+    This prevents Hessen/Osthessen articles that were tagged with a local
+    place name from being archived after 14 days."""
     BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
     for hash_wert, _ in neue_artikel:
         cursor.execute("SELECT tags, region FROM artikel WHERE hash = %s", (hash_wert,))
         row = cursor.fetchone()
         if not row or not row[0]:
             continue
-        tags_str, current_region = row[0], row[1]
-        if current_region not in BROAD:
+        if row[1] not in BROAD:
             continue
-
-        tags = [t.strip().lower() for t in tags_str.split('·')]
-
-        # Try upgrade first: a Fulda-area tag takes full precedence
-        upgraded = False
-        for t in tags:
-            if t in _BEKANNTE_SET:
-                cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (t, hash_wert))
-                upgraded = True
+        for tag in row[0].split('·'):
+            tag_norm = tag.strip().lower()
+            if tag_norm in _BEKANNTE_SET:
+                cursor.execute(
+                    "UPDATE artikel SET region = %s WHERE hash = %s",
+                    (tag_norm, hash_wert)
+                )
                 break
-        if upgraded:
-            continue
-
-        # Downgrade: landkreis-fulda articles tagged with a foreign city
-        if current_region == 'landkreis-fulda':
-            new_region = None
-            for t in tags:
-                if t in _BUNDESWEITE_ORTE:
-                    new_region = 'bundesweit'
-                    break
-            if new_region is None:
-                for t in tags:
-                    if t in _HESSISCHE_FREMDE:
-                        new_region = 'hessen'
-                        break
-            if new_region:
-                cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (new_region, hash_wert))
-
     conn.commit()
 
 

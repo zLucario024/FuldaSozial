@@ -411,7 +411,7 @@ def _aggregator_ausfuehren():
     import fulda_news_aggregator as agg
     conn = agg.db_verbinden()
     agg.datenbank_einrichten(conn)
-    agg._ortsteil_region_reparieren(conn)
+    agg._region_retroaktiv_korrigieren(conn)
     for feed in agg.FEEDS:
         agg.feed_verarbeiten(feed, conn)
     for quelle in agg.HTML_QUELLEN:
