@@ -169,8 +169,12 @@ def benachrichtigungen_senden(conn, cutoff_iso):
     web_loeschen = []
     fcm_loeschen = []
 
+    # Load already-sent hashes so we don't repeat notifications
+    cursor.execute("SELECT heimat, artikel_hash FROM push_benachrichtigt")
+    bereits_gesendet = {r[0]: r[1] for r in cursor.fetchall()}
+
     for heimat in alle_heimaten:
-        # Most recent article that mentions this Heimat in region, tags or title
+        # All new articles that mention this Heimat in region, tags or title
         cursor.execute("""
             SELECT hash, titel, link, region, tags FROM artikel
             WHERE gespeichert >= %s
@@ -179,22 +183,31 @@ def benachrichtigungen_senden(conn, cutoff_iso):
                 OR LOWER(tags)  LIKE %s
                 OR LOWER(titel) LIKE %s
               )
-            ORDER BY id DESC LIMIT 1
+            ORDER BY id DESC
         """, (cutoff_iso, heimat, f'%{heimat}%', f'%{heimat}%'))
-        row = cursor.fetchone()
-        if not row:
+        rows = cursor.fetchall()
+        if not rows:
             continue
 
-        hash_, titel, link, region, tags = row
+        hash_, titel, link, region, tags = rows[0]
+        anzahl = len(rows)
+
+        # Skip if this exact article was already notified for this heimat
+        if bereits_gesendet.get(heimat) == hash_:
+            continue
+
         kat = kategorie_bestimmen(titel, tags)
         emoji = KATEGORIE_EMOJI.get(kat, '📰')
         wappen_name = WAPPEN_NAMEN[heimat]
         icon_url = f"{SITE_URL}/Design/Wappen/{quote(wappen_name)}.png"
         site_url = f"{SITE_URL}/?ort={quote(heimat)}&highlight={hash_}"
         title_text = f"{emoji} Neues aus {wappen_name}"
-        body = titel[:120]
+        if anzahl > 1:
+            body = f"{titel[:80]} – und {anzahl - 1} weitere"
+        else:
+            body = titel[:120]
 
-        print(f"  [{heimat}] '{titel[:60]}…'")
+        print(f"  [{heimat}] {anzahl} Artikel · '{titel[:55]}…'")
 
         # --- Web Push ---
         if private_key:
@@ -243,6 +256,16 @@ def benachrichtigungen_senden(conn, cutoff_iso):
                     fcm_fehler += 1
             except Exception:
                 fcm_fehler += 1
+
+        # Record this article as sent so the next run won't repeat it
+        cursor.execute("""
+            INSERT INTO push_benachrichtigt (heimat, artikel_hash, gesendet_am)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (heimat) DO UPDATE
+              SET artikel_hash = EXCLUDED.artikel_hash,
+                  gesendet_am  = EXCLUDED.gesendet_am
+        """, (heimat, hash_, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        conn.commit()
 
     for ep in web_loeschen:
         cursor.execute("DELETE FROM push_subscriptions WHERE endpoint = %s", (ep,))
@@ -366,6 +389,13 @@ def datenbank_einrichten(conn):
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_datum ON artikel(datum)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_quelle_region ON artikel(quelle, region)")
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS push_benachrichtigt (
+            heimat      TEXT PRIMARY KEY,
+            artikel_hash TEXT NOT NULL,
+            gesendet_am TEXT NOT NULL
+        )
+    """)
     conn.commit()
     cursor.close()
     print("Datenbank bereit (PostgreSQL/Supabase)")

@@ -2432,7 +2432,7 @@ function karteZahlenAktualisieren() {
       const wappenKey = Object.keys(WAPPEN).find(k => k.toLowerCase() === ort);
       if (wappenKey) {
         const tbb = t.getBBox();
-        const WAPPEN_OFFSET = { 'petersberg': [0,-55], 'großenlüder': [15,-60], 'neuhof': [0,-35] };
+        const WAPPEN_OFFSET = { 'petersberg': [0,-55], 'großenlüder': [15,-60], 'neuhof': [0,-35], 'dipperz': [100, -40] };
         const [ox, oy] = WAPPEN_OFFSET[ort] || [0, 0];
         const img = document.createElementNS(NS, 'image');
         img.setAttribute('class', 'k-badge');
