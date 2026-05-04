@@ -1510,6 +1510,10 @@ const ORT_AUSSCHLUSS = {
   'innenstadt': ['frankfurt', 'hünfeld', 'hanau', 'kassel', 'marburg', 'darmstadt'],
 };
 
+// Ortsteile, die gleichzeitig häufige deutsche Wörter/Eigennamen sind.
+// Sie werden nur gegen a.tags geprüft, nicht gegen den Volltext.
+const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'tann', 'nüst']);
+
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".
 function ortMatch(text, ort) {
@@ -1520,6 +1524,14 @@ function ortMatch(text, ort) {
     idx += 1;
   }
   return false;
+}
+
+// Wie ortMatch, aber ambige Ortsteil-Namen (ORTSTEILE_NUR_TAGS) werden nur in tags gesucht.
+function ortsteileMatch(text, tags) {
+  const tagsLower = (tags || '').toLowerCase();
+  return Object.keys(ORTSTEILE_MAPPING).some(o =>
+    ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tagsLower, o) : ortMatch(text, o)
+  );
 }
 
 // ── KATEGORIEN ──
@@ -1807,13 +1819,14 @@ async function artikelLaden(tage = 1) {
 function gefilterteArtikel() {
   function passt(a) {
     const text = ((a.titel || '') + ' ' + (a.tags || '') + ' ' + (a.beschreibung || '')).toLowerCase();
+    const tags = (a.tags || '').toLowerCase();
     if (suchbegriff && !text.includes(suchbegriff)) return false;
     if (aktivOrt) {
       if (aktivOrt === 'landkreis-fulda') {
         const r = (a.region || '').toLowerCase();
         const regionOk = r && r !== 'hessen' && r !== 'osthessen';
         const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
-          || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
+          || ortsteileMatch(text, tags);
         if (!regionOk && !textOk) return false;
         // Exclude articles whose title+tags name a foreign city but no Landkreis place in the title.
         // Only applied to 'osthessen' articles (Osthessen-News covers broad regional/national topics).
@@ -1823,12 +1836,12 @@ function gefilterteArtikel() {
           const titelTags = (titel + ' ' + (a.tags || '')).toLowerCase();
           const hatFremde = LANDKREIS_FREMDE.some(o => ortMatch(titelTags, o));
           const hatLokal = ORTE_LANDKREIS.some(o => ortMatch(titel, o))
-            || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(titel, o));
+            || ortsteileMatch(titel, tags);
           if (hatFremde && !hatLokal) return false;
         }
       } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
-          || Object.keys(ORTSTEILE_MAPPING).some(o => ortMatch(text, o));
+          || ortsteileMatch(text, tags);
         if (hatLandkreisOrt) return false;
       } else if (aktivOrt === 'gemeinden') {
         // Alle Gemeinden aus WAPPEN außer Stadt Fulda + ihre Ortsteile
