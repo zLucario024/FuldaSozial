@@ -671,8 +671,13 @@ function navMenuSchliessen() {
 async function artikelTeilen(link, titel, btn) {
   if (typeof umami !== 'undefined') umami.track('artikel-geteilt', { titel: titel.substring(0, 50), url: link });
   if (navigator.share) {
-    try { await navigator.share({ title: titel, url: link }); } catch (_) {}
-    return;
+    try {
+      await navigator.share({ title: titel, url: link });
+      return; // share sheet opened successfully
+    } catch (err) {
+      if (err && err.name === 'AbortError') return; // user cancelled — do nothing
+      // NotAllowedError or similar (e.g. standalone PWA on older iOS) — fall through to clipboard
+    }
   }
   try {
     await navigator.clipboard.writeText(link);
@@ -1432,6 +1437,28 @@ const ORTE_LANDKREIS = [
   'poppenhausen','bad salzschlirf','rhön','wasserkuppe','fuldaer','osthessen', 'region fulda'
 ];
 
+// ── Tunable filter config ──────────────────────────────────────────────────
+// Change values here — no need to edit passt() or other filter logic.
+const FILTER_CONFIG = {
+  // Generic/regional terms from ORTE_LANDKREIS that must NOT count as a specific
+  // local anchor in the hatLokal check. Add ambiguous terms here.
+  ORTE_LOKAL_AUSSCHLUSS: ['osthessen', 'fuldaer', 'rhön', 'region fulda', 'wasserkuppe'],
+
+  // Minimum keyword score for kategorieBestimmen to assign a specific category.
+  // 1 = any single weak keyword is enough; raise to 2 to require a strong keyword.
+  MIN_KATEGORIE_SCORE: 1,
+
+  // Ort-Werte, für die ein Artikel ausgeblendet wird, wenn Titel oder Tags eine
+  // fremde Stadt (aus LANDKREIS_FREMDE) enthalten. Verhindert z.B., dass ein
+  // Artikel über die "Gießener Innenstadt" im Fulda-Innenstadt-Filter auftaucht.
+  // Weitere mehrdeutige Ort-Werte hier eintragen.
+  ORT_FREMD_AUSSCHLUSS: new Set(['innenstadt']),
+};
+
+// Specific place names only — excludes generic regional terms that don't anchor
+// an article to the Landkreis (e.g. 'rhön' in a Leipzig headline is not local).
+const ORTE_LOKAL = ORTE_LANDKREIS.filter(o => !FILTER_CONFIG.ORTE_LOKAL_AUSSCHLUSS.includes(o));
+
 // ── ORTSTEILE / STADTTEILE → GEMEINDE ──
 const ORTSTEILE_MAPPING = {
   // Stadt Fulda – Stadtteile
@@ -1516,11 +1543,14 @@ const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'tann', 'nüst']);
 
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".
+// Erlaubt auch die deutsche Einwohner-/Adjektivform auf "-er" (z.B. "Fliedener", "Hainzeller").
 function ortMatch(text, ort) {
   let idx = 0;
   while ((idx = text.indexOf(ort, idx)) >= 0) {
-    const nach = text[idx + ort.length];
-    if (!nach || !/[a-zäöüß]/.test(nach)) return true;
+    const rest = text.slice(idx + ort.length);
+    if (!rest || !/[a-zäöüß]/.test(rest[0])) return true;
+    // "-er" Demonym erlauben: "Fliedener", "Hainzeller" usw.
+    if (rest[0] === 'e' && rest[1] === 'r' && (!rest[2] || !/[a-zäöüß]/.test(rest[2]))) return true;
     idx += 1;
   }
   return false;
@@ -1712,6 +1742,10 @@ const WAPPEN = {
   "Rasdorf":         `<img src="Design/Wappen/Rasdorf.png"         style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
   "Tann":            `<img src="Design/Wappen/Tann.png"            style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
 };
+// All Gemeinden (lowercase) except Stadt Fulda and the Landkreis entry — used in the 'gemeinden' filter.
+const GEMEINDE_LISTE = Object.keys(WAPPEN)
+  .filter(k => k !== 'Fulda' && k !== 'Landkreis Fulda')
+  .map(k => k.toLowerCase());
 const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
 
 function kategorieBestimmen(titel, tags) {
@@ -1724,7 +1758,7 @@ function kategorieBestimmen(titel, tags) {
     const score =
       [...strongSet].reduce((s, k) => s + (text.includes(k) ? 3 : 0), 0) +
       kat.keys.reduce((s, k) => s + (!strongSet.has(k) && text.includes(k) ? 1 : 0), 0);
-    if (score > besterScore) { besterScore = score; besteKat = name; }
+    if (score >= FILTER_CONFIG.MIN_KATEGORIE_SCORE && score > besterScore) { besterScore = score; besteKat = name; }
   }
   return besteKat;
 }
@@ -1828,15 +1862,15 @@ function gefilterteArtikel() {
         const textOk = ORTE_LANDKREIS.some(o => ortMatch(text, o))
           || ortsteileMatch(text, tags);
         if (!regionOk && !textOk) return false;
-        // Exclude articles whose title+tags name a foreign city but no Landkreis place in the title.
+        // Exclude articles whose title+tags name a foreign city but no Landkreis place in title+tags.
         // Only applied to 'osthessen' articles (Osthessen-News covers broad regional/national topics).
         // 'landkreis-fulda' sources (Marktkorb, Fuldainfo, …) are local and trusted unconditionally.
         if (r === 'osthessen') {
           const titel = (a.titel || '').toLowerCase();
           const titelTags = (titel + ' ' + (a.tags || '')).toLowerCase();
           const hatFremde = LANDKREIS_FREMDE.some(o => ortMatch(titelTags, o));
-          const hatLokal = ORTE_LANDKREIS.some(o => ortMatch(titel, o))
-            || ortsteileMatch(titel, tags);
+          const hatLokal = ORTE_LOKAL.some(o => ortMatch(titelTags, o))
+            || ortsteileMatch(titelTags, tags);
           if (hatFremde && !hatLokal) return false;
         }
       } else if (aktivOrt === 'hessen') {
@@ -1845,13 +1879,8 @@ function gefilterteArtikel() {
         if (hatLandkreisOrt) return false;
       } else if (aktivOrt === 'gemeinden') {
         // Alle Gemeinden aus WAPPEN außer Stadt Fulda + ihre Ortsteile
-        const gemeindeListe = Object.keys(WAPPEN)
-          .filter(k => k !== 'Fulda' && k !== 'Landkreis Fulda')
-          .map(k => k.toLowerCase());
-        const hatGemeinde = gemeindeListe.some(o => ortMatch(text, o))
-          || Object.entries(GEMEINDE_ORTSTEILE)
-              .filter(([g]) => gemeindeListe.includes(g))
-              .some(([, ortsteile]) => ortsteile.some(o => ortMatch(text, o)));
+        const hatGemeinde = GEMEINDE_LISTE.some(o => ortMatch(text, o))
+          || ortsteileMatch(text, tags);
         if (!hatGemeinde) return false;
       } else {
         const r = (a.region || '').toLowerCase();
@@ -1859,11 +1888,17 @@ function gefilterteArtikel() {
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
         const istDorf = ortsteile.length === 0 && Object.values(GEMEINDE_ORTSTEILE).some(l => l.includes(aktivOrt));
         const textOk = istDorf
-          ? text.includes(aktivOrt)
-          : (ortMatch(text, aktivOrt) || ortsteile.some(o => ortMatch(text, o)));
+          ? ortMatch(text, aktivOrt)
+          : (ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o)));
         if (!regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
-        if (ausschluss && ausschluss.some(a => ortMatch(text, a))) return false;
+        if (ausschluss && ausschluss.some(ausschlussOrt => ortMatch(text, ausschlussOrt))) return false;
+        // Für mehrdeutige Ort-Begriffe (z.B. "Innenstadt"): Artikel ausblenden, wenn
+        // Titel oder Tags eine bekannte Fremdstadt nennen.
+        if (FILTER_CONFIG.ORT_FREMD_AUSSCHLUSS.has(aktivOrt)) {
+          const titelTags = ((a.titel || '') + ' ' + (a.tags || '')).toLowerCase();
+          if (LANDKREIS_FREMDE.some(o => ortMatch(titelTags, o))) return false;
+        }
       }
     }
     if (aktivQuelle && (a.quelle || '') !== aktivQuelle) return false;
