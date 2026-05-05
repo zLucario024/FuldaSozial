@@ -1363,6 +1363,8 @@ let archivSuchErgebnisse = [];
 let _archivSuchTimeout = null;
 let archivOrtErgebnisse = [];
 let _archivOrtQuery = '';
+let quelleArchivErgebnisse = [];
+let _quelleArchivQuery = '';
 const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let meineHeimat = localStorage.getItem('meine-heimat') || '';
@@ -1426,7 +1428,7 @@ const LANDKREIS_FREMDE = [
   'leipzig','berlin','hamburg','münchen','köln','frankfurt','stuttgart',
   'düsseldorf','dortmund','hannover','bremen','dresden','nürnberg',
   'kassel','gießen','wiesbaden','darmstadt','marburg','erfurt',
-  'mainz','magdeburg','potsdam','rostock','kiel','saarbrücken',
+  'mainz','magdeburg','potsdam','rostock','kiel','saarbrücken','hanau','thüringen'
 ];
 
 // ── ORTE LANDKREIS FULDA ──
@@ -1568,8 +1570,8 @@ function ortsteileMatch(text, tags) {
 const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
-    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug', 'diebstahl'],
-    keys: ['raub','vorfall', 'polizei','unfall','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
+    strong: ['amokfahrt','unfall','vorfall','brand','blaulicht','mord','schießerei', 'betrug', 'diebstahl'],
+    keys: ['amokfahrt','raub','vorfall', 'polizei','unfall','unfälle','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1926,6 +1928,12 @@ function gefilterteArtikel() {
     const archivNeu = archivOrtErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
     return [...haupt, ...archivNeu];
   }
+  // Merge silent Quelle-archive results for infrequently publishing sources
+  if (aktivQuelle && _quelleArchivQuery === aktivQuelle && quelleArchivErgebnisse.length) {
+    const bekannteLinks = new Set(haupt.map(a => a.link));
+    const archivNeu = quelleArchivErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
+    return [...haupt, ...archivNeu];
+  }
   return haupt;
 }
 
@@ -1974,6 +1982,24 @@ function artikelAnzeigen() {
       ortArchivSuche(aktivOrt);
       return;
     }
+    if (aktivQuelle && _quelleArchivQuery !== aktivQuelle) {
+      if (hatMehr) {
+        grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+          + '<div class="spinner"></div>'
+          + '<span>Suche nach Artikeln…</span></div>';
+        document.getElementById('mehr-btn').style.display = 'none';
+        document.getElementById('archiv-hinweis').style.display = 'none';
+        mehrLaden();
+        return;
+      }
+      grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+        + '<div class="spinner"></div>'
+        + '<span>Suche im Archiv nach älteren Artikeln…</span></div>';
+      document.getElementById('mehr-btn').style.display = 'none';
+      document.getElementById('archiv-hinweis').style.display = 'none';
+      quelleArchivSuche(aktivQuelle);
+      return;
+    }
     const ortName = aktivOrt && !['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt) ? ` zu „${aktivOrt}"` : '';
     grid.innerHTML = `<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel${ortName} gefunden.</p>`
       + `<p style="font-size:.85rem;color:var(--text-muted);margin-top:.25rem">In der Suche findest du Artikel aus dem gesamten Archiv.</p></div>`;
@@ -1990,7 +2016,7 @@ function artikelAnzeigen() {
   pushHighlightAnzeigen();
   // Auto-fill: if filter active and initial results are sparse, fetch more without requiring a click
   if (hatMehr && gezeigt < PRO_SEITE) mehrLaden();
-  else _pruefOrtArchiv();
+  else { _pruefOrtArchiv(); _pruefQuelleArchiv(); }
 }
 
 async function mehrLaden() {
@@ -2043,7 +2069,7 @@ async function mehrLaden() {
   }
   btn.style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
-  _pruefOrtArchiv();
+  _pruefOrtArchiv(); _pruefQuelleArchiv();
 }
 
 function karteErstellen(artikel, index) {
@@ -2748,6 +2774,7 @@ function kategorieWaehlen(btn, k) {
 function quelleWaehlen(btn, q) {
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   btn.classList.add('aktiv-dunkel');
+  if (q !== aktivQuelle) { quelleArchivErgebnisse = []; _quelleArchivQuery = ''; }
   aktivQuelle = q;
   if (q && typeof umami !== 'undefined') umami.track('filter-quelle', { quelle: q });
   filterLeistAktualisieren(); urlAktualisieren(); artikelAnzeigen();
@@ -2792,6 +2819,24 @@ function _pruefOrtArchiv() {
   ortArchivSuche(aktivOrt);
 }
 
+async function quelleArchivSuche(quelle) {
+  _quelleArchivQuery = quelle;
+  try {
+    const res = await fetch(`${API}/artikel?quelle=${encodeURIComponent(quelle)}&tage=180&limit=200`);
+    const data = await res.json();
+    if (quelle !== aktivQuelle) return; // discard if source changed while in flight
+    quelleArchivErgebnisse = Array.isArray(data) ? data : (data.artikel || []);
+    artikelAnzeigen();
+  } catch(_) { if (quelle === aktivQuelle) artikelAnzeigen(); }
+}
+
+function _pruefQuelleArchiv() {
+  if (!aktivQuelle) return;
+  if (_quelleArchivQuery === aktivQuelle) return;
+  if (gefilterteArtikel().length >= PRO_SEITE) return;
+  quelleArchivSuche(aktivQuelle);
+}
+
 function sucheLöschen() {
   document.getElementById('suche').value = '';
   sucheAktualisieren();
@@ -2818,6 +2863,7 @@ function kategorieFilterLeeren() {
 }
 
 function quelleFilterLeeren() {
+  quelleArchivErgebnisse = []; _quelleArchivQuery = '';
   aktivQuelle = '';
   document.querySelectorAll('#quelle-chips .chip').forEach(c => c.classList.remove('aktiv-dunkel'));
   document.querySelector('#quelle-chips .chip').classList.add('aktiv-dunkel');
