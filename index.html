@@ -1233,28 +1233,28 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="chip" onclick="ortWaehlen(this,'zirkenbach')">Zirkenbach</button>
     </div>
     <div class="chip-reihe" id="gemeinden-chips" style="display:none; padding-top:.3rem; padding-left:.5rem; border-left: 2px solid var(--border);">
-      <button class="chip" onclick="ortWaehlen(this, 'hünfeld')">Hünfeld</button>
-      <button class="chip" onclick="ortWaehlen(this, 'künzell')">Künzell</button>
-      <button class="chip" onclick="ortWaehlen(this, 'petersberg')">Petersberg</button>
-      <button class="chip" onclick="ortWaehlen(this, 'neuhof')">Neuhof</button>
-      <button class="chip" onclick="ortWaehlen(this, 'eichenzell')">Eichenzell</button>
-      <button class="chip" onclick="ortWaehlen(this, 'flieden')">Flieden</button>
+      <button class="chip" onclick="ortWaehlen(this, 'bad salzschlirf')">Bad Salzschlirf</button>
       <button class="chip" onclick="ortWaehlen(this, 'burghaun')">Burghaun</button>
-      <button class="chip" onclick="ortWaehlen(this, 'großenlüder')">Großenlüder</button>
-      <button class="chip" onclick="ortWaehlen(this, 'hilders')">Hilders</button>
-      <button class="chip" onclick="ortWaehlen(this, 'hofbieber')">Hofbieber</button>
-      <button class="chip" onclick="ortWaehlen(this, 'gersfeld')">Gersfeld</button>
-      <button class="chip" onclick="ortWaehlen(this, 'tann')">Tann</button>
-      <button class="chip" onclick="ortWaehlen(this, 'eiterfeld')">Eiterfeld</button>
-      <button class="chip" onclick="ortWaehlen(this, 'rasdorf')">Rasdorf</button>
       <button class="chip" onclick="ortWaehlen(this, 'dipperz')">Dipperz</button>
       <button class="chip" onclick="ortWaehlen(this, 'ebersburg')">Ebersburg</button>
       <button class="chip" onclick="ortWaehlen(this, 'ehrenberg')">Ehrenberg</button>
+      <button class="chip" onclick="ortWaehlen(this, 'eichenzell')">Eichenzell</button>
+      <button class="chip" onclick="ortWaehlen(this, 'eiterfeld')">Eiterfeld</button>
+      <button class="chip" onclick="ortWaehlen(this, 'flieden')">Flieden</button>
+      <button class="chip" onclick="ortWaehlen(this, 'gersfeld')">Gersfeld</button>
+      <button class="chip" onclick="ortWaehlen(this, 'großenlüder')">Großenlüder</button>
+      <button class="chip" onclick="ortWaehlen(this, 'hilders')">Hilders</button>
+      <button class="chip" onclick="ortWaehlen(this, 'hofbieber')">Hofbieber</button>
       <button class="chip" onclick="ortWaehlen(this, 'hosenfeld')">Hosenfeld</button>
+      <button class="chip" onclick="ortWaehlen(this, 'hünfeld')">Hünfeld</button>
       <button class="chip" onclick="ortWaehlen(this, 'kalbach')">Kalbach</button>
+      <button class="chip" onclick="ortWaehlen(this, 'künzell')">Künzell</button>
+      <button class="chip" onclick="ortWaehlen(this, 'neuhof')">Neuhof</button>
       <button class="chip" onclick="ortWaehlen(this, 'nüsttal')">Nüsttal</button>
+      <button class="chip" onclick="ortWaehlen(this, 'petersberg')">Petersberg</button>
       <button class="chip" onclick="ortWaehlen(this, 'poppenhausen')">Poppenhausen</button>
-      <button class="chip" onclick="ortWaehlen(this, 'bad salzschlirf')">Bad Salzschlirf</button>
+      <button class="chip" onclick="ortWaehlen(this, 'rasdorf')">Rasdorf</button>
+      <button class="chip" onclick="ortWaehlen(this, 'tann')">Tann</button>
     </div>
   </div>
 
@@ -2395,6 +2395,7 @@ function stadtteileToggle(btn) {
   if (offen) {
     // second click → close list, go back to Landkreis Fulda
     _stadtteileToggle(false);
+    _gemeindenToggle(false);
     const lkChip = [...document.querySelectorAll('#ort-chips .chip')]
       .find(c => (c.getAttribute('onclick') || '').includes("'landkreis-fulda'"));
     document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
@@ -2404,6 +2405,7 @@ function stadtteileToggle(btn) {
   } else {
     // first click → open list, filter to Stadt Fulda
     _stadtteileToggle(true);
+    _gemeindenToggle(false);
     document.querySelectorAll('#ort-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
     if (btn) btn.classList.add('aktiv-ort');
     _kategorieZurueck(); aktivOrt = 'fulda';
