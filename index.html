@@ -1467,22 +1467,34 @@ const ORTE_LOKAL = ORTE_LANDKREIS.filter(o => !FILTER_CONFIG.ORTE_LOKAL_AUSSCHLU
 // ── ORTSTEILE / STADTTEILE → GEMEINDE ──
 const ORTSTEILE_MAPPING = {
   // Stadt Fulda – Stadtteile
-  'aschenberg':'fulda','bronnzell':'fulda','dietershan':'fulda',
-  'döllbach':'fulda','edelzell':'fulda','frauenberg':'fulda',
-  'gläserzell':'fulda','haimbach':'fulda','horas':'fulda',
+  'aschenberg':'fulda','bernhards':'fulda','besges':'fulda',
+  'bronnzell':'fulda','dietershan':'fulda','döllbach':'fulda',
+  'edelzell':'fulda','frauenberg':'fulda','fulda-galerie':'fulda',
+  'gläserzell':'fulda','haimbach':'fulda','harmerz':'fulda',
+  'hochschule fulda':'fulda','horas':'fulda','istergiesel':'fulda',
   'johannesberg':'fulda','kämmerzell':'fulda','kohlhaus':'fulda',
-  'lehnerz':'fulda','malkes':'fulda','neuenberg':'fulda','niesig':'fulda',
-  'roßberg':'fulda','sickels':'fulda','süßenbach':'fulda',
-  'uffhausen':'fulda','ziehers':'fulda', 'hochschule fulda' : 'fulda', 'weimarer tunnel' : 'fulda',
+  'lehnerz':'fulda','lüdermünd':'fulda','maberzell':'fulda',
+  'maikes':'fulda','malkes':'fulda','mittelrode':'fulda',
+  'neuenberg':'fulda','niederrode':'fulda','niesig':'fulda',
+  'nordend':'fulda','oberrode':'fulda','ostend':'fulda',
+  'rodges':'fulda','roßberg':'fulda','sickels':'fulda',
+  'südend':'fulda','süßenbach':'fulda','uffhausen':'fulda',
+  'weimarer tunnel':'fulda','westend':'fulda',
+  'ziehers':'fulda','ziehers-nord':'fulda','ziehers-süd':'fulda',
   // Gemeinde Künzell
   'bachrain':'künzell','dirlos':'künzell','engelhelms':'künzell',
-  'haunes':'künzell','pilgerzell':'künzell', 'dietershausen':'künzell', 'keulos':'künzell', 'wissels':'künzell', 'dassen':'künzell',
+  'haunes':'künzell','pilgerzell':'künzell', 'dietershausen':'künzell', 'keulos':'künzell', 'dassen':'künzell',
   // Gemeinde Petersberg
-  'haunedorf' : 'petersberg', 'marbach':'petersberg', 'margretenhaun':'petersberg','steinau':'petersberg', 'steinhaus':'petersberg',
-  'almendorf':'petersberg', 'böckels':'petersberg', 'melzdorf':'petersberg', 'rex':'petersberg', 'stöckels':'petersberg', 'untergötzenhof':'petersberg',
+  'almendorf':'petersberg','böckels':'petersberg','dalherda':'petersberg',
+  'großsassen':'petersberg','habelsbach':'petersberg','haunedorf':'petersberg',
+  'kesselbach':'petersberg','kleinsassen':'petersberg','marbach':'petersberg',
+  'margretenhaun':'petersberg','melzdorf':'petersberg','orferode':'petersberg',
+  'rex':'petersberg','roßbach':'petersberg','steinau':'petersberg',
+  'steinhaus':'petersberg','stöckels':'petersberg','untergötzenhof':'petersberg',
   // Gemeinde Neuhof
-  'hauswurz':'neuhof', 'dorfborn':'neuhof','giesel':'neuhof',
-  'rommerz':'neuhof','hattenhof':'neuhof','kauppen':'neuhof','tiefengruben':'neuhof',
+  'dorfborn':'neuhof','giesel':'neuhof','hattenhof':'neuhof',
+  'hauswurz':'neuhof','kauppen':'neuhof','motzlar':'neuhof',
+  'rommerz':'neuhof','schachten':'neuhof','tiefengruben':'neuhof',
   // Gemeinde Eichenzell
   'kerzell':'eichenzell','löschenrod':'eichenzell','lütter':'eichenzell',
   'rothemann':'eichenzell','welkers':'eichenzell','wissels':'eichenzell',
@@ -1498,7 +1510,7 @@ const ORTSTEILE_MAPPING = {
   'müs':'großenlüder','uttrichshausen':'großenlüder',
   // Stadt Hünfeld
   'großenbach':'hünfeld','kirchhasel':'hünfeld','mackenzell':'hünfeld',
-  'malges':'hünfeld','molzbach':'hünfeld','steinbach':'hünfeld', 'hünfelder' : 'hünfeld',
+  'malges':'hünfeld','molzbach':'hünfeld','steinbach':'hünfeld',
   // Gemeinde Hofbieber
   'langenbieber':'hofbieber','mittelbieber':'hofbieber',
   'niederbieber':'hofbieber','schwarzbach':'hofbieber','traisbach':'hofbieber',
@@ -1506,7 +1518,10 @@ const ORTSTEILE_MAPPING = {
   'heubach':'kalbach','mittelkalbach':'kalbach','niederkalbach':'kalbach',
   'oberkalbach':'kalbach','zünters':'kalbach',
   // Gemeinde Hosenfeld
-  'blankenau':'hosenfeld','brandlos':'hosenfeld','hainzell':'hosenfeld','jossa':'hosenfeld','pfaffenrod':'hosenfeld','poppenrod':'hosenfeld','schletzenhausen':'hosenfeld',
+  'altenhof':'hosenfeld','blankenau':'hosenfeld','brandlos':'hosenfeld',
+  'büchenberg':'hosenfeld','eichenberg':'hosenfeld','hainzell':'hosenfeld',
+  'jossa':'hosenfeld','mittelhaun':'hosenfeld','pfaffenrod':'hosenfeld',
+  'poppenrod':'hosenfeld','schletzenhausen':'hosenfeld',
   // Gemeinde Dipperz
   'dörnhagen':'dipperz','rönshausen':'dipperz',
   // Gemeinde Ebersburg
@@ -1515,12 +1530,13 @@ const ORTSTEILE_MAPPING = {
   // Gemeinde Ehrenberg (Rhön)
   'reulbach':'ehrenberg','seiferts':'ehrenberg','wüstensachsen':'ehrenberg',
   // Gemeinde Hilders
-  'dietges':'hilders','liebhards':'hilders',
-  'simmershausen':'hilders','unterweid':'hilders',
+  'dietges':'hilders','gehilf':'hilders','liebhards':'hilders',
+  'simmershausen':'hilders','unterweid':'hilders','wickers':'hilders',
   // Stadt Gersfeld (Rhön)
-  'melperts':'gersfeld',
+  'findlos':'gersfeld','habelsdorf':'gersfeld','melperts':'gersfeld',
+  'obernhausen':'gersfeld','schachen':'gersfeld','seifertshausen':'gersfeld',
   // Gemeinde Tann (Rhön)
-  'günthers':'tann','lahrbach':'tann','neuswarts':'tann',
+  'dippach':'tann','günthers':'tann','lahrbach':'tann','neuswarts':'tann',
   // Gemeinde Poppenhausen (Wasserkuppe)
   'abtsroda':'poppenhausen','rodholz':'poppenhausen','sieblos':'poppenhausen',
   // Gemeinde Nüsttal
@@ -1529,6 +1545,8 @@ const ORTSTEILE_MAPPING = {
   // Gemeinde Eiterfeld
   'arzell':'eiterfeld','buchenau':'eiterfeld',
   'großentaft':'eiterfeld','leibolz':'eiterfeld','soisdorf':'eiterfeld',
+  // Gemeinde Rasdorf
+  'habel':'rasdorf','setzelbach':'rasdorf',
 };
 // Reverse-Lookup: Gemeinde → Array ihrer Ortsteile (einmalig berechnet)
 const GEMEINDE_ORTSTEILE = {};
@@ -1544,7 +1562,7 @@ const ORT_AUSSCHLUSS = {
 
 // Ortsteile, die gleichzeitig häufige deutsche Wörter/Eigennamen sind.
 // Sie werden nur gegen a.tags geprüft, nicht gegen den Volltext.
-const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'tann', 'nüst']);
+const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'nüst']);
 
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".

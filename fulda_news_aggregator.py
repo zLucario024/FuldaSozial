@@ -346,8 +346,9 @@ def html_session_erstellen():
     session.headers.update(HTML_HEADERS)
     return session
 
-# Quellen, deren RSS-Beschreibung Sidebar-/Infobox-Inhalte enthält → Meta-Tag direkt vom Artikel holen
-QUELLEN_META_DESC = {'osthessen-news.de'}
+# Quellen, deren RSS-Beschreibung Sidebar-/Infobox-Inhalte enthält ODER leer ist →
+# Meta-Tag direkt vom Artikel holen, um der KI mehr Kontext zu geben.
+QUELLEN_META_DESC = {'osthessen-news.de', 'fuldaerzeitung.de'}
 
 def auf_zwei_saetze(text: str) -> str:
     """Kürzt Text auf maximal zwei Sätze."""
@@ -430,8 +431,11 @@ def tags_generieren(titel_liste, beschreibung_liste=None):
         f"{i+1}. {titel}" + (f"\n   Kontext: {beschreibung_liste[i]}" if beschreibung_liste[i] else "")
         for i, titel in enumerate(titel_liste)
     )
-    prompt = f"""Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
-Fokus auf: Ort, Thema, beteiligte Personen oder Institutionen.
+    prompt = f"""Du bist ein Nachrichten-Tagger für den Landkreis Fulda (Hessen).
+Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
+Falls ein Ortsname aus dem Landkreis erkennbar ist, setze diesen als ersten Tag — auch kleinste Dörfer.
+Gemeinden: fulda, hünfeld, künzell, petersberg, neuhof, eichenzell, flieden, burghaun, großenlüder, hilders, hofbieber, gersfeld, tann, eiterfeld, rasdorf, dipperz, ebersburg, ehrenberg, hosenfeld, kalbach, nüsttal, poppenhausen.
+Ortsteile/Dörfer (Auswahl): rückers, schweben, schmalnau, wehrda, gruben, hünhan, nüst, rothenkirchen, mackenzell, kirchhasel, molzbach, malges, steinbach, pilgerzell, bachrain, horas, johannesberg, maberzell, kämmerzell, bimbach, kleinlüder, uttrichshausen, rommerz, hainzell, blankenau, weyhers, wüstensachsen, sieblos, abtsroda, rodholz, ützhausen, mottgers, großentaft, soisdorf, leibolz, buchenau, arzell, melperts, günthers, lahrbach, neuswarts, dietges, liebhards, simmershausen, löschenrod, kerzell, welkers, haindorf.
 Trenne die Tags mit " · ".
 Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung, keine Erklärungen.
 
@@ -755,10 +759,35 @@ def html_quelle_verarbeiten(quelle, conn):
 
     if neue_artikel:
         print(f"  Gefunden: {len(gefundene)} | Neu: {neu} | Duplikate: {duplikate}")
+
+        # Fetch meta descriptions for sources that need it (e.g. Fuldaer Zeitung)
+        if any(dom in quelle.get("base_url", "") for dom in QUELLEN_META_DESC):
+            print(f"  Hole Meta-Beschreibungen für {len(neue_artikel)} Artikel...")
+            for hash_wert, _ in neue_artikel:
+                cursor.execute(
+                    "SELECT link, beschreibung FROM artikel WHERE hash = %s", (hash_wert,)
+                )
+                row = cursor.fetchone()
+                if row and not row[1]:
+                    meta = meta_beschreibung_holen(row[0])
+                    if meta:
+                        cursor.execute(
+                            "UPDATE artikel SET beschreibung = %s WHERE hash = %s",
+                            (meta, hash_wert)
+                        )
+            conn.commit()
+
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
         for i in range(0, len(neue_artikel), 20):
             batch = neue_artikel[i:i + 20]
-            tags_dict = tags_generieren([t for _, t in batch])
+            batch_hashes = [h for h, _ in batch]
+            cursor.execute(
+                "SELECT hash, beschreibung FROM artikel WHERE hash = ANY(%s)",
+                (batch_hashes,)
+            )
+            desc_map = {row[0]: row[1] or "" for row in cursor.fetchall()}
+            beschreibungen = [desc_map.get(h, "") for h, _ in batch]
+            tags_dict = tags_generieren([t for _, t in batch], beschreibungen)
             for hash_wert, titel in batch:
                 tags = tags_dict.get(titel, "")
                 if tags:
@@ -960,30 +989,36 @@ BEKANNTE_REGIONEN = (
     'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
     'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
     # Ortsteile Künzell
-    'bachrain', 'dirlos', 'engelhelms', 'haunes', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms',
+    'haunes', 'keulos', 'pilgerzell',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'dalherda', 'giesel', 'großsassen', 'habelsbach',
-    'kesselbach', 'kleinsassen', 'marbach', 'orferode', 'roßbach',
+    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach',
+    'haunedorf', 'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun',
+    'melzdorf', 'orferode', 'rex', 'roßbach', 'steinau', 'steinhaus',
+    'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
-    'hauswurz', 'hainzell', 'motzlar', 'rommerz', 'schachten',
+    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen',
+    'motzlar', 'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
     'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
     # Ortsteile Flieden
-    'haindorf', 'kohlgrund', 'rückers',
+    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund',
+    'magdlos', 'rückers', 'schweben', 'stork', 'struth',
     # Ortsteile Burghaun
     'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
     'steens', 'thälau', 'wehrda',
     # Ortsteile Großenlüder
     'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
     # Ortsteile Hünfeld
-    'großenbach', 'hünfelder', 'kirchhasel', 'mackenzell', 'malges',
+    'großenbach', 'kirchhasel', 'mackenzell', 'malges',
     'molzbach', 'steinbach',
     # Ortsteile Hofbieber
     'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
     # Ortsteile Kalbach
     'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
     # Ortsteile Hosenfeld
-    'altenhof', 'büchenberg', 'eichenberg', 'mittelhaun',
+    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg',
+    'hainzell', 'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
     # Ortsteile Dipperz
     'dörnhagen', 'rönshausen',
     # Ortsteile Ebersburg
@@ -991,32 +1026,131 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
     # Ortsteile Hilders
-    'dietges', 'liebhards', 'simmershausen', 'unterweid',
+    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Gersfeld
-    'melperts',
+    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
-    'günthers', 'lahrbach', 'neuswarts',
+    'dippach', 'günthers', 'lahrbach', 'neuswarts',
     # Ortsteile Poppenhausen
     'abtsroda', 'rodholz', 'sieblos',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
     # Ortsteile Eiterfeld
     'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    # Ortsteile Rasdorf
+    'habel', 'setzelbach',
 )
 
 _BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
 _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
 
+# Maps every Ortsteil/Stadtteil to its parent Gemeinde key (matching WAPPEN_NAMEN).
+# Keep in sync with ORTSTEILE_MAPPING in index.html.
+ORTSTEILE_TO_GEMEINDE = {
+    # Stadt Fulda – Stadtteile
+    'aschenberg': 'fulda', 'bernhards': 'fulda', 'besges': 'fulda',
+    'bronnzell': 'fulda', 'dietershan': 'fulda', 'döllbach': 'fulda',
+    'edelzell': 'fulda', 'frauenberg': 'fulda', 'fulda-galerie': 'fulda',
+    'gläserzell': 'fulda', 'haimbach': 'fulda', 'harmerz': 'fulda',
+    'hochschule fulda': 'fulda', 'horas': 'fulda', 'innenstadt': 'fulda',
+    'istergiesel': 'fulda', 'johannesberg': 'fulda', 'kämmerzell': 'fulda',
+    'kohlhaus': 'fulda', 'lehnerz': 'fulda', 'lüdermünd': 'fulda',
+    'maberzell': 'fulda', 'maikes': 'fulda', 'malkes': 'fulda',
+    'mittelrode': 'fulda', 'neuenberg': 'fulda', 'niederrode': 'fulda',
+    'niesig': 'fulda', 'nordend': 'fulda', 'oberrode': 'fulda',
+    'ostend': 'fulda', 'rodges': 'fulda', 'roßberg': 'fulda',
+    'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda',
+    'uffhausen': 'fulda', 'weimarer tunnel': 'fulda', 'westend': 'fulda',
+    'ziehers': 'fulda', 'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
+    # Gemeinde Künzell
+    'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell',
+    'dirlos': 'künzell', 'engelhelms': 'künzell', 'haunes': 'künzell',
+    'keulos': 'künzell', 'pilgerzell': 'künzell',
+    # Gemeinde Petersberg
+    'almendorf': 'petersberg', 'böckels': 'petersberg', 'dalherda': 'petersberg',
+    'großsassen': 'petersberg', 'habelsbach': 'petersberg', 'haunedorf': 'petersberg',
+    'kesselbach': 'petersberg', 'kleinsassen': 'petersberg', 'marbach': 'petersberg',
+    'margretenhaun': 'petersberg', 'melzdorf': 'petersberg', 'orferode': 'petersberg',
+    'rex': 'petersberg', 'roßbach': 'petersberg', 'steinau': 'petersberg',
+    'steinhaus': 'petersberg', 'stöckels': 'petersberg', 'untergötzenhof': 'petersberg',
+    # Gemeinde Neuhof
+    'dorfborn': 'neuhof', 'giesel': 'neuhof', 'hattenhof': 'neuhof',
+    'hauswurz': 'neuhof', 'kauppen': 'neuhof', 'motzlar': 'neuhof',
+    'rommerz': 'neuhof', 'schachten': 'neuhof', 'tiefengruben': 'neuhof',
+    # Gemeinde Eichenzell
+    'kerzell': 'eichenzell', 'löschenrod': 'eichenzell', 'lütter': 'eichenzell',
+    'rothemann': 'eichenzell', 'welkers': 'eichenzell', 'wissels': 'eichenzell',
+    'zirkenbach': 'eichenzell',
+    # Gemeinde Flieden
+    'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden',
+    'höf und haid': 'flieden', 'kohlgrund': 'flieden', 'magdlos': 'flieden',
+    'rückers': 'flieden', 'schweben': 'flieden', 'stork': 'flieden',
+    'struth': 'flieden',
+    # Gemeinde Burghaun
+    'gruben': 'burghaun', 'hettenhausen': 'burghaun', 'hünhan': 'burghaun',
+    'nüst': 'burghaun', 'rothenkirchen': 'burghaun', 'schmalnau': 'burghaun',
+    'steens': 'burghaun', 'thälau': 'burghaun', 'wehrda': 'burghaun',
+    # Gemeinde Großenlüder
+    'bimbach': 'großenlüder', 'kleinlüder': 'großenlüder',
+    'müs': 'großenlüder', 'uttrichshausen': 'großenlüder',
+    # Stadt Hünfeld
+    'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld',
+    'malges': 'hünfeld', 'molzbach': 'hünfeld', 'steinbach': 'hünfeld',
+    # Gemeinde Hofbieber
+    'langenbieber': 'hofbieber', 'mittelbieber': 'hofbieber',
+    'niederbieber': 'hofbieber', 'schwarzbach': 'hofbieber', 'traisbach': 'hofbieber',
+    # Gemeinde Kalbach
+    'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach',
+    'oberkalbach': 'kalbach', 'zünters': 'kalbach',
+    # Gemeinde Hosenfeld
+    'altenhof': 'hosenfeld', 'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld',
+    'büchenberg': 'hosenfeld', 'eichenberg': 'hosenfeld', 'hainzell': 'hosenfeld',
+    'jossa': 'hosenfeld', 'mittelhaun': 'hosenfeld', 'pfaffenrod': 'hosenfeld',
+    'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
+    # Gemeinde Dipperz
+    'dörnhagen': 'dipperz', 'rönshausen': 'dipperz',
+    # Gemeinde Ebersburg
+    'euters': 'ebersburg', 'götzenhof': 'ebersburg',
+    'thalau': 'ebersburg', 'weyhers': 'ebersburg',
+    # Gemeinde Ehrenberg
+    'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'wüstensachsen': 'ehrenberg',
+    # Gemeinde Hilders
+    'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders',
+    'simmershausen': 'hilders', 'unterweid': 'hilders', 'wickers': 'hilders',
+    # Stadt Gersfeld (Rhön)
+    'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld',
+    'obernhausen': 'gersfeld', 'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',
+    # Gemeinde Tann (Rhön)
+    'dippach': 'tann', 'günthers': 'tann', 'lahrbach': 'tann', 'neuswarts': 'tann',
+    # Gemeinde Poppenhausen (Wasserkuppe)
+    'abtsroda': 'poppenhausen', 'rodholz': 'poppenhausen', 'sieblos': 'poppenhausen',
+    # Gemeinde Nüsttal
+    'hofaschenbach': 'nüsttal', 'morles': 'nüsttal',
+    'mottgers': 'nüsttal', 'ützhausen': 'nüsttal',
+    # Gemeinde Eiterfeld
+    'arzell': 'eiterfeld', 'buchenau': 'eiterfeld',
+    'großentaft': 'eiterfeld', 'leibolz': 'eiterfeld', 'soisdorf': 'eiterfeld',
+    # Gemeinde Rasdorf
+    'habel': 'rasdorf', 'setzelbach': 'rasdorf',
+}
+
+
+def _region_aus_tag_bestimmen(tag_norm):
+    """Resolve a normalised tag to a Gemeinde key, or None if not a known place.
+    Checks Gemeinden first, then resolves Ortsteile to their parent Gemeinde."""
+    if tag_norm in WAPPEN_NAMEN:
+        return tag_norm
+    return ORTSTEILE_TO_GEMEINDE.get(tag_norm)
+
 
 def _region_retroaktiv_korrigieren(conn):
-    """Fix existing articles whose tags contain a known Gemeinde/Stadtteil
+    """Fix existing articles whose tags contain a known Gemeinde/Ortsteil
     but whose region is still set to a broad value (hessen, osthessen, landkreis-fulda, etc.).
     Safe to run on every aggregator start — only updates rows that need it."""
     cursor = conn.cursor()
 
-    # Repair: articles that were wrongly promoted to Ortsteil-level regions
-    # (e.g. 'rückers', 'löschenrod') by a one-off retroactive run are reset to
-    # 'landkreis-fulda'. Ortsteil filtering in the frontend works via text-matching anyway.
+    # Reset any Ortsteil-level regions (e.g. 'rückers') back to 'landkreis-fulda'
+    # so the loop below can re-promote them correctly to the parent Gemeinde.
     GEMEINDEN = tuple(WAPPEN_NAMEN.keys()) + ('landkreis-fulda', 'hessen', 'osthessen')
     cursor.execute(
         "UPDATE artikel SET region = 'landkreis-fulda'"
@@ -1035,11 +1169,11 @@ def _region_retroaktiv_korrigieren(conn):
     updated = 0
     for hash_wert, tags_str in rows:
         for tag in tags_str.split('·'):
-            tag_norm = tag.strip().lower()
-            if tag_norm in _BEKANNTE_SET:
+            ziel = _region_aus_tag_bestimmen(tag.strip().lower())
+            if ziel:
                 cursor.execute(
                     "UPDATE artikel SET region = %s WHERE hash = %s",
-                    (tag_norm, hash_wert)
+                    (ziel, hash_wert)
                 )
                 updated += 1
                 break
@@ -1050,10 +1184,10 @@ def _region_retroaktiv_korrigieren(conn):
 
 
 def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
-    """Upgrades an article's region to a specific Gemeinde/Stadtteil/Ortsteil
-    when the AI-assigned tags contain a matching known-region name.
-    This prevents Hessen/Osthessen articles that were tagged with a local
-    place name from being archived after 14 days."""
+    """Upgrades an article's region to a specific Gemeinde when the AI-assigned
+    tags contain a matching place name (Gemeinde or Ortsteil → parent Gemeinde).
+    This prevents Hessen/Osthessen articles tagged with a local place from being
+    archived after 14 days."""
     BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
     for hash_wert, _ in neue_artikel:
         cursor.execute("SELECT tags, region FROM artikel WHERE hash = %s", (hash_wert,))
@@ -1063,11 +1197,11 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
         if row[1] not in BROAD:
             continue
         for tag in row[0].split('·'):
-            tag_norm = tag.strip().lower()
-            if tag_norm in _BEKANNTE_SET:
+            ziel = _region_aus_tag_bestimmen(tag.strip().lower())
+            if ziel:
                 cursor.execute(
                     "UPDATE artikel SET region = %s WHERE hash = %s",
-                    (tag_norm, hash_wert)
+                    (ziel, hash_wert)
                 )
                 break
     conn.commit()

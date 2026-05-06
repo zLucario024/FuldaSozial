@@ -42,30 +42,36 @@ BEKANNTE_REGIONEN = {
     'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
     'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
     # Ortsteile Künzell
-    'bachrain', 'dirlos', 'engelhelms', 'haunes', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms',
+    'haunes', 'keulos', 'pilgerzell',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'dalherda', 'giesel', 'großsassen', 'habelsbach',
-    'kesselbach', 'kleinsassen', 'marbach', 'orferode', 'roßbach',
+    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach',
+    'haunedorf', 'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun',
+    'melzdorf', 'orferode', 'rex', 'roßbach', 'steinau', 'steinhaus',
+    'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
-    'hauswurz', 'hainzell', 'motzlar', 'rommerz', 'schachten',
+    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen',
+    'motzlar', 'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
     'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
     # Ortsteile Flieden
-    'haindorf', 'kohlgrund', 'rückers',
+    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund',
+    'magdlos', 'rückers', 'schweben', 'stork', 'struth',
     # Ortsteile Burghaun
     'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
     'steens', 'thälau', 'wehrda',
     # Ortsteile Großenlüder
     'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
     # Ortsteile Hünfeld
-    'großenbach', 'hünfelder', 'kirchhasel', 'mackenzell', 'malges',
+    'großenbach', 'kirchhasel', 'mackenzell', 'malges',
     'molzbach', 'steinbach',
     # Ortsteile Hofbieber
     'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
     # Ortsteile Kalbach
     'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
     # Ortsteile Hosenfeld
-    'altenhof', 'büchenberg', 'eichenberg', 'mittelhaun',
+    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg',
+    'hainzell', 'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
     # Ortsteile Dipperz
     'dörnhagen', 'rönshausen',
     # Ortsteile Ebersburg
@@ -73,17 +79,19 @@ BEKANNTE_REGIONEN = {
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
     # Ortsteile Hilders
-    'dietges', 'liebhards', 'simmershausen', 'unterweid',
+    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Gersfeld
-    'melperts',
+    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
-    'günthers', 'lahrbach', 'neuswarts',
+    'dippach', 'günthers', 'lahrbach', 'neuswarts',
     # Ortsteile Poppenhausen
     'abtsroda', 'rodholz', 'sieblos',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
     # Ortsteile Eiterfeld
     'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    # Ortsteile Rasdorf
+    'habel', 'setzelbach',
 }
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
