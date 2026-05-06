@@ -769,6 +769,20 @@ document.addEventListener('DOMContentLoaded', function() {
     #karte-oeffnen-btn { flex-direction:column; gap:5px; padding:8px 14px; border-radius:10px; }
     #karte-btn-wappen { display:block; width:44px; height:auto; object-fit:contain; }
   }
+  /* Gemeinde im Fokus — Header-Karte (Desktop) */
+  #fokus-widget-header { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; width:130px; flex-shrink:0; border:2px solid var(--rot); border-radius:12px; padding:16px 12px; text-decoration:none; background:none; color:var(--rot); cursor:pointer; transition:background .2s; }
+  #fokus-widget-header:hover { background:var(--rot-hell); }
+  #fokus-wappen-header { width:72px; height:auto; object-fit:contain; }
+  .fokus-header-label { font-size:.6rem; color:var(--grau-mittel); text-transform:uppercase; letter-spacing:.07em; font-weight:500; text-align:center; line-height:1.4; }
+  #fokus-name-header { font-size:.95rem; font-weight:700; color:var(--rot); font-family:var(--font-display); }
+  /* Gemeinde im Fokus — Chip (Mobile only) */
+  #fokus-widget { display:none; } /* hidden on desktop; shown in mobile chip-reihe */
+  @media (max-width:768px) {
+    #fokus-widget { display:flex; flex-direction:column; align-items:center; gap:5px; padding:8px 14px; border-radius:10px; border:2px solid var(--rot); text-decoration:none; background:none; color:var(--rot); flex-shrink:0; order:1; }
+    #fokus-widget:hover { background:var(--rot-hell); }
+    #fokus-wappen { width:44px; height:auto; display:block; object-fit:contain; }
+    .fokus-label { display:block; font-size:.55rem; color:var(--grau-mittel); font-weight:400; letter-spacing:.04em; text-transform:uppercase; line-height:1.4; }
+  }
   /* Karten-Modal */
   #karte-mobil-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:1500; align-items:flex-end; justify-content:center; }
   #karte-mobil-modal.aktiv { display:flex; }
@@ -930,6 +944,11 @@ document.addEventListener('DOMContentLoaded', function() {
       <button onclick="karteReset()">Filter zurücksetzen</button>
     </div>
   </div>
+  <a id="fokus-widget-header" href="" target="_blank" rel="noopener noreferrer" aria-label="Gemeinde im Fokus">
+    <span class="fokus-header-label">Gemeinde im Fokus</span>
+    <img id="fokus-wappen-header" src="" alt="">
+    <span id="fokus-name-header"></span>
+  </a>
   <div id="karte-panel">
     <div id="karte-map-col">
     <div id="karte-wrap">
@@ -1100,23 +1119,23 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
   <nav class="nav-menu-panel">
     <button class="nav-menu-close" id="nav-menu-close" onclick="navMenuSchliessen()" aria-label="Menü schließen">✕</button>
-    <a href="landkreis.html" class="nav-menu-item" style="background:#C9A227;color:#3a2000;font-weight:700;border-radius:8px">
+    <a href="landkreis.html" class="nav-menu-item" data-umami-event="nav-landkreis" style="background:#C9A227;color:#3a2000;font-weight:700;border-radius:8px">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Unser Landkreis
     </a>
-    <a href="ueber.html" class="nav-menu-item">
+    <a href="ueber.html" class="nav-menu-item" data-umami-event="nav-ueber">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
       Über RegioNachrichten
     </a>
-    <a href="archiv.html" class="nav-menu-item">
+    <a href="archiv.html" class="nav-menu-item" data-umami-event="nav-archiv">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9" y1="14.5" x2="15" y2="14.5"/></svg>
       Archiv
     </a>
-    <a href="impressum.html" class="nav-menu-item">
+    <a href="impressum.html" class="nav-menu-item" data-umami-event="nav-impressum">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Impressum
     </a>
-    <a href="datenschutz.html" class="nav-menu-item">
+    <a href="datenschutz.html" class="nav-menu-item" data-umami-event="nav-datenschutz">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Datenschutz
     </a>
@@ -1182,6 +1201,22 @@ document.addEventListener('DOMContentLoaded', function() {
         </span>
         <button id="push-bell" class="push-bell-btn" onclick="bellKlick()" title="Benachrichtigungen aktivieren" aria-label="Benachrichtigungen" style="display:none"><span id="push-bell-icon">🔔</span><span id="push-bell-label">Benachrichtigungen</span></button>
       </span>
+      <a id="fokus-widget" href="" target="_blank" rel="noopener noreferrer" aria-label="Gemeinde im Fokus">
+        <img id="fokus-wappen" src="" alt="">
+        <span class="fokus-label">Im Fokus</span>
+        <span id="fokus-name"></span>
+      </a>
+      <script>
+        const FOKUS_GEMEINDE = { name: 'Flieden', wappen: 'Design/Wappen/Flieden.png', url: 'https://www.rnfulda.de/flieden.html' };
+        (function(){
+          const fokusEvent = 'fokus-' + FOKUS_GEMEINDE.name.toLowerCase();
+          [['fokus-widget','fokus-wappen','fokus-name'],['fokus-widget-header','fokus-wappen-header','fokus-name-header']].forEach(function(ids){
+            const w = document.getElementById(ids[0]); if (w) { w.href = FOKUS_GEMEINDE.url; w.setAttribute('data-umami-event', fokusEvent); }
+            const img = document.getElementById(ids[1]); if (img) { img.src = FOKUS_GEMEINDE.wappen; img.alt = 'Wappen ' + FOKUS_GEMEINDE.name; }
+            const n = document.getElementById(ids[2]); if (n) n.textContent = FOKUS_GEMEINDE.name;
+          });
+        })();
+      </script>
       <button id="karte-oeffnen-btn" onclick="karteModalOeffnen()" aria-label="Karte anzeigen">
         <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
@@ -1332,7 +1367,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="grid" id="artikel-grid"></div>
 <button class="mehr-btn" id="mehr-btn" onclick="mehrLaden()" style="display:none">Mehr laden</button>
 <p class="archiv-hinweis" id="archiv-hinweis" style="display:none">
-  Ältere Artikel (über 200 je Gemeinde) sind im <a href="archiv.html">Archiv</a> verfügbar.
+  Ältere Artikel (über 200 je Gemeinde) sind im <a href="archiv.html" data-umami-event="nav-archiv">Archiv</a> verfügbar.
 </p>
 
 <div id="heimat-modal" onclick="heimatModalHintergrundKlick(event)">
@@ -3244,8 +3279,8 @@ swRegistrieren();
   <div class="footer-inner">
     <span>© 2026 Autor und Crowdworker Adrian Jestädt · RegioNachrichten Fulda</span>
     <nav>
-      <a href="impressum.html">Impressum</a>
-      <a href="datenschutz.html">Datenschutzerklärung</a>
+      <a href="impressum.html" data-umami-event="nav-impressum">Impressum</a>
+      <a href="datenschutz.html" data-umami-event="nav-datenschutz">Datenschutzerklärung</a>
     </nav>
   </div>
 </footer>
