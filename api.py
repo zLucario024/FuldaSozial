@@ -85,7 +85,8 @@ BEKANNTE_REGIONEN = (
     'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
     'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
     # Ortsteile Kalbach
-    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
+    'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
+    'veitsteinbach',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
     # Ortsteile Poppenhausen

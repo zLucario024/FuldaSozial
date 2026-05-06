@@ -1032,7 +1032,8 @@ BEKANNTE_REGIONEN = (
     'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
     'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
     # Ortsteile Kalbach
-    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
+    'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
+    'veitsteinbach',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
     # Ortsteile Poppenhausen
@@ -1113,8 +1114,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'eichenberg': 'hosenfeld', 'hainzell': 'hosenfeld', 'jossa': 'hosenfeld', 'mittelhaun': 'hosenfeld',
     'pfaffenrod': 'hosenfeld', 'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
     # Ortsteile Kalbach
-    'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach', 'oberkalbach': 'kalbach',
-    'zünters': 'kalbach',
+    'eichenried': 'kalbach', 'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach',
+    'oberkalbach': 'kalbach', 'uttrichshausen': 'kalbach', 'veitsteinbach': 'kalbach',
     # Ortsteile Nüsttal
     'hofaschenbach': 'nüsttal', 'morles': 'nüsttal', 'mottgers': 'nüsttal', 'ützhausen': 'nüsttal',
     # Ortsteile Poppenhausen
