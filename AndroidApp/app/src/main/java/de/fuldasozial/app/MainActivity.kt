@@ -163,6 +163,18 @@ class MainActivity : AppCompatActivity() {
         fun istBenachrichtigungenAktiv(): Boolean =
             getSharedPreferences(FcmService.PREFS, MODE_PRIVATE)
                 .getBoolean(KEY_NOTIF_ENABLED, false)
+
+        @JavascriptInterface
+        fun teilen(url: String, titel: String) {
+            runOnUiThread {
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, url)
+                    putExtra(Intent.EXTRA_SUBJECT, titel)
+                }
+                startActivity(Intent.createChooser(intent, titel))
+            }
+        }
     }
 
     private fun heimatSpeichern(heimat: String) {
