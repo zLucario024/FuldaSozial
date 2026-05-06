@@ -670,13 +670,16 @@ function navMenuSchliessen() {
 // ── TEILEN ──
 async function artikelTeilen(link, titel, btn) {
   if (typeof umami !== 'undefined') umami.track('artikel-geteilt', { titel: titel.substring(0, 50), url: link });
+  if (window.Android?.teilen) {
+    window.Android.teilen(link, titel);
+    return;
+  }
   if (navigator.share) {
     try {
       await navigator.share({ title: titel, url: link });
-      return; // share sheet opened successfully
+      return;
     } catch (err) {
-      if (err && err.name === 'AbortError') return; // user cancelled — do nothing
-      // NotAllowedError or similar (e.g. standalone PWA on older iOS) — fall through to clipboard
+      if (err && err.name === 'AbortError') return;
     }
   }
   try {
