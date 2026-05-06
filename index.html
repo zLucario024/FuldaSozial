@@ -1368,6 +1368,8 @@ let archivOrtErgebnisse = [];
 let _archivOrtQuery = '';
 let quelleArchivErgebnisse = [];
 let _quelleArchivQuery = '';
+let ortVollsucheErgebnisse = [];
+let _ortVollsucheQuery = '';
 const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
 let meineHeimat = localStorage.getItem('meine-heimat') || '';
@@ -1941,7 +1943,20 @@ function gefilterteArtikel() {
   if (aktivOrt && _archivOrtQuery === aktivOrt && archivOrtErgebnisse.length) {
     const bekannteLinks = new Set(haupt.map(a => a.link));
     const archivNeu = archivOrtErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
-    return [...haupt, ...archivNeu];
+    const combined = [...haupt, ...archivNeu];
+    // Merge full-database results if archive search was also done
+    if (_ortVollsucheQuery === aktivOrt && ortVollsucheErgebnisse.length) {
+      const alleLinks = new Set(combined.map(a => a.link));
+      const vollNeu = ortVollsucheErgebnisse.filter(a => !alleLinks.has(a.link) && passt(a));
+      return [...combined, ...vollNeu];
+    }
+    return combined;
+  }
+  // Merge full-database Ort results (without archive results)
+  if (aktivOrt && _ortVollsucheQuery === aktivOrt && ortVollsucheErgebnisse.length) {
+    const bekannteLinks = new Set(haupt.map(a => a.link));
+    const vollNeu = ortVollsucheErgebnisse.filter(a => !bekannteLinks.has(a.link) && passt(a));
+    return [...haupt, ...vollNeu];
   }
   // Merge silent Quelle-archive results for infrequently publishing sources
   if (aktivQuelle && _quelleArchivQuery === aktivQuelle && quelleArchivErgebnisse.length) {
@@ -2058,9 +2073,10 @@ async function mehrLaden() {
   if (!hatMehr) return;
   btn.disabled = true;
   btn.textContent = alleArtikel.length > 2000 ? 'Lade… (viele Artikel, kann einen Moment dauern)' : 'Lade…';
-  let runden = 0;
+  let runden = 0, rundenOhneMatch = 0;
   try {
     while (hatMehr && gefilterteArtikel().length - gezeigt < PRO_SEITE && runden < 5) {
+      const matchingVorher = gefilterteArtikel().length;
       const res = await fetch(`${API}/artikel-hauptseite?limit=${SEITEN_GROESSE}&offset=${aktuellerOffset}&days=${ladeModusTage}`);
       if (!res.ok) break;
       const data = await res.json();
@@ -2068,6 +2084,12 @@ async function mehrLaden() {
       aktuellerOffset += (data.artikel || []).length;
       hatMehr = data.hat_mehr || false;
       runden++;
+      if (gefilterteArtikel().length === matchingVorher) {
+        rundenOhneMatch++;
+        if (rundenOhneMatch >= 3) break;
+      } else {
+        rundenOhneMatch = 0;
+      }
     }
   } catch(_) { /* keep button visible so user can retry */ }
   gefiltert = gefilterteArtikel();
@@ -2246,7 +2268,7 @@ function ortWaehlen(btn, ort) {
   }
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   if (btn) btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
-  if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; _kategorieZurueck(); }
+  if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; ortVollsucheErgebnisse = []; _ortVollsucheQuery = ''; _kategorieZurueck(); }
   aktivOrt = ort;
   if (!btn || !btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
@@ -2821,7 +2843,7 @@ async function archivSuche(snap) {
 async function ortArchivSuche(ort) {
   _archivOrtQuery = ort;
   try {
-    const res = await fetch(`${API}/archiv?suche=${encodeURIComponent(ort)}&limit=50`);
+    const res = await fetch(`${API}/archiv?suche=${encodeURIComponent(ort)}&limit=150`);
     const data = await res.json();
     if (ort !== aktivOrt) return; // discard if Ort changed while in flight
     archivOrtErgebnisse = data.artikel || [];
@@ -2829,11 +2851,27 @@ async function ortArchivSuche(ort) {
   } catch(_) { if (ort === aktivOrt) artikelAnzeigen(); }
 }
 
+async function ortVollsuche(ort) {
+  _ortVollsucheQuery = ort;
+  try {
+    const res = await fetch(`${API}/ort-vollsuche?region=${encodeURIComponent(ort)}&limit=200`);
+    const data = await res.json();
+    if (ort !== aktivOrt) return;
+    ortVollsucheErgebnisse = data.artikel || [];
+    artikelAnzeigen();
+  } catch(_) { if (ort === aktivOrt) artikelAnzeigen(); }
+}
+
 function _pruefOrtArchiv() {
   if (!aktivOrt || ['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt)) return;
-  if (_archivOrtQuery === aktivOrt) return;
-  if (gefilterteArtikel().length >= PRO_SEITE) return;
-  ortArchivSuche(aktivOrt);
+  if (_archivOrtQuery !== aktivOrt) {
+    if (gefilterteArtikel().length < PRO_SEITE) ortArchivSuche(aktivOrt);
+    return;
+  }
+  // Archive search done but still very few results → search entire database
+  if (_ortVollsucheQuery !== aktivOrt && gefilterteArtikel().length < 5) {
+    ortVollsuche(aktivOrt);
+  }
 }
 
 async function quelleArchivSuche(quelle) {
@@ -2861,10 +2899,12 @@ function sucheLöschen() {
 
 function ortFilterLeeren() {
   archivOrtErgebnisse = []; _archivOrtQuery = '';
+  ortVollsucheErgebnisse = []; _ortVollsucheQuery = '';
   aktivOrt = '';
   document.querySelectorAll('#ort-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   document.querySelector('#ort-chips .chip').classList.add('aktiv');
-  urlAktualisieren(); filterLeistAktualisieren(); artikelAnzeigen();
+  urlAktualisieren(); filterLeistAktualisieren();
+  if (ladeModusTage > 1) { artikelLaden(1); } else { artikelAnzeigen(); }
 }
 
 function _kategorieZurueck() {
@@ -2901,6 +2941,8 @@ function datumFilterLeeren() {
 function alleFilterZurueck() {
   aktivOrt = 'landkreis-fulda'; aktivKategorie = ''; aktivQuelle = ''; aktivTag = ''; suchbegriff = ''; aktivMeineArtikel = false;
   archivSuchErgebnisse = []; clearTimeout(_archivSuchTimeout);
+  archivOrtErgebnisse = []; _archivOrtQuery = '';
+  ortVollsucheErgebnisse = []; _ortVollsucheQuery = '';
   const maChip = document.getElementById('meine-artikel-chip');
   if (maChip) maChip.classList.remove('aktiv-herz');
   document.getElementById('suche').value = '';

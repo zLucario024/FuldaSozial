@@ -390,6 +390,7 @@ def datenbank_einrichten(conn):
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_datum ON artikel(datum)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_quelle_region ON artikel(quelle, region)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_region ON artikel(region)")
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS push_benachrichtigt (
             heimat      TEXT PRIMARY KEY,
@@ -1177,23 +1178,29 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
     tags contain a matching place name (Gemeinde or Ortsteil → parent Gemeinde).
     This prevents Hessen/Osthessen articles tagged with a local place from being
     archived after 14 days."""
+    if not neue_artikel:
+        return
     BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
-    for hash_wert, _ in neue_artikel:
-        cursor.execute("SELECT tags, region FROM artikel WHERE hash = %s", (hash_wert,))
-        row = cursor.fetchone()
-        if not row or not row[0]:
+    hashes = [h for h, _ in neue_artikel]
+    cursor.execute(
+        "SELECT hash, tags, region FROM artikel WHERE hash = ANY(%s)",
+        (hashes,)
+    )
+    rows = cursor.fetchall()
+    updates = []
+    for hash_wert, tags_roh, region in rows:
+        if region not in BROAD or not tags_roh:
             continue
-        if row[1] not in BROAD:
-            continue
-        for tag in row[0].split('·'):
+        for tag in tags_roh.split('·'):
             ziel = _region_aus_tag_bestimmen(tag.strip().lower())
             if ziel:
-                cursor.execute(
-                    "UPDATE artikel SET region = %s WHERE hash = %s",
-                    (ziel, hash_wert)
-                )
+                updates.append((ziel, hash_wert))
                 break
+    for ziel, hash_wert in updates:
+        cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (ziel, hash_wert))
     conn.commit()
+    if updates:
+        print(f"  Regionen verfeinert: {len(updates)} Artikel auf Gemeinde-Ebene angehoben")
 
 
 def archiv_generieren(conn):

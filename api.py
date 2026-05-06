@@ -12,7 +12,7 @@ import json
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query, BackgroundTasks, HTTPException
+from fastapi import FastAPI, Query, BackgroundTasks, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -175,7 +175,7 @@ def artikel_abrufen(
 
 
 @app.get("/artikel-hauptseite")
-def artikel_hauptseite(limit: int = Query(200, ge=1, le=500), offset: int = Query(0, ge=0), days: int = Query(1, ge=1, le=30)):
+def artikel_hauptseite(limit: int = Query(200, ge=1, le=500), offset: int = Query(0, ge=0), days: int = Query(1, ge=1, le=30), response: Response = None):
     conn = db_verbinden()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("""
@@ -190,6 +190,8 @@ def artikel_hauptseite(limit: int = Query(200, ge=1, le=500), offset: int = Quer
     rows = rows[:limit]
     cursor.close()
     conn.close()
+    if response:
+        response.headers["Cache-Control"] = "public, max-age=60"
     return {"anzahl": len(rows), "hat_mehr": hat_mehr, "offset": offset, "artikel": [dict(r) for r in rows]}
 
 
@@ -201,6 +203,7 @@ def archiv_abrufen(
     suche:  str = Query(None),
     von:    str = Query(None),
     bis:    str = Query(None),
+    response: Response = None,
 ):
     """Returns archived articles:
     - Unknown-region articles older than 7 days
@@ -251,12 +254,34 @@ def archiv_abrufen(
     conn.close()
 
     import math
+    if response:
+        response.headers["Cache-Control"] = "public, max-age=300"
     return {
         "artikel":        [dict(r) for r in rows],
         "gesamt":         gesamt,
         "seite":          seite,
         "seiten_gesamt":  math.ceil(gesamt / limit) if gesamt else 1,
     }
+
+
+@app.get("/ort-vollsuche")
+def ort_vollsuche(region: str = Query(...), limit: int = Query(200, ge=1, le=500)):
+    """Returns all articles matching a specific region/municipality across the entire database,
+    without date restrictions. Used as fallback for villages with sparse recent content."""
+    limit = min(limit, 500)
+    conn = db_verbinden()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("""
+        SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
+        FROM artikel
+        WHERE region = %s OR titel ILIKE %s OR tags ILIKE %s
+        ORDER BY datum DESC
+        LIMIT %s
+    """, (region, f"%{region}%", f"%{region}%", limit))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return {"artikel": [dict(r) for r in rows], "anzahl": len(rows)}
 
 
 @app.get("/artikel/{artikel_id}")
