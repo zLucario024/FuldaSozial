@@ -1,0 +1,86 @@
+{
+  "fulda": [
+    "aschenberg", "bernhards", "besges", "bronnzell", "dietershan",
+    "döllbach", "edelzell", "frauenberg", "fulda-galerie", "gläserzell",
+    "haimbach", "harmerz", "hochschule fulda", "horas", "innenstadt",
+    "istergiesel", "johannesberg", "kämmerzell", "kohlhaus", "lehnerz",
+    "lüdermünd", "maberzell", "maikes", "malkes", "mittelrode",
+    "neuenberg", "niederrode", "niesig", "nordend", "oberrode",
+    "ostend", "rodges", "roßberg", "sickels", "südend", "süßenbach",
+    "uffhausen", "weimarer tunnel", "westend",
+    "ziehers", "ziehers-nord", "ziehers-süd"
+  ],
+  "hünfeld": [
+    "großenbach", "kirchhasel", "mackenzell", "malges", "molzbach", "steinbach"
+  ],
+  "künzell": [
+    "bachrain", "dassen", "dietershausen", "dirlos", "engelhelms",
+    "haunes", "keulos", "pilgerzell"
+  ],
+  "petersberg": [
+    "almendorf", "böckels", "dalherda", "großsassen", "habelsbach",
+    "haunedorf", "kesselbach", "kleinsassen", "marbach", "margretenhaun",
+    "melzdorf", "orferode", "rex", "roßbach", "steinau", "steinhaus",
+    "stöckels", "untergötzenhof"
+  ],
+  "neuhof": [
+    "dorfborn", "giesel", "hattenhof", "hauswurz", "kauppen",
+    "motzlar", "rommerz", "schachten", "tiefengruben"
+  ],
+  "eichenzell": [
+    "kerzell", "löschenrod", "lütter", "rothemann", "welkers",
+    "wissels", "zirkenbach"
+  ],
+  "flieden": [
+    "buchenrod", "döngesmühle", "haindorf", "höf und haid", "kohlgrund",
+    "magdlos", "rückers", "schweben", "stork", "struth"
+  ],
+  "burghaun": [
+    "gruben", "hettenhausen", "hünhan", "nüst", "rothenkirchen",
+    "schmalnau", "steens", "thälau", "wehrda"
+  ],
+  "großenlüder": [
+    "bimbach", "kleinlüder", "müs", "uttrichshausen"
+  ],
+  "hilders": [
+    "dietges", "gehilf", "liebhards", "simmershausen", "unterweid", "wickers"
+  ],
+  "hofbieber": [
+    "langenbieber", "mittelbieber", "niederbieber", "schwarzbach", "traisbach"
+  ],
+  "gersfeld": [
+    "findlos", "habelsdorf", "melperts", "obernhausen", "schachen", "seifertshausen"
+  ],
+  "tann": [
+    "dippach", "günthers", "lahrbach", "neuswarts"
+  ],
+  "eiterfeld": [
+    "arzell", "buchenau", "großentaft", "leibolz", "soisdorf"
+  ],
+  "rasdorf": [
+    "habel", "setzelbach"
+  ],
+  "dipperz": [
+    "dörnhagen", "rönshausen"
+  ],
+  "ebersburg": [
+    "euters", "götzenhof", "thalau", "weyhers"
+  ],
+  "ehrenberg": [
+    "reulbach", "seiferts", "wüstensachsen"
+  ],
+  "hosenfeld": [
+    "altenhof", "blankenau", "brandlos", "büchenberg", "eichenberg",
+    "hainzell", "jossa", "mittelhaun", "pfaffenrod", "poppenrod", "schletzenhausen"
+  ],
+  "kalbach": [
+    "heubach", "mittelkalbach", "niederkalbach", "oberkalbach", "zünters"
+  ],
+  "nüsttal": [
+    "hofaschenbach", "morles", "mottgers", "ützhausen"
+  ],
+  "poppenhausen": [
+    "abtsroda", "rodholz", "sieblos"
+  ],
+  "bad salzschlirf": []
+}

@@ -981,64 +981,62 @@ BEKANNTE_REGIONEN = (
     'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
     # Stadtteile Fulda
     'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
-    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach',
-    'harmerz', 'hochschule fulda', 'horas', 'innenstadt', 'istergiesel',
-    'johannesberg', 'kämmerzell', 'kohlhaus', 'lehnerz', 'lüdermünd',
-    'maberzell', 'maikes', 'malkes', 'mittelrode', 'neuenberg', 'niederrode',
-    'niesig', 'nordend', 'oberrode', 'ostend', 'rodges', 'roßberg', 'sickels',
-    'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
-    'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
+    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz',
+    'hochschule fulda', 'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus',
+    'kämmerzell', 'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes',
+    'mittelrode', 'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode',
+    'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
+    'uffhausen', 'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
+    # Ortsteile Hünfeld
+    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach', 'steinbach',
     # Ortsteile Künzell
-    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms',
-    'haunes', 'keulos', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
+    'keulos', 'pilgerzell',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach',
-    'haunedorf', 'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun',
-    'melzdorf', 'orferode', 'rex', 'roßbach', 'steinau', 'steinhaus',
-    'stöckels', 'untergötzenhof',
+    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach', 'haunedorf',
+    'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun', 'melzdorf', 'orferode',
+    'rex', 'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
-    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen',
-    'motzlar', 'rommerz', 'schachten', 'tiefengruben',
+    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
+    'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
     'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
+    'zirkenbach',
     # Ortsteile Flieden
-    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund',
-    'magdlos', 'rückers', 'schweben', 'stork', 'struth',
+    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
+    'rückers', 'schweben', 'stork', 'struth',
     # Ortsteile Burghaun
     'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
     'steens', 'thälau', 'wehrda',
     # Ortsteile Großenlüder
     'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
-    # Ortsteile Hünfeld
-    'großenbach', 'kirchhasel', 'mackenzell', 'malges',
-    'molzbach', 'steinbach',
+    # Ortsteile Hilders
+    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Hofbieber
     'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
-    # Ortsteile Kalbach
-    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
-    # Ortsteile Hosenfeld
-    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg',
-    'hainzell', 'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    # Ortsteile Gersfeld
+    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
+    # Ortsteile Tann
+    'dippach', 'günthers', 'lahrbach', 'neuswarts',
+    # Ortsteile Eiterfeld
+    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    # Ortsteile Rasdorf
+    'habel', 'setzelbach',
     # Ortsteile Dipperz
     'dörnhagen', 'rönshausen',
     # Ortsteile Ebersburg
     'euters', 'götzenhof', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
-    # Ortsteile Hilders
-    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
-    # Ortsteile Gersfeld
-    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
-    # Ortsteile Tann
-    'dippach', 'günthers', 'lahrbach', 'neuswarts',
-    # Ortsteile Poppenhausen
-    'abtsroda', 'rodholz', 'sieblos',
+    # Ortsteile Hosenfeld
+    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
+    'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    # Ortsteile Kalbach
+    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
-    # Ortsteile Eiterfeld
-    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
-    # Ortsteile Rasdorf
-    'habel', 'setzelbach',
+    # Ortsteile Poppenhausen
+    'abtsroda', 'rodholz', 'sieblos',
 )
 
 _BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
@@ -1047,91 +1045,81 @@ _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
 # Maps every Ortsteil/Stadtteil to its parent Gemeinde key (matching WAPPEN_NAMEN).
 # Keep in sync with ORTSTEILE_MAPPING in index.html.
 ORTSTEILE_TO_GEMEINDE = {
-    # Stadt Fulda – Stadtteile
-    'aschenberg': 'fulda', 'bernhards': 'fulda', 'besges': 'fulda',
-    'bronnzell': 'fulda', 'dietershan': 'fulda', 'döllbach': 'fulda',
-    'edelzell': 'fulda', 'frauenberg': 'fulda', 'fulda-galerie': 'fulda',
-    'gläserzell': 'fulda', 'haimbach': 'fulda', 'harmerz': 'fulda',
-    'hochschule fulda': 'fulda', 'horas': 'fulda', 'innenstadt': 'fulda',
-    'istergiesel': 'fulda', 'johannesberg': 'fulda', 'kämmerzell': 'fulda',
-    'kohlhaus': 'fulda', 'lehnerz': 'fulda', 'lüdermünd': 'fulda',
-    'maberzell': 'fulda', 'maikes': 'fulda', 'malkes': 'fulda',
-    'mittelrode': 'fulda', 'neuenberg': 'fulda', 'niederrode': 'fulda',
-    'niesig': 'fulda', 'nordend': 'fulda', 'oberrode': 'fulda',
-    'ostend': 'fulda', 'rodges': 'fulda', 'roßberg': 'fulda',
-    'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda',
-    'uffhausen': 'fulda', 'weimarer tunnel': 'fulda', 'westend': 'fulda',
-    'ziehers': 'fulda', 'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
-    # Gemeinde Künzell
-    'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell',
-    'dirlos': 'künzell', 'engelhelms': 'künzell', 'haunes': 'künzell',
-    'keulos': 'künzell', 'pilgerzell': 'künzell',
-    # Gemeinde Petersberg
-    'almendorf': 'petersberg', 'böckels': 'petersberg', 'dalherda': 'petersberg',
-    'großsassen': 'petersberg', 'habelsbach': 'petersberg', 'haunedorf': 'petersberg',
-    'kesselbach': 'petersberg', 'kleinsassen': 'petersberg', 'marbach': 'petersberg',
-    'margretenhaun': 'petersberg', 'melzdorf': 'petersberg', 'orferode': 'petersberg',
-    'rex': 'petersberg', 'roßbach': 'petersberg', 'steinau': 'petersberg',
-    'steinhaus': 'petersberg', 'stöckels': 'petersberg', 'untergötzenhof': 'petersberg',
-    # Gemeinde Neuhof
-    'dorfborn': 'neuhof', 'giesel': 'neuhof', 'hattenhof': 'neuhof',
-    'hauswurz': 'neuhof', 'kauppen': 'neuhof', 'motzlar': 'neuhof',
-    'rommerz': 'neuhof', 'schachten': 'neuhof', 'tiefengruben': 'neuhof',
-    # Gemeinde Eichenzell
-    'kerzell': 'eichenzell', 'löschenrod': 'eichenzell', 'lütter': 'eichenzell',
-    'rothemann': 'eichenzell', 'welkers': 'eichenzell', 'wissels': 'eichenzell',
-    'zirkenbach': 'eichenzell',
-    # Gemeinde Flieden
-    'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden',
-    'höf und haid': 'flieden', 'kohlgrund': 'flieden', 'magdlos': 'flieden',
-    'rückers': 'flieden', 'schweben': 'flieden', 'stork': 'flieden',
-    'struth': 'flieden',
-    # Gemeinde Burghaun
-    'gruben': 'burghaun', 'hettenhausen': 'burghaun', 'hünhan': 'burghaun',
-    'nüst': 'burghaun', 'rothenkirchen': 'burghaun', 'schmalnau': 'burghaun',
-    'steens': 'burghaun', 'thälau': 'burghaun', 'wehrda': 'burghaun',
-    # Gemeinde Großenlüder
-    'bimbach': 'großenlüder', 'kleinlüder': 'großenlüder',
-    'müs': 'großenlüder', 'uttrichshausen': 'großenlüder',
-    # Stadt Hünfeld
-    'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld',
-    'malges': 'hünfeld', 'molzbach': 'hünfeld', 'steinbach': 'hünfeld',
-    # Gemeinde Hofbieber
-    'langenbieber': 'hofbieber', 'mittelbieber': 'hofbieber',
-    'niederbieber': 'hofbieber', 'schwarzbach': 'hofbieber', 'traisbach': 'hofbieber',
-    # Gemeinde Kalbach
-    'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach',
-    'oberkalbach': 'kalbach', 'zünters': 'kalbach',
-    # Gemeinde Hosenfeld
-    'altenhof': 'hosenfeld', 'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld',
-    'büchenberg': 'hosenfeld', 'eichenberg': 'hosenfeld', 'hainzell': 'hosenfeld',
-    'jossa': 'hosenfeld', 'mittelhaun': 'hosenfeld', 'pfaffenrod': 'hosenfeld',
-    'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
-    # Gemeinde Dipperz
-    'dörnhagen': 'dipperz', 'rönshausen': 'dipperz',
-    # Gemeinde Ebersburg
-    'euters': 'ebersburg', 'götzenhof': 'ebersburg',
-    'thalau': 'ebersburg', 'weyhers': 'ebersburg',
-    # Gemeinde Ehrenberg
-    'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'wüstensachsen': 'ehrenberg',
-    # Gemeinde Hilders
-    'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders',
-    'simmershausen': 'hilders', 'unterweid': 'hilders', 'wickers': 'hilders',
-    # Stadt Gersfeld (Rhön)
-    'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld',
-    'obernhausen': 'gersfeld', 'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',
-    # Gemeinde Tann (Rhön)
+    # Stadtteile Fulda
+    'aschenberg': 'fulda', 'bernhards': 'fulda', 'besges': 'fulda', 'bronnzell': 'fulda',
+    'dietershan': 'fulda', 'döllbach': 'fulda', 'edelzell': 'fulda', 'frauenberg': 'fulda',
+    'fulda-galerie': 'fulda', 'gläserzell': 'fulda', 'haimbach': 'fulda', 'harmerz': 'fulda',
+    'hochschule fulda': 'fulda', 'horas': 'fulda', 'innenstadt': 'fulda', 'istergiesel': 'fulda',
+    'johannesberg': 'fulda', 'kohlhaus': 'fulda', 'kämmerzell': 'fulda', 'lehnerz': 'fulda',
+    'lüdermünd': 'fulda', 'maberzell': 'fulda', 'maikes': 'fulda', 'malkes': 'fulda',
+    'mittelrode': 'fulda', 'neuenberg': 'fulda', 'niederrode': 'fulda', 'niesig': 'fulda',
+    'nordend': 'fulda', 'oberrode': 'fulda', 'ostend': 'fulda', 'rodges': 'fulda',
+    'roßberg': 'fulda', 'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda',
+    'uffhausen': 'fulda', 'weimarer tunnel': 'fulda', 'westend': 'fulda', 'ziehers': 'fulda',
+    'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
+    # Ortsteile Hünfeld
+    'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld', 'malges': 'hünfeld',
+    'molzbach': 'hünfeld', 'steinbach': 'hünfeld',
+    # Ortsteile Künzell
+    'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell', 'dirlos': 'künzell',
+    'engelhelms': 'künzell', 'haunes': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell',
+    # Ortsteile Petersberg
+    'almendorf': 'petersberg', 'böckels': 'petersberg', 'dalherda': 'petersberg', 'großsassen': 'petersberg',
+    'habelsbach': 'petersberg', 'haunedorf': 'petersberg', 'kesselbach': 'petersberg', 'kleinsassen': 'petersberg',
+    'marbach': 'petersberg', 'margretenhaun': 'petersberg', 'melzdorf': 'petersberg', 'orferode': 'petersberg',
+    'rex': 'petersberg', 'roßbach': 'petersberg', 'steinau': 'petersberg', 'steinhaus': 'petersberg',
+    'stöckels': 'petersberg', 'untergötzenhof': 'petersberg',
+    # Ortsteile Neuhof
+    'dorfborn': 'neuhof', 'giesel': 'neuhof', 'hattenhof': 'neuhof', 'hauswurz': 'neuhof',
+    'kauppen': 'neuhof', 'motzlar': 'neuhof', 'rommerz': 'neuhof', 'schachten': 'neuhof',
+    'tiefengruben': 'neuhof',
+    # Ortsteile Eichenzell
+    'kerzell': 'eichenzell', 'löschenrod': 'eichenzell', 'lütter': 'eichenzell', 'rothemann': 'eichenzell',
+    'welkers': 'eichenzell', 'wissels': 'eichenzell', 'zirkenbach': 'eichenzell',
+    # Ortsteile Flieden
+    'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden', 'höf und haid': 'flieden',
+    'kohlgrund': 'flieden', 'magdlos': 'flieden', 'rückers': 'flieden', 'schweben': 'flieden',
+    'stork': 'flieden', 'struth': 'flieden',
+    # Ortsteile Burghaun
+    'gruben': 'burghaun', 'hettenhausen': 'burghaun', 'hünhan': 'burghaun', 'nüst': 'burghaun',
+    'rothenkirchen': 'burghaun', 'schmalnau': 'burghaun', 'steens': 'burghaun', 'thälau': 'burghaun',
+    'wehrda': 'burghaun',
+    # Ortsteile Großenlüder
+    'bimbach': 'großenlüder', 'kleinlüder': 'großenlüder', 'müs': 'großenlüder', 'uttrichshausen': 'großenlüder',
+    # Ortsteile Hilders
+    'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders', 'simmershausen': 'hilders',
+    'unterweid': 'hilders', 'wickers': 'hilders',
+    # Ortsteile Hofbieber
+    'langenbieber': 'hofbieber', 'mittelbieber': 'hofbieber', 'niederbieber': 'hofbieber', 'schwarzbach': 'hofbieber',
+    'traisbach': 'hofbieber',
+    # Ortsteile Gersfeld
+    'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld', 'obernhausen': 'gersfeld',
+    'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',
+    # Ortsteile Tann
     'dippach': 'tann', 'günthers': 'tann', 'lahrbach': 'tann', 'neuswarts': 'tann',
-    # Gemeinde Poppenhausen (Wasserkuppe)
-    'abtsroda': 'poppenhausen', 'rodholz': 'poppenhausen', 'sieblos': 'poppenhausen',
-    # Gemeinde Nüsttal
-    'hofaschenbach': 'nüsttal', 'morles': 'nüsttal',
-    'mottgers': 'nüsttal', 'ützhausen': 'nüsttal',
-    # Gemeinde Eiterfeld
-    'arzell': 'eiterfeld', 'buchenau': 'eiterfeld',
-    'großentaft': 'eiterfeld', 'leibolz': 'eiterfeld', 'soisdorf': 'eiterfeld',
-    # Gemeinde Rasdorf
+    # Ortsteile Eiterfeld
+    'arzell': 'eiterfeld', 'buchenau': 'eiterfeld', 'großentaft': 'eiterfeld', 'leibolz': 'eiterfeld',
+    'soisdorf': 'eiterfeld',
+    # Ortsteile Rasdorf
     'habel': 'rasdorf', 'setzelbach': 'rasdorf',
+    # Ortsteile Dipperz
+    'dörnhagen': 'dipperz', 'rönshausen': 'dipperz',
+    # Ortsteile Ebersburg
+    'euters': 'ebersburg', 'götzenhof': 'ebersburg', 'thalau': 'ebersburg', 'weyhers': 'ebersburg',
+    # Ortsteile Ehrenberg
+    'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'wüstensachsen': 'ehrenberg',
+    # Ortsteile Hosenfeld
+    'altenhof': 'hosenfeld', 'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld', 'büchenberg': 'hosenfeld',
+    'eichenberg': 'hosenfeld', 'hainzell': 'hosenfeld', 'jossa': 'hosenfeld', 'mittelhaun': 'hosenfeld',
+    'pfaffenrod': 'hosenfeld', 'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
+    # Ortsteile Kalbach
+    'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach', 'oberkalbach': 'kalbach',
+    'zünters': 'kalbach',
+    # Ortsteile Nüsttal
+    'hofaschenbach': 'nüsttal', 'morles': 'nüsttal', 'mottgers': 'nüsttal', 'ützhausen': 'nüsttal',
+    # Ortsteile Poppenhausen
+    'abtsroda': 'poppenhausen', 'rodholz': 'poppenhausen', 'sieblos': 'poppenhausen',
+
 }
 
 

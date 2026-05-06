@@ -24,7 +24,7 @@ REGIONEN_HESSEN = ('hessen', 'osthessen')
 # Regions shown on the main page permanently (Gemeinden, Landkreis, Stadtteile, Dörfer).
 # Articles whose region is not in this set AND not in REGIONEN_HESSEN are
 # considered "Alle"-only and archived after 7 days.
-BEKANNTE_REGIONEN = {
+BEKANNTE_REGIONEN = (
     # Landkreis (permanent)
     'landkreis-fulda',
     # Gemeinden
@@ -34,78 +34,65 @@ BEKANNTE_REGIONEN = {
     'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
     # Stadtteile Fulda
     'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
-    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach',
-    'harmerz', 'hochschule fulda', 'horas', 'innenstadt', 'istergiesel',
-    'johannesberg', 'kämmerzell', 'kohlhaus', 'lehnerz', 'lüdermünd',
-    'maberzell', 'maikes', 'malkes', 'mittelrode', 'neuenberg', 'niederrode',
-    'niesig', 'nordend', 'oberrode', 'ostend', 'rodges', 'roßberg', 'sickels',
-    'südend', 'süßenbach', 'uffhausen', 'weimarer tunnel', 'westend',
-    'ziehers', 'ziehers-nord', 'ziehers-süd', 'zirkenbach',
+    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz',
+    'hochschule fulda', 'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus',
+    'kämmerzell', 'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes',
+    'mittelrode', 'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode',
+    'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
+    'uffhausen', 'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
+    # Ortsteile Hünfeld
+    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach', 'steinbach',
     # Ortsteile Künzell
-    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms',
-    'haunes', 'keulos', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
+    'keulos', 'pilgerzell',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach',
-    'haunedorf', 'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun',
-    'melzdorf', 'orferode', 'rex', 'roßbach', 'steinau', 'steinhaus',
-    'stöckels', 'untergötzenhof',
+    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach', 'haunedorf',
+    'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun', 'melzdorf', 'orferode',
+    'rex', 'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
-    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen',
-    'motzlar', 'rommerz', 'schachten', 'tiefengruben',
+    'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
+    'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
     'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
+    'zirkenbach',
     # Ortsteile Flieden
-    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund',
-    'magdlos', 'rückers', 'schweben', 'stork', 'struth',
+    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
+    'rückers', 'schweben', 'stork', 'struth',
     # Ortsteile Burghaun
     'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
     'steens', 'thälau', 'wehrda',
     # Ortsteile Großenlüder
     'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
-    # Ortsteile Hünfeld
-    'großenbach', 'kirchhasel', 'mackenzell', 'malges',
-    'molzbach', 'steinbach',
+    # Ortsteile Hilders
+    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Hofbieber
     'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
-    # Ortsteile Kalbach
-    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
-    # Ortsteile Hosenfeld
-    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg',
-    'hainzell', 'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    # Ortsteile Gersfeld
+    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
+    # Ortsteile Tann
+    'dippach', 'günthers', 'lahrbach', 'neuswarts',
+    # Ortsteile Eiterfeld
+    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    # Ortsteile Rasdorf
+    'habel', 'setzelbach',
     # Ortsteile Dipperz
     'dörnhagen', 'rönshausen',
     # Ortsteile Ebersburg
     'euters', 'götzenhof', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
-    # Ortsteile Hilders
-    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
-    # Ortsteile Gersfeld
-    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
-    # Ortsteile Tann
-    'dippach', 'günthers', 'lahrbach', 'neuswarts',
-    # Ortsteile Poppenhausen
-    'abtsroda', 'rodholz', 'sieblos',
+    # Ortsteile Hosenfeld
+    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
+    'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    # Ortsteile Kalbach
+    'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'zünters',
     # Ortsteile Nüsttal
     'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
-    # Ortsteile Eiterfeld
-    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
-    # Ortsteile Rasdorf
-    'habel', 'setzelbach',
-}
+    # Ortsteile Poppenhausen
+    'abtsroda', 'rodholz', 'sieblos',
+)
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
-
-def db_verbinden():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    return conn
-
-
-app = FastAPI(
-    title="Fulda News API",
-    description="Regionale Nachrichten aus dem Landkreis Fulda",
-    version="1.0.0",
-)
 
 app.add_middleware(
     CORSMiddleware,
