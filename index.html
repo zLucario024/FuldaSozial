@@ -1100,13 +1100,13 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="nav-menu-overlay" id="nav-menu-overlay"></div>
   <nav class="nav-menu-panel">
     <button class="nav-menu-close" id="nav-menu-close" onclick="navMenuSchliessen()" aria-label="Menü schließen">✕</button>
+    <a href="landkreis.html" class="nav-menu-item" style="background:#C9A227;color:#3a2000;font-weight:700;border-radius:8px">
+      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Unser Landkreis
+    </a>
     <a href="ueber.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
       Über RegioNachrichten
-    </a>
-    <a href="landkreis.html" class="nav-menu-item">
-      <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Unser Landkreis
     </a>
     <a href="archiv.html" class="nav-menu-item">
       <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" style="width:18px;height:18px;flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9" y1="14.5" x2="15" y2="14.5"/></svg>
@@ -1186,6 +1186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <img id="karte-btn-wappen" src="Design/Wappen/Landkreis Fulda.png" alt="Wappen Landkreis Fulda">
         <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
         Karte
+        <span id="karte-neu-badge" style="display:none;font-size:.6rem;font-weight:700;letter-spacing:.03em;color:var(--rot);background:var(--rot-hell);border-radius:999px;padding:1px 6px;line-height:1.4;margin-top:-2px"></span>
       </button>
     </div>
     <div class="filter-label">
@@ -1856,6 +1857,7 @@ async function artikelLaden(tage = 1) {
     _ladeController = null;
     artikelAnzeigen();
     heimatNeuZaehlen();
+    _karteNeuBadgeAktualisieren();
   } catch(e) {
     clearTimeout(langsam);
     if (e.name === 'AbortError') return;
@@ -2754,6 +2756,21 @@ function heimatButtonAktualisieren(count) {
     icon.style.display = '';
   }
   pushBellAktualisieren();
+}
+
+function _karteNeuBadgeAktualisieren() {
+  const badge = document.getElementById('karte-neu-badge');
+  if (!badge || !alleArtikel.length) { if (badge) badge.style.display = 'none'; return; }
+  const vor24h = new Date(Date.now() - 86400000);
+  const pad = n => String(n).padStart(2, '0');
+  const cutoff = `${vor24h.getFullYear()}-${pad(vor24h.getMonth()+1)}-${pad(vor24h.getDate())} ${pad(vor24h.getHours())}:${pad(vor24h.getMinutes())}:${pad(vor24h.getSeconds())}`;
+  const anzahl = alleArtikel.filter(a => (a.datum || '') >= cutoff).length;
+  if (anzahl > 0) {
+    badge.textContent = '+' + anzahl;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 function heimatNeuZaehlen() {

@@ -46,7 +46,7 @@ _HESSISCHE_FREMDE = frozenset({
     'gießen', 'offenbach', 'hanau', 'marburg', 'limburg', 'bad homburg',
     'rüsselsheim', 'friedberg', 'bad nauheim', 'langen', 'dreieich',
     'bensheim', 'heppenheim', 'michelstadt', 'erbach', 'viernheim',
-    'vogelsbergkreis', 'vogelsberg', 'main-kinzig-kreis', 'main-kinzig',
+    'langenselbold', 'vogelsbergkreis', 'vogelsberg', 'main-kinzig-kreis', 'main-kinzig',
     'hersfeld-rotenburg', 'bad hersfeld', 'rotenburg an der fulda',
     'lahn-dill-kreis', 'lahn-dill', 'wetteraukreis', 'wetterau',
     'odenwaldkreis', 'odenwald', 'rheingau-taunus-kreis', 'rheingau',
