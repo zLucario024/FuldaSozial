@@ -31,7 +31,7 @@
 <link rel="apple-touch-icon" sizes="192x192" href="Design/rn_logo_mini.jpg">
 
 <!-- SEO -->
-<meta name="description" content="Aktuelle Nachrichten aus Fulda und dem Landkreis – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr aus Fulda, Hünfeld, Künzell, Petersberg, Neuhof, Eichenzell, Flieden, Burghaun, Großenlüder, Hilders, Hofbieber, Gersfeld, Tann, Eiterfeld, Rasdorf, Dipperz, Ebersburg, Ehrenberg, Hosenfeld, Kalbach, Nüsttal, Poppenhausen und Bad Salzschlirf.">
+<meta id="meta-description" name="description" content="Aktuelle Nachrichten aus Fulda und dem Landkreis – automatisch gesammelt aus lokalen Quellen. Polizei, Politik, Sport, Kultur und mehr aus Fulda, Hünfeld, Künzell, Petersberg, Neuhof, Eichenzell, Flieden, Burghaun, Großenlüder, Hilders, Hofbieber, Gersfeld, Tann, Eiterfeld, Rasdorf, Dipperz, Ebersburg, Ehrenberg, Hosenfeld, Kalbach, Nüsttal, Poppenhausen und Bad Salzschlirf.">
 <meta name="keywords" content="Fulda Nachrichten, Landkreis Fulda, Osthessen News, Fulda aktuell, 
 Hünfeld, Hünfeld Nachrichten, 
 Künzell, Künzell Nachrichten, Petersberg, Petersberg Nachrichten, Neuhof, Neuhof Nachrichten, Eichenzell, Eichenzell Nachrichten, 
@@ -57,7 +57,25 @@ Fulda,
 Fulda Nachrichten">
 <meta name="robots" content="index, follow">
 <meta name="author" content="RegioNachrichten Fulda">
-<link rel="canonical" href="https://www.rnfulda.de">
+<link id="canonical-tag" rel="canonical" href="https://www.rnfulda.de">
+<script>
+(function() {
+  var p = new URLSearchParams(location.search);
+  var ort = p.get('ort');
+  var kat = p.get('kategorie');
+  if (p.get('tag')) return;
+  var base = 'https://www.rnfulda.de';
+  var c = document.getElementById('canonical-tag');
+  var d = document.getElementById('meta-description');
+  if (ort) {
+    c.href = base + '/?ort=' + encodeURIComponent(ort);
+    d.content = 'Lokale Nachrichten aus ' + ort.charAt(0).toUpperCase() + ort.slice(1) + ' – aktuelle Meldungen aus der Gemeinde auf RegioNachrichten Fulda.';
+  } else if (kat) {
+    c.href = base + '/?kategorie=' + encodeURIComponent(kat);
+    d.content = 'Nachrichten aus dem Bereich ' + kat + ' im Landkreis Fulda – RegioNachrichten Fulda.';
+  }
+})();
+</script>
 
 <!-- Open Graph -->
 <meta property="og:title" content="RegioNachrichten Fulda – Lokale Nachrichten aus Fulda und Osthessen">
@@ -1940,11 +1958,12 @@ function gefilterteArtikel() {
         if (!hatGemeinde) return false;
       } else {
         const r = (a.region || '').toLowerCase();
+        const elternGemeinde = ORTSTEILE_MAPPING[aktivOrt];
         const regionOk = r === aktivOrt;
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
         const istDorf = ortsteile.length === 0 && Object.values(GEMEINDE_ORTSTEILE).some(l => l.includes(aktivOrt));
         const textOk = istDorf
-          ? ortMatch(text, aktivOrt)
+          ? (ortMatch(text, aktivOrt) || (elternGemeinde && r === elternGemeinde && text.includes(aktivOrt)))
           : (ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o)));
         if (!regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];

@@ -1422,29 +1422,7 @@ footer a{{color:var(--rot);text-decoration:none}}
 
 
 def sitemap_generieren(conn):
-    """Regeneriert sitemap.xml mit allen statischen Seiten + allen bekannten Tags aus der DB."""
-    from urllib.parse import quote
-
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT tags FROM artikel
-        WHERE tags IS NOT NULL AND tags != ''
-    """)
-    rows = cursor.fetchall()
-    cursor.close()
-
-    # Einzelne Tags zählen (getrennt durch " · ")
-    from collections import Counter
-    tag_counter = Counter()
-    for (tags_str,) in rows:
-        for tag in tags_str.split('·'):
-            tag = tag.strip()
-            if tag:
-                tag_counter[tag] += 1
-
-    # Nur Tags mit mindestens 3 Artikeln aufnehmen (vermeidet Einzel-Tags)
-    haeufige_tags = [tag for tag, count in tag_counter.items() if count >= 3]
-    haeufige_tags.sort()
+    """Regeneriert sitemap.xml mit allen statischen und Ort/Kategorie-Filterseiten."""
 
     STATIC_URLS = [
         ("https://www.rnfulda.de",                                  "hourly", "1.0"),
@@ -1496,15 +1474,6 @@ def sitemap_generieren(conn):
                   f'    <changefreq>{freq}</changefreq>',
                   f'    <priority>{prio}</priority>', f'  </url>']
 
-    lines += ['', f'  <!-- Dynamische Tag-Seiten ({len(haeufige_tags)} Tags mit ≥3 Artikeln) -->']
-    for tag in haeufige_tags:
-        encoded = quote(tag, safe='')
-        lines += [f'  <url>',
-                  f'    <loc>https://www.rnfulda.de/?tag={encoded}</loc>',
-                  f'    <changefreq>daily</changefreq>',
-                  f'    <priority>0.5</priority>',
-                  f'  </url>']
-
     # Archive pages — enumerate generated files
     archiv_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "archiv")
     archiv_seiten = []
@@ -1528,7 +1497,7 @@ def sitemap_generieren(conn):
     with open(sitemap_pfad, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
 
-    print(f"  Sitemap aktualisiert: {len(STATIC_URLS)} statische + {len(haeufige_tags)} Tag-URLs → sitemap.xml")
+    print(f"  Sitemap aktualisiert: {len(STATIC_URLS)} statische URLs + Archiv-Seiten → sitemap.xml")
 
 if __name__ == "__main__":
     main()
