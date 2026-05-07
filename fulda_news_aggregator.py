@@ -52,7 +52,7 @@ _HESSISCHE_FREMDE = frozenset({
     'odenwaldkreis', 'odenwald', 'rheingau-taunus-kreis', 'rheingau',
     'hochtaunuskreis', 'hochtaunus', 'groß-gerau', 'darmstadt-dieburg',
     'bergstraße', 'waldeck-frankenberg', 'schwalm-eder-kreis', 'schwalm-eder',
-    'werra-meißner-kreis', 'werra-meißner', 'kassel-land', 'fulda-oda',
+    'werra-meißner-kreis', 'werra-meißner', 'kassel-land', 'fulda-oda', 'nordhessen'
 })
 
 # Cities and regions clearly outside Hessen.
