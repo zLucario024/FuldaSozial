@@ -95,7 +95,17 @@ BEKANNTE_REGIONEN = (
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
 
-app = FastAPI(title="Fulda News API")
+
+def db_verbinden():
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    return conn
+
+
+app = FastAPI(
+    title="Fulda News API",
+    description="Regionale Nachrichten aus dem Landkreis Fulda",
+    version="1.0.0",
+)
 
 app.add_middleware(
     CORSMiddleware,
