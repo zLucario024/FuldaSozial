@@ -95,6 +95,8 @@ BEKANNTE_REGIONEN = (
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN
 
+app = FastAPI(title="Fulda News API")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
