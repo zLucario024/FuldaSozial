@@ -1426,7 +1426,7 @@ let ortVollsucheErgebnisse = [];
 let _ortVollsucheQuery = '';
 const PRO_SEITE = 50; // articles rendered per "Mehr laden" click
 let aktivOrt = 'landkreis-fulda', aktivKategorie = '', aktivQuelle = '', aktivTag = '', suchbegriff = '', aktivMeineArtikel = false;
-let meineHeimat = localStorage.getItem('meine-heimat') || '';
+let meineHeimat = (localStorage.getItem('meine-heimat') || '').toLowerCase();
 let heimatLetzterKlick = localStorage.getItem('meine-heimat-letzer-klick') || '';
 let _swRegistration = null;
 let _pushSubscription = null;
@@ -1959,12 +1959,9 @@ function gefilterteArtikel() {
       } else {
         const r = (a.region || '').toLowerCase();
         const elternGemeinde = ORTSTEILE_MAPPING[aktivOrt];
-        const regionOk = r === aktivOrt;
+        const regionOk = r === aktivOrt || (elternGemeinde && r === elternGemeinde && text.includes(aktivOrt));
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
-        const istDorf = ortsteile.length === 0 && Object.values(GEMEINDE_ORTSTEILE).some(l => l.includes(aktivOrt));
-        const textOk = istDorf
-          ? (ortMatch(text, aktivOrt) || (elternGemeinde && r === elternGemeinde && text.includes(aktivOrt)))
-          : (ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o)));
+        const textOk = ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o));
         if (!regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
         if (ausschluss && ausschluss.some(ausschlussOrt => ortMatch(text, ausschlussOrt))) return false;
@@ -2325,7 +2322,7 @@ function ortWaehlen(btn, ort) {
   document.querySelectorAll('#ort-chips .chip, #gemeinden-chips .chip, #stadtteile-chips .chip').forEach(c => c.classList.remove('aktiv','aktiv-ort'));
   if (btn) btn.classList.add(ort ? 'aktiv-ort' : 'aktiv');
   if (ort !== aktivOrt) { archivOrtErgebnisse = []; _archivOrtQuery = ''; ortVollsucheErgebnisse = []; _ortVollsucheQuery = ''; _kategorieZurueck(); }
-  aktivOrt = ort;
+  aktivOrt = ort ? ort.toLowerCase() : ort;
   if (!btn || !btn.closest('#gemeinden-chips')) {
     _gemeindenToggle(ort === 'gemeinden');
   }
@@ -2752,8 +2749,8 @@ function heimatModalHintergrundKlick(e) {
 }
 
 function heimatWaehlen(ort) {
-  meineHeimat = ort;
-  localStorage.setItem('meine-heimat', ort);
+  meineHeimat = (ort || '').toLowerCase();
+  localStorage.setItem('meine-heimat', meineHeimat);
   document.querySelectorAll('.heimat-kachel').forEach(k =>
     k.classList.toggle('ausgewaehlt', k.dataset.ort === ort)
   );

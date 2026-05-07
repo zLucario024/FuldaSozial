@@ -286,10 +286,10 @@ def ort_vollsuche(region: str = Query(...), limit: int = Query(200, ge=1, le=500
     cursor.execute("""
         SELECT id, hash, titel, link, quelle, typ, region, datum, gespeichert, tags, beschreibung
         FROM artikel
-        WHERE region = %s OR titel ILIKE %s OR tags ILIKE %s
+        WHERE region = %s OR titel ILIKE %s OR tags ILIKE %s OR beschreibung ILIKE %s
         ORDER BY datum DESC
         LIMIT %s
-    """, (region, f"%{region}%", f"%{region}%", limit))
+    """, (region, f"%{region}%", f"%{region}%", f"%{region}%", limit))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
