@@ -2083,6 +2083,16 @@ function artikelAnzeigen() {
       quelleArchivSuche(aktivQuelle);
       return;
     }
+    // Archive search done but vollsuche not yet tried — show spinner and search entire DB
+    if (istSpezifischesOrt && _archivOrtQuery === aktivOrt && _ortVollsucheQuery !== aktivOrt) {
+      grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+        + '<div class="spinner"></div>'
+        + '<span>Suche in der gesamten Datenbank…</span></div>';
+      document.getElementById('mehr-btn').style.display = 'none';
+      document.getElementById('archiv-hinweis').style.display = 'none';
+      ortVollsuche(aktivOrt);
+      return;
+    }
     const ortName = aktivOrt && !['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt) ? ` zu „${aktivOrt}"` : '';
     grid.innerHTML = `<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel${ortName} gefunden.</p>`
       + `<p style="font-size:.85rem;color:var(--text-muted);margin-top:.25rem">In der Suche findest du Artikel aus dem gesamten Archiv.</p></div>`;
