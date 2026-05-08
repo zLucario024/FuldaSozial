@@ -53,8 +53,8 @@ BEKANNTE_REGIONEN = (
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
-    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
-    'zirkenbach',
+    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'rönshausen', 'welkers',
+    'wissels', 'zirkenbach',
     # Ortsteile Flieden
     'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
     'rückers', 'schweben', 'stork', 'struth',
@@ -76,7 +76,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Rasdorf
     'habel', 'setzelbach',
     # Ortsteile Dipperz
-    'dörnhagen', 'rönshausen',
+    'dörnhagen',
     # Ortsteile Ebersburg
     'euters', 'götzenhof', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg

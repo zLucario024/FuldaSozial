@@ -1001,8 +1001,8 @@ BEKANNTE_REGIONEN = (
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
-    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'welkers', 'wissels',
-    'zirkenbach',
+    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'rönshausen', 'welkers',
+    'wissels', 'zirkenbach',
     # Ortsteile Flieden
     'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
     'rückers', 'schweben', 'stork', 'struth',
@@ -1024,7 +1024,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Rasdorf
     'habel', 'setzelbach',
     # Ortsteile Dipperz
-    'dörnhagen', 'rönshausen',
+    'dörnhagen',
     # Ortsteile Ebersburg
     'euters', 'götzenhof', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
@@ -1077,7 +1077,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'tiefengruben': 'neuhof',
     # Ortsteile Eichenzell
     'kerzell': 'eichenzell', 'löschenrod': 'eichenzell', 'lütter': 'eichenzell', 'rothemann': 'eichenzell',
-    'welkers': 'eichenzell', 'wissels': 'eichenzell', 'zirkenbach': 'eichenzell',
+    'rönshausen': 'eichenzell', 'welkers': 'eichenzell', 'wissels': 'eichenzell', 'zirkenbach': 'eichenzell',
     # Ortsteile Flieden
     'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden', 'höf und haid': 'flieden',
     'kohlgrund': 'flieden', 'magdlos': 'flieden', 'rückers': 'flieden', 'schweben': 'flieden',
@@ -1105,7 +1105,7 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Rasdorf
     'habel': 'rasdorf', 'setzelbach': 'rasdorf',
     # Ortsteile Dipperz
-    'dörnhagen': 'dipperz', 'rönshausen': 'dipperz',
+    'dörnhagen': 'dipperz',
     # Ortsteile Ebersburg
     'euters': 'ebersburg', 'götzenhof': 'ebersburg', 'thalau': 'ebersburg', 'weyhers': 'ebersburg',
     # Ortsteile Ehrenberg
