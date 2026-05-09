@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magdlos – Ortsteil der Gemeinde Flieden</title>
-<meta name="description" content="Magdlos, Ortsteil der Gemeinde Flieden im Landkreis Fulda – ruhiger Ortsteil mit alter Dorfkirche südlich des Kernorts.">
+<title>Flieden (Kernort) – Gemeinde Flieden</title>
+<meta name="description" content="Flieden Kernort – Rathaus, Kirchen, Schule, Paddelteich und öffentliche Skulpturen im Herzen der Gemeinde Flieden im Landkreis Fulda.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.rnfulda.de/magdlos.html">
-<link rel="icon" type="image/svg+xml" href="Design/rn_fulda_logo_klein.svg">
-<link rel="icon" type="image/jpeg" sizes="48x48" href="Design/rn_logo_mini.jpg">
-<link rel="apple-touch-icon" sizes="192x192" href="Design/rn_logo_mini.jpg">
+<link rel="canonical" href="https://www.rnfulda.de/seiten/flieden-kernort.html">
+<link rel="icon" type="image/svg+xml" href="../Design/rn_fulda_logo_klein.svg">
+<link rel="icon" type="image/jpeg" sizes="48x48" href="../Design/rn_logo_mini.jpg">
+<link rel="apple-touch-icon" sizes="192x192" href="../Design/rn_logo_mini.jpg">
 <style>
-  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'Playfair Display'; src: url('fonts/playfair-display-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'Source Sans 3'; src: url('fonts/source-sans-3-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('../fonts/source-sans-3-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Source Sans 3'; src: url('../fonts/source-sans-3-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -53,24 +53,19 @@
   .ortsteil-meta .chip svg { width: 12px; height: 12px; fill: none; stroke: var(--rot); stroke-width: 2; flex-shrink: 0; }
   .ortsteil-meta .chip:hover { border-color: var(--rot); color: var(--rot); }
   .section-label { font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--rot); margin-bottom: 1rem; margin-top: 2.5rem; }
-
-  /* Single image, displayed large and centered */
-  .bild-gross-wrap { max-width: 580px; margin: 0 auto; cursor: zoom-in; }
-  .bild-gross { width: 100%; border-radius: 12px; display: block; object-fit: cover; transition: opacity .15s; }
-  .bild-gross:hover { opacity: .88; }
-  .bild-caption { text-align: center; font-size: .82rem; color: var(--grau-mittel); margin-top: .5rem; }
-
+  .highlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .75rem; margin-bottom: .5rem; }
+  .highlight-chip { display: flex; align-items: center; gap: 8px; padding: .7rem 1rem; background: var(--grau-hell); border: 1px solid var(--border); border-radius: 10px; font-size: .85rem; font-weight: 500; color: var(--grau-dunkel); }
+  .highlight-chip svg { width: 16px; height: 16px; fill: none; stroke: var(--rot); stroke-width: 2; flex-shrink: 0; }
+  .galerie-grid { columns: 3; gap: .75rem; }
+  .galerie-item { break-inside: avoid; margin-bottom: .75rem; cursor: zoom-in; }
+  .galerie-bild { width: 100%; border-radius: 8px; display: block; object-fit: cover; transition: opacity .15s; }
+  .galerie-bild:hover { opacity: .85; }
+  .galerie-caption { font-size: .72rem; color: var(--grau-mittel); margin-top: 3px; padding: 0 2px; }
   .feedback-box { background: var(--grau-hell); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
   .feedback-text p { font-size: .9rem; color: var(--grau-mittel); margin-bottom: 0; }
   .btn-vorschlag { display: inline-flex; align-items: center; gap: 7px; font-size: .88rem; font-weight: 600; color: var(--rot); background: var(--weiss); border: 2px solid var(--rot); padding: 8px 18px; border-radius: 22px; cursor: pointer; transition: background .15s, color .15s; white-space: nowrap; flex-shrink: 0; }
   .btn-vorschlag:hover { background: var(--rot); color: #fff; }
   .btn-vorschlag svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
-
-  /* Foto upload invite */
-  .foto-einladen { display: flex; align-items: flex-start; gap: 1rem; background: var(--rot-hell); border: 1px solid #f0c0c8; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0; }
-  .foto-einladen svg { width: 24px; height: 24px; fill: none; stroke: var(--rot); stroke-width: 1.5; flex-shrink: 0; margin-top: 2px; }
-  .foto-einladen p { font-size: .9rem; color: var(--grau-dunkel); margin-bottom: 0; }
-
   #foto-modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.82); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
   #foto-modal.offen { display: flex; }
   #foto-modal-inhalt { max-width: 92vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center; gap: .75rem; animation: einblenden .18s ease; }
@@ -100,21 +95,20 @@
   .footer-inner nav { display: flex; gap: 1.5rem; }
   .footer-inner nav a { color: var(--grau-mittel); text-decoration: none; transition: color .15s; }
   .footer-inner nav a:hover { color: var(--rot); }
-  html.dark-mode body { --weiss: #141414; --schwarz: #ececec; --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa; --grau-hell: #202020; --border: #333; --rot-hell: #2c0c10; }
+  html.dark-mode body { --weiss: #141414; --schwarz: #ececec; --grau-dunkel: #cccccc; --grau-mittel: #aaaaaa; --grau-hell: #202020; --border: #333; }
   html.dark-mode header, html.dark-mode footer { background: var(--weiss); border-color: var(--border); }
   html.dark-mode #feedback-modal-inhalt { background: #1e1e1e; }
   html.dark-mode #feedback-textarea { background: #2a2a2a; color: var(--schwarz); border-color: var(--border); }
   html.dark-mode .btn-vorschlag { background: transparent; }
   html.dark-mode .btn-vorschlag:hover { background: var(--rot); color: #fff; }
-  html.dark-mode .foto-einladen { background: #2c0c10; border-color: #6a1020; }
-  @media (max-width: 600px) { main { padding: 2rem 1rem 3rem; } h1 { font-size: 1.5rem; } .feedback-box { flex-direction: column; gap: 1rem; } .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; } }
+  @media (max-width: 600px) { main { padding: 2rem 1rem 3rem; } h1 { font-size: 1.5rem; } .galerie-grid { columns: 2; } .feedback-box { flex-direction: column; gap: 1rem; } .footer-inner { flex-direction: column; align-items: flex-start; padding: 1rem; } }
 </style>
 <script>if(localStorage.getItem('darkmode')==='1')document.documentElement.classList.add('dark-mode');</script>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">
+  <a href="../index.html" class="logo">
     <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg></div>
     <div class="logo-text">RegioNachrichten <span>Fulda</span></div>
   </a>
@@ -126,20 +120,31 @@
     Gemeinde Flieden
   </a>
 
-  <p class="ortsteil-label">Ortsteil · Gemeinde Flieden</p>
-  <h1><em>Magdlos</em></h1>
-  <p class="untertitel">Kleiner, beschaulicher Ortsteil südlich des Kernorts, eingebettet in die hügelige Landschaft zwischen Kinzigtal und Rhön. Im Zentrum des Dorflebens steht die alte Pfarrkirche.</p>
+  <p class="ortsteil-label">Kernort · Gemeinde Flieden</p>
+  <h1><em>Flieden</em></h1>
+  <p class="untertitel">Sitz der Gemeindeverwaltung und Mittelpunkt der Gemeinde. Rathaus, zwei Kirchen, Schule, der Paddelteich und öffentliche Kunstwerke machen den Kernort zum lebendigen Zentrum von Flieden.</p>
   <div class="cta-reihe">
-    <a href="index.html?ort=magdlos" class="btn-nachrichten">
+    <a href="../index.html?ort=flieden" class="btn-nachrichten">
       <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
       Aktuelle Nachrichten
     </a>
     <a href="flieden.html" class="btn-gemeinde">Zur Gemeinde Flieden</a>
   </div>
   <div class="ortsteil-meta">
-    <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>732 Einwohner</span>
-    <span class="chip"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>7,3 km²</span>
+    <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>3.931 Einwohner</span>
+    <span class="chip"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>12,4 km²</span>
     <a href="flieden.html" class="chip"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Gemeinde Flieden</a>
+  </div>
+
+  <hr>
+
+  <p class="section-label">Im Kernort</p>
+  <div class="highlight-grid">
+    <div class="highlight-chip"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Rathaus</div>
+    <div class="highlight-chip"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Kath. &amp; ev. Kirche</div>
+    <div class="highlight-chip"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>Schule</div>
+    <div class="highlight-chip"><svg viewBox="0 0 24 24"><path d="M2 12s3-5 10-5 10 5 10 5-3 5-10 5-10-5-10-5z"/></svg>Paddelteich</div>
+    <div class="highlight-chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>Jona-Skulptur</div>
   </div>
 
   <hr>
@@ -149,26 +154,43 @@
 
   <hr>
 
-  <p class="section-label">Bild aus Magdlos</p>
-  <div class="bild-gross-wrap" onclick="fotoOeffnen()">
-    <img class="bild-gross" src="Design/Bilder für Orte Infoseite/Magdlos Kirche.jpg"
-         alt="Kirche Magdlos" loading="lazy" id="magdlos-bild"
-         onerror="this.closest('.bild-gross-wrap').style.display='none'">
-    <p class="bild-caption">Kirche Magdlos</p>
-  </div>
-
-  <hr>
-
-  <div class="foto-einladen">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-    <p>Du kennst Magdlos? <strong>Wir freuen uns über Fotos</strong> aus dem Ortsteil – schick sie direkt an <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a> und wir nehmen sie gerne in diese Seite auf.</p>
+  <p class="section-label">Bilder aus dem Kernort</p>
+  <div class="galerie-grid">
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden Rathaus.jpg" alt="Rathaus Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Rathaus</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden Kirche.jpg" alt="Kirche Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Kirche</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden ev. Kirche.jpg" alt="Evangelische Kirche Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Ev. Kirche</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden Jona der Prophet.jpg" alt="Skulptur Jona der Prophet" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Jona der Prophet</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden König.jpg" alt="König-Skulptur Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Skulptur König</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden Paddelteich.jpg" alt="Paddelteich Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Paddelteich</div>
+    </div>
+    <div class="galerie-item" onclick="fotoOeffnen(this)">
+      <img class="galerie-bild" src="../Design/Bilder für Orte Infoseite/Flieden Schule.jpg" alt="Schule Flieden" loading="lazy" onerror="this.closest('.galerie-item').style.display='none'">
+      <div class="galerie-caption">Schule</div>
+    </div>
   </div>
 
   <hr>
 
   <div class="feedback-box">
     <div class="feedback-text">
-      <p><strong>Etwas fehlt oder stimmt nicht?</strong><br>Ergänze Informationen oder sende uns Fotos aus Magdlos.</p>
+      <p><strong>Etwas fehlt oder stimmt nicht?</strong><br>Ergänze Informationen oder sende uns Fotos aus dem Kernort.</p>
     </div>
     <button class="btn-vorschlag" onclick="feedbackOeffnen()">
       <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
@@ -184,7 +206,7 @@
   </div>
 </footer>
 
-<div id="foto-modal" role="dialog" aria-modal="true" onclick="if(event.target===this)fotoZu()">
+<div id="foto-modal" role="dialog" aria-modal="true" onclick="fotoSchliessen(event)">
   <button id="foto-modal-schliessen" onclick="fotoZu()" aria-label="Schließen">
     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
@@ -201,26 +223,19 @@
     </button>
     <h2>Inhalte ergänzen oder korrigieren</h2>
     <p class="modal-sub">Schreib deinen Vorschlag – oder direkt an <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a>.</p>
-    <textarea id="feedback-textarea" placeholder="Dein Vorschlag zu Magdlos…"></textarea>
+    <textarea id="feedback-textarea" placeholder="Dein Vorschlag zum Kernort Flieden…"></textarea>
     <div class="feedback-modal-actions">
       <span class="feedback-email-hint"><a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a></span>
-      <button class="btn-senden" onclick="feedbackSenden('Magdlos')">Per E-Mail senden</button>
+      <button class="btn-senden" onclick="feedbackSenden('Flieden Kernort')">Per E-Mail senden</button>
     </div>
     <p class="foto-hinweis">Fotos einsenden per E-Mail an <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a></p>
   </div>
 </div>
 
 <script>
-function fotoOeffnen() {
-  var img = document.getElementById('magdlos-bild');
-  if (!img || !img.src) return;
-  document.getElementById('foto-modal-bild').src = img.src;
-  document.getElementById('foto-modal-bild').alt = img.alt;
-  document.getElementById('foto-modal-caption').textContent = 'Kirche Magdlos';
-  document.getElementById('foto-modal').classList.add('offen');
-  document.body.style.overflow = 'hidden';
-}
+function fotoOeffnen(item) { var img = item.querySelector('img'), cap = item.querySelector('.galerie-caption'); if (!img || !img.src) return; document.getElementById('foto-modal-bild').src = img.src; document.getElementById('foto-modal-bild').alt = img.alt; document.getElementById('foto-modal-caption').textContent = cap ? cap.textContent : ''; document.getElementById('foto-modal').classList.add('offen'); document.body.style.overflow = 'hidden'; }
 function fotoZu() { document.getElementById('foto-modal').classList.remove('offen'); document.body.style.overflow = ''; }
+function fotoSchliessen(e) { if (e.target === document.getElementById('foto-modal')) fotoZu(); }
 function feedbackOeffnen() { document.getElementById('feedback-modal').classList.add('offen'); document.body.style.overflow = 'hidden'; setTimeout(function(){ document.getElementById('feedback-textarea').focus(); }, 100); }
 function feedbackZu() { document.getElementById('feedback-modal').classList.remove('offen'); document.body.style.overflow = ''; }
 function feedbackSchliessen(e) { if (e.target === document.getElementById('feedback-modal')) feedbackZu(); }

@@ -8,12 +8,12 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.rnfulda.de/impressum.html</loc>
+    <loc>https://www.rnfulda.de/seiten/impressum.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.rnfulda.de/datenschutz.html</loc>
+    <loc>https://www.rnfulda.de/seiten/datenschutz.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

@@ -1416,7 +1416,7 @@ footer a{{color:var(--rot);text-decoration:none}}
     <span>{next_link}</span>
   </nav>
 </main>
-<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv</a> · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></footer>
+<footer>RegioNachrichten Fulda · <a href="../archiv.html">Archiv</a> · <a href="../seiten/impressum.html">Impressum</a> · <a href="../seiten/datenschutz.html">Datenschutz</a></footer>
 </body>
 </html>"""
 
@@ -1426,8 +1426,8 @@ def sitemap_generieren(conn):
 
     STATIC_URLS = [
         ("https://www.rnfulda.de",                                  "hourly", "1.0"),
-        ("https://www.rnfulda.de/impressum.html",                   "yearly", "0.3"),
-        ("https://www.rnfulda.de/datenschutz.html",                 "yearly", "0.3"),
+        ("https://www.rnfulda.de/seiten/impressum.html",             "yearly", "0.3"),
+        ("https://www.rnfulda.de/seiten/datenschutz.html",          "yearly", "0.3"),
         ("https://www.rnfulda.de/archiv.html",                      "weekly", "0.6"),
         # ?ort=landkreis-fulda weggelassen — Homepage ist bereits die Landkreis-Ansicht
         ("https://www.rnfulda.de/?ort=fulda",                       "hourly", "0.9"),
