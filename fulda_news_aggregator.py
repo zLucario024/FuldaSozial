@@ -987,7 +987,7 @@ BEKANNTE_REGIONEN = (
     'kämmerzell', 'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes',
     'mittelrode', 'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode',
     'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
-    'uffhausen', 'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
+    'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
     'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach', 'steinbach',
     # Ortsteile Künzell
@@ -1010,7 +1010,8 @@ BEKANNTE_REGIONEN = (
     'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
     'steens', 'thälau', 'wehrda',
     # Ortsteile Großenlüder
-    'bimbach', 'kleinlüder', 'müs', 'uttrichshausen',
+    'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
+    'uttrichshausen',
     # Ortsteile Hilders
     'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Hofbieber
@@ -1057,8 +1058,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'mittelrode': 'fulda', 'neuenberg': 'fulda', 'niederrode': 'fulda', 'niesig': 'fulda',
     'nordend': 'fulda', 'oberrode': 'fulda', 'ostend': 'fulda', 'rodges': 'fulda',
     'roßberg': 'fulda', 'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda',
-    'uffhausen': 'fulda', 'weimarer tunnel': 'fulda', 'westend': 'fulda', 'ziehers': 'fulda',
-    'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
+    'weimarer tunnel': 'fulda', 'westend': 'fulda', 'ziehers': 'fulda', 'ziehers-nord': 'fulda',
+    'ziehers-süd': 'fulda',
     # Ortsteile Hünfeld
     'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld', 'malges': 'hünfeld',
     'molzbach': 'hünfeld', 'steinbach': 'hünfeld',
@@ -1087,7 +1088,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'rothenkirchen': 'burghaun', 'schmalnau': 'burghaun', 'steens': 'burghaun', 'thälau': 'burghaun',
     'wehrda': 'burghaun',
     # Ortsteile Großenlüder
-    'bimbach': 'großenlüder', 'kleinlüder': 'großenlüder', 'müs': 'großenlüder', 'uttrichshausen': 'großenlüder',
+    'bimbach': 'großenlüder', 'eichenau': 'großenlüder', 'kleinlüder': 'großenlüder', 'lütterz': 'großenlüder',
+    'müs': 'großenlüder', 'uffhausen': 'großenlüder', 'uttrichshausen': 'großenlüder',
     # Ortsteile Hilders
     'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders', 'simmershausen': 'hilders',
     'unterweid': 'hilders', 'wickers': 'hilders',
