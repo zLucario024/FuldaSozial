@@ -1,5 +1,18 @@
-self.addEventListener('install', () => self.skipWaiting());
+const SHELL_CACHE = 'shell-v1';
+const SHELL_ASSETS = ['/', '/index.html', '/fonts/playfair-display-700.woff2', '/fonts/playfair-display-900.woff2', '/fonts/source-sans-3-400.woff2', '/fonts/source-sans-3-500.woff2', '/fonts/source-sans-3-600.woff2', '/Design/rn_logo_mini.jpg'];
+
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(SHELL_CACHE).then(c => c.addAll(SHELL_ASSETS)));
+  self.skipWaiting();
+});
+
 self.addEventListener('activate', event => event.waitUntil(clients.claim()));
+
+self.addEventListener('fetch', event => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request).catch(() => caches.match('/index.html')));
+  }
+});
 
 self.addEventListener('push', event => {
   if (!event.data) return;

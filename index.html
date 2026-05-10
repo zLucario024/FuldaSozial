@@ -277,6 +277,8 @@ Fulda Nachrichten">
   .btn-reset:hover { border-color: var(--rot); color: var(--rot); }
 
   .ergebnis-bar { max-width: 1400px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; font-size: .9rem; color: var(--grau-mittel); }
+  #offline-banner { display: none; max-width: 1400px; margin: 0 auto; padding: .6rem 2rem; background: #fff8e1; border-bottom: 1px solid #ffe082; color: #7a5c00; font-size: .85rem; align-items: center; gap: .5rem; }
+  html.dark-mode #offline-banner { background: #2a2000; border-color: #5a4000; color: #e0c060; }
 
   /* AKTIVE FILTER BANNER */
   /* Aktive Filter Leiste */
@@ -1378,6 +1380,11 @@ document.addEventListener('DOMContentLoaded', function() {
   <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
+<div id="offline-banner" style="display:none">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+  Offline – gespeicherte Artikel vom <span id="offline-datum"></span>
+</div>
+
 <div class="ergebnis-bar">
   <span id="anzahl-text">Lade Artikel...</span>
 </div>
@@ -1909,6 +1916,7 @@ async function artikelLaden(tage = 1) {
     aktuellerOffset = alleArtikel.length;
     hatMehr = data.hat_mehr || false;
     _ladeController = null;
+    try { localStorage.setItem('cachedArtikel', JSON.stringify(alleArtikel)); localStorage.setItem('cachedArtikelDatum', new Date().toISOString()); } catch(_) {}
     artikelAnzeigen();
     heimatNeuZaehlen();
     _karteNeuBadgeAktualisieren();
@@ -1917,12 +1925,36 @@ async function artikelLaden(tage = 1) {
     if (e.name === 'AbortError') return;
     ladeModusTage = tage;
     _ladeController = null;
-    grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
-      + '<p>⚠️ Artikel konnten nicht geladen werden.</p>'
-      + `<button onclick="artikelLaden(${tage})" style="margin-top:.5rem;padding:.6rem 1.4rem;background:var(--rot);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem">Erneut versuchen</button>`
-      + '</div>';
-    document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
+    const _cached = localStorage.getItem('cachedArtikel');
+    if (_cached) {
+      try {
+        alleArtikel = JSON.parse(_cached);
+        aktuellerOffset = alleArtikel.length;
+        offlineBannerZeigen();
+        artikelAnzeigen();
+      } catch(_) {
+        grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1"><p>⚠️ Artikel konnten nicht geladen werden.</p></div>';
+      }
+    } else {
+      grid.innerHTML = '<div class="lade-container" style="grid-column:1/-1">'
+        + '<p>⚠️ Artikel konnten nicht geladen werden.</p>'
+        + `<button onclick="artikelLaden(${tage})" style="margin-top:.5rem;padding:.6rem 1.4rem;background:var(--rot);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem">Erneut versuchen</button>`
+        + '</div>';
+      document.getElementById('anzahl-text').textContent = 'Keine Verbindung';
+    }
   }
+}
+
+function offlineBannerZeigen() {
+  const banner = document.getElementById('offline-banner');
+  if (!banner) return;
+  const datum = localStorage.getItem('cachedArtikelDatum');
+  const datumEl = document.getElementById('offline-datum');
+  if (datum && datumEl) {
+    const d = new Date(datum);
+    datumEl.textContent = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  banner.style.display = 'flex';
 }
 
 function gefilterteArtikel() {
