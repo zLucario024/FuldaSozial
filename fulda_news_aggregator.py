@@ -989,7 +989,7 @@ BEKANNTE_REGIONEN = (
     'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
     'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
-    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach', 'steinbach',
+    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
     # Ortsteile Künzell
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
     'keulos', 'pilgerzell',
@@ -1007,8 +1007,8 @@ BEKANNTE_REGIONEN = (
     'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
     'rückers', 'schweben', 'stork', 'struth',
     # Ortsteile Burghaun
-    'gruben', 'hettenhausen', 'hünhan', 'nüst', 'rothenkirchen', 'schmalnau',
-    'steens', 'thälau', 'wehrda',
+    'großenmoor', 'gruben', 'hechelmannskirchen', 'hünhan', 'kleinmoor', 'köhlersmoor',
+    'langenschwarz', 'rothenkirchen', 'schlotzau', 'steinbach',
     # Ortsteile Großenlüder
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
     'uttrichshausen',
@@ -1062,7 +1062,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'ziehers-süd': 'fulda',
     # Ortsteile Hünfeld
     'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld', 'malges': 'hünfeld',
-    'molzbach': 'hünfeld', 'steinbach': 'hünfeld',
+    'molzbach': 'hünfeld',
     # Ortsteile Künzell
     'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell', 'dirlos': 'künzell',
     'engelhelms': 'künzell', 'haunes': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell',
@@ -1084,9 +1084,9 @@ ORTSTEILE_TO_GEMEINDE = {
     'kohlgrund': 'flieden', 'magdlos': 'flieden', 'rückers': 'flieden', 'schweben': 'flieden',
     'stork': 'flieden', 'struth': 'flieden',
     # Ortsteile Burghaun
-    'gruben': 'burghaun', 'hettenhausen': 'burghaun', 'hünhan': 'burghaun', 'nüst': 'burghaun',
-    'rothenkirchen': 'burghaun', 'schmalnau': 'burghaun', 'steens': 'burghaun', 'thälau': 'burghaun',
-    'wehrda': 'burghaun',
+    'großenmoor': 'burghaun', 'gruben': 'burghaun', 'hechelmannskirchen': 'burghaun', 'hünhan': 'burghaun',
+    'kleinmoor': 'burghaun', 'köhlersmoor': 'burghaun', 'langenschwarz': 'burghaun', 'rothenkirchen': 'burghaun',
+    'schlotzau': 'burghaun', 'steinbach': 'burghaun',
     # Ortsteile Großenlüder
     'bimbach': 'großenlüder', 'eichenau': 'großenlüder', 'kleinlüder': 'großenlüder', 'lütterz': 'großenlüder',
     'müs': 'großenlüder', 'uffhausen': 'großenlüder', 'uttrichshausen': 'großenlüder',
