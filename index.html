@@ -1979,6 +1979,8 @@ function gefilterteArtikel() {
           const hatLokal = ORTE_LOKAL.some(o => ortMatch(titelTags, o))
             || ortsteileMatch(titelTags, tags);
           if (hatFremde && !hatLokal) return false;
+          // Fuldainfo covers broad topics — require at least one local place mention in text
+          if ((a.quelle || '').toLowerCase().includes('fuldainfo') && !textOk) return false;
         }
       } else if (aktivOrt === 'hessen') {
         const hatLandkreisOrt = ORTE_LANDKREIS.some(o => ortMatch(text, o))
