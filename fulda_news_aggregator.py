@@ -753,15 +753,15 @@ def wittich_artikel_holen(url, base_url):
         gesehen.add(link)
 
         content = a_m.group(2)
-        titel_m = re.search(r'<h\d[^>]*>(.*?)</h\d>', content, re.DOTALL)
-        p_m = re.search(r'<p[^>]*>(.*?)</p>', content, re.DOTALL)
+        titel_m = re.search(r'data-role="headline"[^>]*>\s*(.*?)\s*</h\d>', content, re.DOTALL)
+        teaser_m = re.search(r'data-role="teaser"[^>]*>(.*?)</div>', content, re.DOTALL)
         if not titel_m:
             continue
 
         titel = html_unescape(re.sub(r'<[^>]+>', '', titel_m.group(1))).strip()
         beschreibung = auf_zwei_saetze(
-            html_unescape(re.sub(r'<[^>]+>', '', p_m.group(1))).strip()
-        ) if p_m else ""
+            html_unescape(re.sub(r'<[^>]+>', '', teaser_m.group(1))).strip()
+        ) if teaser_m else ""
 
         if not titel or len(titel) < 3:
             continue

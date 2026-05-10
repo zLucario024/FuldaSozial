@@ -1523,6 +1523,12 @@ const FILTER_CONFIG = {
   ORT_FREMD_AUSSCHLUSS: new Set(['innenstadt']),
 };
 
+// Sources that exclusively cover one Gemeinde — always pass that Gemeinde's filter
+// regardless of whether the article text mentions the place name.
+const QUELLE_REGION_EXKLUSIV = {
+  'GemeindeZeitung Petersberg': 'petersberg',
+};
+
 // Specific place names only — excludes generic regional terms that don't anchor
 // an article to the Landkreis (e.g. 'rhön' in a Leipzig headline is not local).
 const ORTE_LOKAL = ORTE_LANDKREIS.filter(o => !FILTER_CONFIG.ORTE_LOKAL_AUSSCHLUSS.includes(o));
@@ -2001,7 +2007,8 @@ function gefilterteArtikel() {
         const regionOk = r === aktivOrt || (elternGemeinde && r === elternGemeinde && text.includes(aktivOrt));
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
         const textOk = ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o));
-        if (!regionOk && !textOk) return false;
+        const quelleExklusiv = QUELLE_REGION_EXKLUSIV[a.quelle] === aktivOrt;
+        if (!quelleExklusiv && !regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
         if (ausschluss && ausschluss.some(ausschlussOrt => ortMatch(text, ausschlussOrt))) return false;
         // Für mehrdeutige Ort-Begriffe (z.B. "Innenstadt"): Artikel ausblenden, wenn
