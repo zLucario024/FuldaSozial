@@ -314,6 +314,14 @@ HTML_QUELLEN = [
         "region": "landkreis-fulda",
         "parser": "hs_fulda",
     },
+    {
+        "name": "GemeindeZeitung Petersberg",
+        "url": "https://ol.wittich.de/titel/1142",
+        "base_url": "https://ol.wittich.de",
+        "typ": "Amtsblatt",
+        "region": "petersberg",
+        "parser": "wittich",
+    },
 ]
 
 HEADERS = {
@@ -704,6 +712,64 @@ def hs_fulda_artikel_holen(url, base_url):
     return artikel
 
 
+def wittich_artikel_holen(url, base_url):
+    """Scrapt eine Wittich-Gemeindezeitung. url = https://ol.wittich.de/titel/[ID].
+    The base URL auto-loads the current issue, so no issue number is needed in config."""
+    m_id = re.search(r'/titel/(\d+)', url)
+    if not m_id:
+        print("  FEHLER: Keine Titel-ID in Wittich-URL gefunden")
+        return []
+    titel_id = m_id.group(1)
+
+    try:
+        session = html_session_erstellen()
+        r = session.get(url, timeout=20, allow_redirects=True)
+        r.raise_for_status()
+    except Exception as e:
+        print(f"  FEHLER: Wittich-Seite nicht erreichbar ({e})")
+        return []
+
+    # Derive publication date from ISO week embedded in article links
+    datum_str = None
+    m_ausgabe = re.search(r'/ausgabe/(\d+)/(\d{4})/', r.text)
+    if m_ausgabe:
+        try:
+            ausgabe, jahr = int(m_ausgabe.group(1)), int(m_ausgabe.group(2))
+            # Thursday of the ISO week — typical Wittich publication day
+            datum_str = datetime.fromisocalendar(jahr, ausgabe, 4).strftime('%Y-%m-%d 08:00:00')
+        except (ValueError, AttributeError):
+            pass
+
+    artikel = []
+    gesehen = set()
+    artikel_pattern = re.compile(
+        r'<a\s[^>]*href="(/titel/' + re.escape(titel_id) + r'/ausgabe/\d+/\d{4}/artikel/[^"]+)"[^>]*>(.*?)</a>',
+        re.DOTALL
+    )
+    for a_m in artikel_pattern.finditer(r.text):
+        link = base_url + a_m.group(1)
+        if link in gesehen:
+            continue
+        gesehen.add(link)
+
+        content = a_m.group(2)
+        titel_m = re.search(r'<h\d[^>]*>(.*?)</h\d>', content, re.DOTALL)
+        p_m = re.search(r'<p[^>]*>(.*?)</p>', content, re.DOTALL)
+        if not titel_m:
+            continue
+
+        titel = html_unescape(re.sub(r'<[^>]+>', '', titel_m.group(1))).strip()
+        beschreibung = auf_zwei_saetze(
+            html_unescape(re.sub(r'<[^>]+>', '', p_m.group(1))).strip()
+        ) if p_m else ""
+
+        if not titel or len(titel) < 3:
+            continue
+        artikel.append((titel, link, datum_str, beschreibung))
+
+    return artikel
+
+
 def html_quelle_verarbeiten(quelle, conn):
     print(f"\n{'=' * 55}")
     print(f"Abrufen: {quelle['name']} (HTML)")
@@ -713,6 +779,8 @@ def html_quelle_verarbeiten(quelle, conn):
         gefundene = oz_artikel_holen(quelle["url"], quelle["base_url"])
     elif parser == "hs_fulda":
         gefundene = hs_fulda_artikel_holen(quelle["url"], quelle["base_url"])
+    elif parser == "wittich":
+        gefundene = wittich_artikel_holen(quelle["url"], quelle["base_url"])
     else:
         gefundene = html_artikel_holen(quelle["url"], quelle["base_url"])
     if not gefundene:
