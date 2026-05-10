@@ -92,7 +92,8 @@ BEKANNTE_REGIONEN = (
     'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
     'veitsteinbach',
     # Ortsteile Nüsttal
-    'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
+    'gotthards', 'haselstein', 'hofaschenbach', 'mittelaschenbach', 'morles', 'oberaschenbach',
+    'rimmels', 'silges',
     # Ortsteile Poppenhausen
     'abtsroda', 'rodholz', 'sieblos',
 )

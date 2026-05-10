@@ -1040,7 +1040,8 @@ BEKANNTE_REGIONEN = (
     'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
     'veitsteinbach',
     # Ortsteile Nüsttal
-    'hofaschenbach', 'morles', 'mottgers', 'ützhausen',
+    'gotthards', 'haselstein', 'hofaschenbach', 'mittelaschenbach', 'morles', 'oberaschenbach',
+    'rimmels', 'silges',
     # Ortsteile Poppenhausen
     'abtsroda', 'rodholz', 'sieblos',
 )
@@ -1126,7 +1127,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'eichenried': 'kalbach', 'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach',
     'oberkalbach': 'kalbach', 'uttrichshausen': 'kalbach', 'veitsteinbach': 'kalbach',
     # Ortsteile Nüsttal
-    'hofaschenbach': 'nüsttal', 'morles': 'nüsttal', 'mottgers': 'nüsttal', 'ützhausen': 'nüsttal',
+    'gotthards': 'nüsttal', 'haselstein': 'nüsttal', 'hofaschenbach': 'nüsttal', 'mittelaschenbach': 'nüsttal',
+    'morles': 'nüsttal', 'oberaschenbach': 'nüsttal', 'rimmels': 'nüsttal', 'silges': 'nüsttal',
     # Ortsteile Poppenhausen
     'abtsroda': 'poppenhausen', 'rodholz': 'poppenhausen', 'sieblos': 'poppenhausen',
 
