@@ -1021,7 +1021,10 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Tann
     'dippach', 'günthers', 'lahrbach', 'neuswarts',
     # Ortsteile Eiterfeld
-    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    'arzell', 'betzenrod', 'branders', 'buchenau', 'dittlofrod', 'fürsteneck',
+    'giesenhain', 'großentaft', 'körnbach', 'leibolz', 'leimbach', 'mengers',
+    'oberweisenborn', 'reckrod', 'soisdorf', 'treischfeld', 'ufhausen', 'unterufhausen',
+    'wölf',
     # Ortsteile Rasdorf
     'habel', 'setzelbach',
     # Ortsteile Dipperz
@@ -1102,8 +1105,11 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Tann
     'dippach': 'tann', 'günthers': 'tann', 'lahrbach': 'tann', 'neuswarts': 'tann',
     # Ortsteile Eiterfeld
-    'arzell': 'eiterfeld', 'buchenau': 'eiterfeld', 'großentaft': 'eiterfeld', 'leibolz': 'eiterfeld',
-    'soisdorf': 'eiterfeld',
+    'arzell': 'eiterfeld', 'betzenrod': 'eiterfeld', 'branders': 'eiterfeld', 'buchenau': 'eiterfeld',
+    'dittlofrod': 'eiterfeld', 'fürsteneck': 'eiterfeld', 'giesenhain': 'eiterfeld', 'großentaft': 'eiterfeld',
+    'körnbach': 'eiterfeld', 'leibolz': 'eiterfeld', 'leimbach': 'eiterfeld', 'mengers': 'eiterfeld',
+    'oberweisenborn': 'eiterfeld', 'reckrod': 'eiterfeld', 'soisdorf': 'eiterfeld', 'treischfeld': 'eiterfeld',
+    'ufhausen': 'eiterfeld', 'unterufhausen': 'eiterfeld', 'wölf': 'eiterfeld',
     # Ortsteile Rasdorf
     'habel': 'rasdorf', 'setzelbach': 'rasdorf',
     # Ortsteile Dipperz

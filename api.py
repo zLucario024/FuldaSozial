@@ -73,7 +73,10 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Tann
     'dippach', 'günthers', 'lahrbach', 'neuswarts',
     # Ortsteile Eiterfeld
-    'arzell', 'buchenau', 'großentaft', 'leibolz', 'soisdorf',
+    'arzell', 'betzenrod', 'branders', 'buchenau', 'dittlofrod', 'fürsteneck',
+    'giesenhain', 'großentaft', 'körnbach', 'leibolz', 'leimbach', 'mengers',
+    'oberweisenborn', 'reckrod', 'soisdorf', 'treischfeld', 'ufhausen', 'unterufhausen',
+    'wölf',
     # Ortsteile Rasdorf
     'habel', 'setzelbach',
     # Ortsteile Dipperz
