@@ -78,7 +78,7 @@ BEKANNTE_REGIONEN = (
     'oberweisenborn', 'reckrod', 'soisdorf', 'treischfeld', 'ufhausen', 'unterufhausen',
     'wölf',
     # Ortsteile Rasdorf
-    'habel', 'setzelbach',
+    'grüsselbach', 'setzelbach',
     # Ortsteile Dipperz
     'dörnhagen',
     # Ortsteile Ebersburg

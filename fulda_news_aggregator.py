@@ -1026,7 +1026,7 @@ BEKANNTE_REGIONEN = (
     'oberweisenborn', 'reckrod', 'soisdorf', 'treischfeld', 'ufhausen', 'unterufhausen',
     'wölf',
     # Ortsteile Rasdorf
-    'habel', 'setzelbach',
+    'grüsselbach', 'setzelbach',
     # Ortsteile Dipperz
     'dörnhagen',
     # Ortsteile Ebersburg
@@ -1111,7 +1111,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'oberweisenborn': 'eiterfeld', 'reckrod': 'eiterfeld', 'soisdorf': 'eiterfeld', 'treischfeld': 'eiterfeld',
     'ufhausen': 'eiterfeld', 'unterufhausen': 'eiterfeld', 'wölf': 'eiterfeld',
     # Ortsteile Rasdorf
-    'habel': 'rasdorf', 'setzelbach': 'rasdorf',
+    'grüsselbach': 'rasdorf', 'setzelbach': 'rasdorf',
     # Ortsteile Dipperz
     'dörnhagen': 'dipperz',
     # Ortsteile Ebersburg
