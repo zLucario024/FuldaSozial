@@ -1067,9 +1067,7 @@ BEKANNTE_REGIONEN = (
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
     'pilgerzell', 'wissels',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'großsassen', 'habelsbach', 'haunedorf', 'kesselbach',
-    'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex', 'roßbach',
-    'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
+    'almendorf', 'haunedorf', 'marbach', 'margretenhaun', 'steinau', 'steinhaus',
     # Ortsteile Neuhof
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
@@ -1148,10 +1146,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell', 'dirlos': 'künzell',
     'engelhelms': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell', 'wissels': 'künzell',
     # Ortsteile Petersberg
-    'almendorf': 'petersberg', 'böckels': 'petersberg', 'großsassen': 'petersberg', 'habelsbach': 'petersberg',
-    'haunedorf': 'petersberg', 'kesselbach': 'petersberg', 'marbach': 'petersberg', 'margretenhaun': 'petersberg',
-    'melzdorf': 'petersberg', 'orferode': 'petersberg', 'rex': 'petersberg', 'roßbach': 'petersberg',
-    'steinau': 'petersberg', 'steinhaus': 'petersberg', 'stöckels': 'petersberg', 'untergötzenhof': 'petersberg',
+    'almendorf': 'petersberg', 'haunedorf': 'petersberg', 'marbach': 'petersberg', 'margretenhaun': 'petersberg',
+    'steinau': 'petersberg', 'steinhaus': 'petersberg',
     # Ortsteile Neuhof
     'dorfborn': 'neuhof', 'giesel': 'neuhof', 'hattenhof': 'neuhof', 'hauswurz': 'neuhof',
     'kauppen': 'neuhof', 'motzlar': 'neuhof', 'rommerz': 'neuhof', 'schachten': 'neuhof',

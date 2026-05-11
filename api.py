@@ -46,9 +46,7 @@ BEKANNTE_REGIONEN = (
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
     'pilgerzell', 'wissels',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'großsassen', 'habelsbach', 'haunedorf', 'kesselbach',
-    'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex', 'roßbach',
-    'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
+    'almendorf', 'haunedorf', 'marbach', 'margretenhaun', 'steinau', 'steinhaus',
     # Ortsteile Neuhof
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
