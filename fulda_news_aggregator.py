@@ -1108,7 +1108,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Dipperz
     'dörnhagen',
     # Ortsteile Ebersburg
-    'euters', 'götzenhof', 'thalau', 'weyhers',
+    'ebersberg', 'ried', 'schmalnau', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
     'melperts', 'reulbach', 'seiferts', 'thaiden', 'wüstensachsen',
     # Ortsteile Hosenfeld
@@ -1200,7 +1200,8 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Dipperz
     'dörnhagen': 'dipperz',
     # Ortsteile Ebersburg
-    'euters': 'ebersburg', 'götzenhof': 'ebersburg', 'thalau': 'ebersburg', 'weyhers': 'ebersburg',
+    'ebersberg': 'ebersburg', 'ried': 'ebersburg', 'schmalnau': 'ebersburg', 'thalau': 'ebersburg',
+    'weyhers': 'ebersburg',
     # Ortsteile Ehrenberg
     'melperts': 'ehrenberg', 'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'thaiden': 'ehrenberg',
     'wüstensachsen': 'ehrenberg',

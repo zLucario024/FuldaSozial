@@ -87,7 +87,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Dipperz
     'dörnhagen',
     # Ortsteile Ebersburg
-    'euters', 'götzenhof', 'thalau', 'weyhers',
+    'ebersberg', 'ried', 'schmalnau', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
     'melperts', 'reulbach', 'seiferts', 'thaiden', 'wüstensachsen',
     # Ortsteile Hosenfeld
