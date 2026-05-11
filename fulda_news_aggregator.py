@@ -1068,8 +1068,8 @@ BEKANNTE_REGIONEN = (
     'keulos', 'pilgerzell',
     # Ortsteile Petersberg
     'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach', 'haunedorf',
-    'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun', 'melzdorf', 'orferode',
-    'rex', 'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
+    'kesselbach', 'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex',
+    'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
@@ -1088,7 +1088,9 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Hilders
     'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Hofbieber
-    'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
+    'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
+    'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
+    'schackau', 'schwarzbach', 'traisbach', 'wiesen', 'wittges',
     # Ortsteile Gersfeld
     'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
@@ -1145,10 +1147,10 @@ ORTSTEILE_TO_GEMEINDE = {
     'engelhelms': 'künzell', 'haunes': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell',
     # Ortsteile Petersberg
     'almendorf': 'petersberg', 'böckels': 'petersberg', 'dalherda': 'petersberg', 'großsassen': 'petersberg',
-    'habelsbach': 'petersberg', 'haunedorf': 'petersberg', 'kesselbach': 'petersberg', 'kleinsassen': 'petersberg',
-    'marbach': 'petersberg', 'margretenhaun': 'petersberg', 'melzdorf': 'petersberg', 'orferode': 'petersberg',
-    'rex': 'petersberg', 'roßbach': 'petersberg', 'steinau': 'petersberg', 'steinhaus': 'petersberg',
-    'stöckels': 'petersberg', 'untergötzenhof': 'petersberg',
+    'habelsbach': 'petersberg', 'haunedorf': 'petersberg', 'kesselbach': 'petersberg', 'marbach': 'petersberg',
+    'margretenhaun': 'petersberg', 'melzdorf': 'petersberg', 'orferode': 'petersberg', 'rex': 'petersberg',
+    'roßbach': 'petersberg', 'steinau': 'petersberg', 'steinhaus': 'petersberg', 'stöckels': 'petersberg',
+    'untergötzenhof': 'petersberg',
     # Ortsteile Neuhof
     'dorfborn': 'neuhof', 'giesel': 'neuhof', 'hattenhof': 'neuhof', 'hauswurz': 'neuhof',
     'kauppen': 'neuhof', 'motzlar': 'neuhof', 'rommerz': 'neuhof', 'schachten': 'neuhof',
@@ -1171,8 +1173,11 @@ ORTSTEILE_TO_GEMEINDE = {
     'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders', 'simmershausen': 'hilders',
     'unterweid': 'hilders', 'wickers': 'hilders',
     # Ortsteile Hofbieber
-    'langenbieber': 'hofbieber', 'mittelbieber': 'hofbieber', 'niederbieber': 'hofbieber', 'schwarzbach': 'hofbieber',
-    'traisbach': 'hofbieber',
+    'allmus': 'hofbieber', 'danzwiesen': 'hofbieber', 'egelmes': 'hofbieber', 'elters': 'hofbieber',
+    'kleinsassen': 'hofbieber', 'langenberg': 'hofbieber', 'langenbieber': 'hofbieber', 'mahlerts': 'hofbieber',
+    'niederbieber': 'hofbieber', 'obergruben': 'hofbieber', 'obernüst': 'hofbieber', 'rödergrund': 'hofbieber',
+    'schackau': 'hofbieber', 'schwarzbach': 'hofbieber', 'traisbach': 'hofbieber', 'wiesen': 'hofbieber',
+    'wittges': 'hofbieber',
     # Ortsteile Gersfeld
     'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld', 'obernhausen': 'gersfeld',
     'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',

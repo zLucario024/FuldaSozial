@@ -67,7 +67,6 @@
     "habelsbach",
     "haunedorf",
     "kesselbach",
-    "kleinsassen",
     "marbach",
     "margretenhaun",
     "melzdorf",
@@ -142,11 +141,23 @@
     "wickers"
   ],
   "hofbieber": [
+    "allmus",
+    "danzwiesen",
+    "elters",
+    "langenberg",
     "langenbieber",
-    "mittelbieber",
+    "mahlerts",
+    "kleinsassen",
     "niederbieber",
+    "obergruben",
+    "obernüst",
+    "rödergrund",
+    "egelmes",
+    "schackau",
     "schwarzbach",
-    "traisbach"
+    "traisbach",
+    "wiesen",
+    "wittges"
   ],
   "gersfeld": [
     "findlos",

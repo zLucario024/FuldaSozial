@@ -47,8 +47,8 @@ BEKANNTE_REGIONEN = (
     'keulos', 'pilgerzell',
     # Ortsteile Petersberg
     'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach', 'haunedorf',
-    'kesselbach', 'kleinsassen', 'marbach', 'margretenhaun', 'melzdorf', 'orferode',
-    'rex', 'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
+    'kesselbach', 'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex',
+    'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
@@ -67,7 +67,9 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Hilders
     'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
     # Ortsteile Hofbieber
-    'langenbieber', 'mittelbieber', 'niederbieber', 'schwarzbach', 'traisbach',
+    'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
+    'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
+    'schackau', 'schwarzbach', 'traisbach', 'wiesen', 'wittges',
     # Ortsteile Gersfeld
     'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
