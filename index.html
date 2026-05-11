@@ -2194,8 +2194,14 @@ function artikelAnzeigen() {
       return;
     }
     const ortName = aktivOrt && !['landkreis-fulda','hessen','gemeinden'].includes(aktivOrt) ? ` zu „${aktivOrt}"` : '';
+    const sucheReset = suchbegriff
+      ? `<button onclick="sucheLöschen()" style="margin-top:.75rem;display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border:1px solid var(--border);border-radius:8px;background:var(--weiss);color:var(--text-muted);font-size:.85rem;cursor:pointer;font-family:var(--font-body)">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+           Keine Ergebnisse: Suche zurücksetzen
+         </button>`
+      : '';
     grid.innerHTML = `<div class="lade-container" style="grid-column:1/-1"><p>Keine Artikel${ortName} gefunden.</p>`
-      + `<p style="font-size:.85rem;color:var(--text-muted);margin-top:.25rem">In der Suche findest du Artikel aus dem gesamten Archiv.</p></div>`;
+      + `<p style="font-size:.85rem;color:var(--text-muted);margin-top:.25rem">In der Suche findest du Artikel aus dem gesamten Archiv.</p>${sucheReset}</div>`;
     document.getElementById('mehr-btn').style.display = 'none';
     document.getElementById('archiv-hinweis').style.display = 'none';
     return;
