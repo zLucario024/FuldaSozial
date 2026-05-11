@@ -608,59 +608,72 @@ function tabWechseln(id, btn) {
   }
 }
 
-// ── Kategorien (identical to index.html) ──
+// ── Kategorien (synced with index.html) ──
 const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
-    strong: ['unfall','vorfall','brand','blaulicht','mord','schießerei','betrug'],
-    keys: ['vorfall','polizei','unfall','feuer','brand','einbruch','rettung','diebstahl','gewalt','festnahme','verletzt','crash','notfall','blaulicht','einsatz','täter','opfer','mord','erpressung','lebensgefahr','vermisst','todesfall','schüsse','schießerei','vor gericht','tötung'],
+    lock: ['verkehrsunfall','amokfahrt','tötungsdelikt','tötungsversuch'],
+    strong: ['amokfahrt','unfall','verkehrsunfall','vorfall','brand','mord','schießerei','betrug','diebstahl'],
+    keys: ['zollkontrolle','verkehrsunfall','körperverletzung','anschlag','amokfahrt','raub','vorfall','polizei','unfall','unfälle','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','einsatz','täter','opfer','mord','erpressung','lebensgefahr','vermisst','todesfall','schüsse','schießerei','vor gericht','tötung','belästigung'],
   },
   'Politik & Verwaltung': {
     farbe: '#1e429f', hell: '#eff6ff',
-    strong: ['politik','verwaltung','bundestag','partei','minister','kanzler','koalition','waffenruhe'],
+    lock: [],
+    strong: ['politik','verwaltung','bundestag','partei','minister','kanzler','koalition','waffenruhe','cdu'],
     keys: ['politik','verwaltung','gemeinderat','stadtrat','bürgermeister','kreistag','wahl','abstimmung','sitzung','beschluss','haushalt','gesetz','verordnung','behörde','bundestag','partei','minister','kanzler','koalition','referendum','demokratie','senat','parlament','regierung','opposition','fraktion','abgeordneter','kandidat','wahlkampf'],
   },
   'Wirtschaft & Arbeit': {
     farbe: '#14532d', hell: '#f0fdf4',
+    lock: [],
     strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos','kreishandwerkschaft'],
     keys: ['wirtschaft','unternehmen','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe','industrie','produktion','dienstleistung','export','import','konjunktur','streik','energiepreis','marketing','inflation','steuer','opel','spritpreis','waffenruhe','kommune','tegut'],
   },
   'Sport': {
     farbe: '#c2410c', hell: '#fff7ed',
+    lock: [],
     strong: ['sport','fußball','handball','liga','meisterschaft','turnier','leichtathletik'],
-    keys: ['sport','leichtathletik','fußball','handball','tennis','turnier','champions league','europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft','playoff','basketball','bvb','schwimmen','finale','eishockey','sg barockstadt','sgb'],
+    keys: ['baseball','football','sport','leichtathletik','fußball','handball','tennis','turnier','champions league','europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft','playoff','basketball','bvb','schwimmen','finale','eishockey','sg barockstadt','sgb'],
   },
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
-    strong: ['kultur','fördermittel','konzert','music','führung','festival','ausstellung','theater','museum','kunst','tradition','fotoshooting','l14zwo','flohmarkt'],
+    lock: [],
+    strong: ['rettmobil','jubiläum','kultur','fördermittel','konzert','music','festival','ausstellung','theater','museum','kunst','tradition','fotoshooting','l14zwo','flohmarkt'],
     keys: ['konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug','bibliothek','kirche','tourismus','christen','bischof','ostern','comedian','jubiläum','tag der offenen tür','stefan buß','park','wildpark','graffiti','schauspieler','singen','einwanderung','gesang','musik','reise','charity','kulinarik','tradition','kreuzfahrt','papst','denkmal'],
   },
   'Bildung & Familie': {
     farbe: '#0369a1', hell: '#e0f2fe',
+    lock: [],
     strong: ['bildung','schule','kita','studium','universität','abitur','ausbildung','journalismus'],
-    keys: ['schule','studie','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht','vortrag','nasa','nachwuchs','astronomie','wissenschaft','mittelalter','zeitreise','caritas','malteser','altkleid','forschung','universität','frauenhaus','sozial','student','expertise','beratung'],
+    keys: ['schule','studie','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht','vortrag','nasa','nachwuchs','astronomie','wissenschaft','mittelalter','zeitreise','caritas','awo','malteser','altkleid','forschung','universität','frauenhaus','sozial','student','expertise','beratung','gedenk'],
   },
   'Natur & Umwelt': {
     farbe: '#166534', hell: '#dcfce7',
+    lock: [],
     strong: ['natur','umwelt','klima','naturschutz','hochwasser','überschwemmung'],
-    keys: ['wetter','wald','rhön','naturschutz','tier','papagei','spargel','katze','schlange','überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser','biber','weiher','blitzeinschlag','blitzeinschläge','himmel','nachthimmel','astronomie'],
+    keys: ['wandern','alpen','wetter','wald','rhön','naturschutz','tier','papagei','spargel','katze','schlange','überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser','biber','weiher','blitzeinschlag','blitzeinschläge','himmel','nachthimmel','astronomie'],
   },
   'Verkehr & Bau': {
     farbe: '#92400e', hell: '#fef3c7',
-    strong: ['verkehr','baustelle','sperrung','autobahn','öpnv','stau'],
+    lock: [],
+    strong: ['sperrung','autobahn','öpnv','verkehr'],
     keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg','bahnhof','tankstelle','flugverkehr','flughafen','fußgängerzone','abriss','k72','blitzen','a7','lufthansa','mobilfunk'],
   },
   'Gesundheit': {
     farbe: '#115e59', hell: '#ccfbf1',
+    lock: [],
     strong: ['gesundheit','krankenhaus','klinik','medizin','arzt','klinikum','chirurgie'],
     keys: ['krankenhaus','arzt','pflege','impfung','klinik','gesundheit','patient','medizin','therapie','praxis','notaufnahme','ambulanz','apotheke','diagnose','klinikum','rücken','chirurgie','ernährung'],
   },
-  'Sonstiges': { farbe: '#4b5563', hell: '#f9fafb', strong: [], keys: [] },
+  'Sonstiges': { farbe: '#4b5563', hell: '#f9fafb', lock: [], strong: [], keys: ['cnn','ted turner','nachrichtensender'] },
 };
 const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
 
 function kategorieBestimmen(titel, tags) {
   const text = ((titel || '') + ' ' + (tags || '')).toLowerCase();
+  for (const name of KATEGORIE_NAMEN) {
+    const kat = KATEGORIEN[name];
+    if (kat.lock && kat.lock.some(k => text.includes(k))) return name;
+  }
   let besteKat = 'Sonstiges', besterScore = 0;
   for (const name of KATEGORIE_NAMEN) {
     const kat = KATEGORIEN[name];
@@ -668,7 +681,7 @@ function kategorieBestimmen(titel, tags) {
     const score =
       [...strongSet].reduce((s, k) => s + (text.includes(k) ? 3 : 0), 0) +
       kat.keys.reduce((s, k) => s + (!strongSet.has(k) && text.includes(k) ? 1 : 0), 0);
-    if (score > besterScore) { besterScore = score; besteKat = name; }
+    if (score >= 1 && score > besterScore) { besterScore = score; besteKat = name; }
   }
   return besteKat;
 }
