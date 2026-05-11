@@ -471,7 +471,7 @@ def _aggregator_ausfuehren():
 def artikel_bearbeiten(artikel_id: int, key: str, daten: dict):
     if key != os.getenv("AGGREGATOR_KEY"):
         raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
-    erlaubte_felder = {"titel", "tags", "beschreibung"}
+    erlaubte_felder = {"titel", "tags", "beschreibung", "region"}
     felder = {k: v for k, v in daten.items() if k in erlaubte_felder}
     if not felder:
         raise HTTPException(status_code=400, detail="Keine gültigen Felder")

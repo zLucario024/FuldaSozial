@@ -83,8 +83,9 @@
   .col-id     { width: 56px; color: #aaa; font-size: 12px; }
   .col-datum  { width: 110px; color: #888; font-size: 12px; white-space: nowrap; }
   .col-quelle { width: 140px; }
-  .col-titel  { width: 260px; }
-  .col-tags   { min-width: 220px; }
+  .col-titel  { width: 240px; }
+  .col-region { width: 130px; }
+  .col-tags   { min-width: 200px; }
   .col-aktionen { width: 110px; white-space: nowrap; }
 
   .quelle-badge {
@@ -287,6 +288,9 @@
       <select id="filter-kategorie" onchange="filterAnwenden()">
         <option value="">Alle Kategorien</option>
       </select>
+      <select id="filter-region" onchange="filterAnwenden()">
+        <option value="">Alle Regionen</option>
+      </select>
       <select id="filter-tage" onchange="laden()">
         <option value="14">Letzte 14 Tage</option>
         <option value="30" selected>Letzte 30 Tage</option>
@@ -317,6 +321,7 @@
             <th class="col-datum">Datum</th>
             <th class="col-quelle">Quelle</th>
             <th class="col-titel">Titel</th>
+            <th class="col-region">Region</th>
             <th class="col-tags">Tags <span style="font-weight:400;color:#aaa">(· getrennt)</span></th>
             <th class="col-aktionen">Aktionen</th>
           </tr>
@@ -415,6 +420,7 @@ function laden() {
       document.getElementById('status-text').textContent = `${alleArtikel.length} Artikel geladen`;
       quellenBefuellen();
       kategorienBefuellen();
+      regionenBefuellen();
       filterAnwenden();
     })
     .catch(() => {
@@ -430,6 +436,14 @@ function quellenBefuellen() {
     quellen.map(q => `<option value="${q}"${q===aktuell?' selected':''}>${q}</option>`).join('');
 }
 
+function regionenBefuellen() {
+  const sel = document.getElementById('filter-region');
+  const aktuell = sel.value;
+  const regionen = [...new Set(alleArtikel.map(a => a.region || '').filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Alle Regionen</option>' +
+    regionen.map(r => `<option value="${r}"${r===aktuell?' selected':''}>${r}</option>`).join('');
+}
+
 function kategorienBefuellen() {
   const sel = document.getElementById('filter-kategorie');
   const aktuell = sel.value;
@@ -442,11 +456,13 @@ function filterAnwenden() {
   const suche = document.getElementById('suche').value.toLowerCase();
   const quelle = document.getElementById('filter-quelle').value;
   const kategorie = document.getElementById('filter-kategorie').value;
+  const region = document.getElementById('filter-region').value;
   gefilterteArtikel = alleArtikel.filter(a => {
     if (quelle && a.quelle !== quelle) return false;
     if (kategorie && kategorieBestimmen(a.titel, a.tags) !== kategorie) return false;
+    if (region && (a.region || '') !== region) return false;
     if (suche) {
-      const haystack = ((a.titel||'') + ' ' + (a.tags||'') + ' ' + (a.quelle||'')).toLowerCase();
+      const haystack = ((a.titel||'') + ' ' + (a.tags||'') + ' ' + (a.quelle||'') + ' ' + (a.region||'')).toLowerCase();
       if (!haystack.includes(suche)) return false;
     }
     return true;
@@ -471,6 +487,9 @@ function tabelleRendern() {
       <td class="col-quelle"><span class="quelle-badge">${esc(a.quelle||'')}</span></td>
       <td class="col-titel">
         <textarea class="editable titel-field" rows="2" data-field="titel" data-original="${esc(a.titel||'')}">${esc(a.titel||'')}</textarea>
+      </td>
+      <td class="col-region">
+        <input class="editable" style="width:100%" type="text" data-field="region" data-original="${esc(a.region||'')}" value="${esc(a.region||'')}" placeholder="–" />
       </td>
       <td class="col-tags">
         <textarea class="editable tags-input tags-field" rows="2" data-field="tags" data-original="${esc(a.tags||'')}">${esc(a.tags||'')}</textarea>
