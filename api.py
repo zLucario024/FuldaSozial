@@ -88,8 +88,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
     # Ortsteile Hosenfeld
-    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
-    'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    'blankenau', 'brandlos', 'hainzell', 'jossa', 'pfaffenrod', 'poppenrod',
+    'schletzenhausen',
     # Ortsteile Kalbach
     'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
     'veitsteinbach',

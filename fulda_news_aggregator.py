@@ -1109,8 +1109,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Ehrenberg
     'reulbach', 'seiferts', 'wüstensachsen',
     # Ortsteile Hosenfeld
-    'altenhof', 'blankenau', 'brandlos', 'büchenberg', 'eichenberg', 'hainzell',
-    'jossa', 'mittelhaun', 'pfaffenrod', 'poppenrod', 'schletzenhausen',
+    'blankenau', 'brandlos', 'hainzell', 'jossa', 'pfaffenrod', 'poppenrod',
+    'schletzenhausen',
     # Ortsteile Kalbach
     'eichenried', 'heubach', 'mittelkalbach', 'niederkalbach', 'oberkalbach', 'uttrichshausen',
     'veitsteinbach',
@@ -1198,8 +1198,7 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Ehrenberg
     'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'wüstensachsen': 'ehrenberg',
     # Ortsteile Hosenfeld
-    'altenhof': 'hosenfeld', 'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld', 'büchenberg': 'hosenfeld',
-    'eichenberg': 'hosenfeld', 'hainzell': 'hosenfeld', 'jossa': 'hosenfeld', 'mittelhaun': 'hosenfeld',
+    'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld', 'hainzell': 'hosenfeld', 'jossa': 'hosenfeld',
     'pfaffenrod': 'hosenfeld', 'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
     # Ortsteile Kalbach
     'eichenried': 'kalbach', 'heubach': 'kalbach', 'mittelkalbach': 'kalbach', 'niederkalbach': 'kalbach',
