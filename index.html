@@ -1691,8 +1691,9 @@ function ortsteileMatch(text, tags) {
 const KATEGORIEN = {
   'Vorfälle': {
     farbe: '#c53030', hell: '#fff5f5',
-    strong: ['amokfahrt','unfall','vorfall','brand','mord','schießerei', 'betrug', 'diebstahl'],
-    keys: ['zollkontrolle','körperverletzung','anschlag','amokfahrt','raub','vorfall', 'polizei','unfall','unfälle','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
+    lock: ['verkehrsunfall','amokfahrt','tötungsdelikt','tötungsversuch'],
+    strong: ['amokfahrt','unfall','verkehrsunfall','vorfall','brand','mord','schießerei', 'betrug', 'diebstahl'],
+    keys: ['zollkontrolle','verkehrsunfall','körperverletzung','anschlag','amokfahrt','raub','vorfall', 'polizei','unfall','unfälle','feuer','brand','einbruch','rettung','gewalt','festnahme','diebstahl','verletzt','crash','notfall','einsatz','täter','opfer', 'mord', 'erpressung', 'lebensgefahr', 'vermisst', 'todesfall', 'schüsse', 'schießerei', 'vor gericht', 'tötung','schüsse', 'belästigung'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff5f5"/>
       <circle cx="200" cy="80" r="54" fill="#c53030" opacity=".07"/>
       <polygon points="200,36 252,118 148,118" fill="#c53030" opacity=".12"/>
@@ -1704,6 +1705,7 @@ const KATEGORIEN = {
   },
   'Politik & Verwaltung': {
     farbe: '#1e429f', hell: '#eff6ff',
+    lock: [],
     strong: ['politik','verwaltung','bundestag','partei','minister','kanzler','koalition', 'waffenruhe', 'cdu'],
     keys: ['ortsvorsteher','ortsbeirat','öffentlicher dienst','bundeswehr','marine','wahl','politik','wahl','föderalismus','bürgermeister','gemeinde','stadtrat','landrat','bundestag','beschluss','sitzung','partei','gesetz','verwaltung','amt','behörde','kreistag', 'cdu', 'spd', 'grüne', 'fdp', 'afd', 'linke', 'volt', 'kanzler','minister','opposition', 'koalition', 'diplomatie', 'ausschuss', 'usa und iran', 'straße von hormus', 'schwarz-rot', 'bundesregierung', 'umfrage', 'verbot', 'frieden', 'hormus', 'krieg', 'tempolimit', 'staat', 'israel', 'klingbeil', 'orban', 'wehrpflicht', 'justiz', 'sicherheit', 'botschafter', 'militär'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#eff6ff"/>
@@ -1722,6 +1724,7 @@ const KATEGORIEN = {
   },
   'Wirtschaft & Arbeit': {
     farbe: '#14532d', hell: '#f0fdf4',
+    lock: [],
     strong: ['wirtschaft','insolvenz','unternehmen','konjunktur','inflation','streik','arbeitslos', 'kreishandwerkschaft'],
     keys: ['innovation','wohnungsmangel','wohngeld','microsoft','digitalisierung','volkswagen','deutsche post','wirtschaft','unternehmen','unternehmer','jobs','stellenanzeige','insolvenz','eröffnung','betrieb','markt','handel','firma','startup','investition','beschäftigung','arbeitslos','gewerbe', 'industrie', 'produktion', 'dienstleistung', 'export', 'import', 'konjunktur', 'streik','energiepreis', 'marketing', 'inflation', 'steuer', 'opel', 'industrie', 'spritpreis', 'waffenruhe', 'kommune', 'tegut', 'verbraucher'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f0fdf4"/>
@@ -1735,6 +1738,7 @@ const KATEGORIEN = {
   },
   'Sport': {
     farbe: '#c2410c', hell: '#fff7ed',
+    lock: [],
     strong: ['sport','fußball','handball','liga','meisterschaft','turnier','leichtathletik'],
     keys: ['baseball','football','sport','leichtathletik', 'fußball','handball','tennis','turnier', 'champions league', 'europa league','verein','liga','rennen','ergebnis','sieg','niederlage','tor','trainer','mannschaft','spieler','meisterschaft', 'playoff', 'basketball', 'bvb', 'schwimmen', 'finale', 'eishockey', 'sg barockstadt', 'sgb'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fff7ed"/>
@@ -1748,6 +1752,7 @@ const KATEGORIEN = {
   },
   'Kultur & Freizeit': {
     farbe: '#6d28d9', hell: '#f5f3ff',
+    lock: [],
     strong: ['rettmobil','jubiläum','kultur', 'fördermittel','konzert', 'music', 'festival','ausstellung','theater','museum','kunst', 'tradition', 'fotoshooting', 'l14zwo', 'flohmarkt'],
     keys: ['rettmobil','nachtleben','vielfalt','orgel','stadtpfarrkirche','bier','heimat','muttertag','flashmob','nachhaltigkeit','konzert','literatur','podcast','ausstellung','theater','museum','festival','kunst','kultur','veranstaltung','fest','feier','event','messe','bühne','kino','ausflug', 'bibliothek', 'kirche', 'tourismus', 'christen', 'bischof', 'ostern', 'comedian', 'jubiläum', 'tag der offenen tür', 'stefan buß', 'park', 'wildpark', 'graffiti', 'schauspieler', 'singen', 'einwanderung', 'gesang', 'musik', 'reise', 'charity', 'kulinarik', 'tradition', 'kreuzfahrt', 'papst', 'denkmal', 'hessentag', 'freibad', 'freibäder', 'dialog'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#f5f3ff"/>
@@ -1761,6 +1766,7 @@ const KATEGORIEN = {
   },
   'Bildung & Familie': {
     farbe: '#0369a1', hell: '#e0f2fe',
+    lock: [],
     strong: ['bildung','schule', 'kita','studium','universität','abitur','ausbildung', 'journalismus'],
     keys: ['schule','studie','hochschule','jugend','eltern','bildung','prävention','lehrer','schüler','studium','ausbildung','kinder','familie','kindergarten','abitur','unterricht', 'vortrag','nasa', 'nachwuchs', 'astronomie', 'wissenschaft', 'mittelalter', 'zeitreise', 'caritas', 'awo', 'malteser', 'altkleid', 'forschung', 'universität', 'frauenhaus', 'sozial', 'student', 'expertise', 'beratung', 'gedenk'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#e0f2fe"/>
@@ -1778,6 +1784,7 @@ const KATEGORIEN = {
   },
   'Natur & Umwelt': {
     farbe: '#166534', hell: '#dcfce7',
+    lock: [],
     strong: ['natur','umwelt','klima','naturschutz','hochwasser','überschwemmung'],
     keys: ['wandern','alpen','wetter','wald','rhön','naturschutz','tier','papagei','spargel', 'katze', 'schlange', 'überschwemmung','natur','umwelt','klima','pflanze','vogel','wolf','biene','nabu','hochwasser', 'biber', 'weiher', 'blitzeinschlag', 'blitzeinschläge', 'himmel', 'nachthimmel', 'astronomie'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#dcfce7"/>
@@ -1803,6 +1810,7 @@ const KATEGORIEN = {
   },
   'Verkehr & Bau': {
     farbe: '#92400e', hell: '#fef3c7',
+    lock: [],
     strong: ['sperrung','autobahn','öpnv','verkehr'],
     keys: ['straße','baustelle','sperrung','öpnv','bus','bahn','verkehr','bau','brücke','autobahn','stau','umleitung','parkplatz','radweg', 'tankstelle', 'flugverkehr', 'flughafen', 'fußgängerzone', 'abriss', 'k72', 'blitzen', 'a7', 'lufthansa', 'mobilfunk'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#fef3c7"/>
@@ -1819,6 +1827,7 @@ const KATEGORIEN = {
   },
   'Gesundheit': {
     farbe: '#115e59', hell: '#ccfbf1',
+    lock: [],
     strong: ['gesundheit','krankenhaus','klinik','medizin','arzt','klinikum','chirurgie'],
     keys: ['laufrunde','krankenhaus','arzt','pflege','impfung','klinik','gesundheit','patient','medizin','therapie','praxis','notaufnahme','ambulanz','apotheke','diagnose','klinikum', 'rücken', 'chirurgie', 'ernährung', 'trinkwasser', 'blutspende'],
     svg: `<svg class="kategorie-svg" viewBox="0 0 400 160"><rect width="400" height="160" fill="#ccfbf1"/>
@@ -1873,6 +1882,10 @@ const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
 
 function kategorieBestimmen(titel, tags) {
   const text = ((titel || '') + ' ' + (tags || '')).toLowerCase();
+  for (const name of KATEGORIE_NAMEN) {
+    const kat = KATEGORIEN[name];
+    if (kat.lock && kat.lock.some(k => text.includes(k))) return name;
+  }
   let besteKat = 'Sonstiges';
   let besterScore = 0;
   for (const name of KATEGORIE_NAMEN) {
