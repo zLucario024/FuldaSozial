@@ -675,6 +675,14 @@ const KATEGORIEN = {
   },
   'Sonstiges': { farbe: '#4b5563', hell: '#f9fafb', lock: [], strong: [], keys: ['cnn','ted turner','nachrichtensender'] },
 };
+fetch('kategorien.json').then(r => r.json()).then(kw => {
+  for (const [n, d] of Object.entries(kw)) {
+    if (!KATEGORIEN[n]) continue;
+    if (d.lock)   KATEGORIEN[n].lock   = d.lock;
+    if (d.strong) KATEGORIEN[n].strong = d.strong;
+    if (d.keys)   KATEGORIEN[n].keys   = d.keys;
+  }
+}).catch(() => {});
 const KATEGORIE_NAMEN = Object.keys(KATEGORIEN).filter(k => k !== 'Sonstiges');
 
 function kategorieBestimmen(titel, tags) {

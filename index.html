@@ -1848,6 +1848,16 @@ const KATEGORIEN = {
       <circle cx="232" cy="80" r="9" fill="#4b5563" opacity=".3"/></svg>`
   }
 };
+// Patch keyword arrays from kategorien.json (single source of truth shared with the aggregator).
+// Colors and SVGs stay here; only lock/strong/keys are overridden.
+fetch('kategorien.json').then(r => r.json()).then(kw => {
+  for (const [n, d] of Object.entries(kw)) {
+    if (!KATEGORIEN[n]) continue;
+    if (d.lock)   KATEGORIEN[n].lock   = d.lock;
+    if (d.strong) KATEGORIEN[n].strong = d.strong;
+    if (d.keys)   KATEGORIEN[n].keys   = d.keys;
+  }
+}).catch(() => {});
 const WAPPEN = {
   "Landkreis Fulda": `<img src="Design/Wappen/Landkreis Fulda.png" style="width:100%;height:100%;object-fit:contain" loading="lazy">`,
   "Bad Salzschlirf": `<img src="Design/Wappen/Bad Salzschlirf.png" style="width:100%;height:100%;object-fit:contain" loading="lazy">`,

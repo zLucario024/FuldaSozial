@@ -328,6 +328,30 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 }
 
+# ── Kategorie-Keywords (single source of truth: kategorien.json) ──
+def _lade_kategorie_keywords():
+    pfad = os.path.join(os.path.dirname(__file__), 'kategorien.json')
+    try:
+        with open(pfad, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+_KATEGORIE_KEYWORDS = _lade_kategorie_keywords()
+
+def _kategorie_hinweis():
+    """Compact category → keyword mapping for the AI tagging prompt."""
+    lines = []
+    for name, data in _KATEGORIE_KEYWORDS.items():
+        if name == 'Sonstiges':
+            continue
+        wichtig = (data.get('lock') or []) + (data.get('strong') or [])
+        extra   = [k for k in (data.get('keys') or []) if k not in wichtig][:10]
+        alle    = wichtig + extra
+        if alle:
+            lines.append(f"  {name}: {', '.join(alle)}")
+    return '\n'.join(lines)
+
 HTML_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -447,6 +471,9 @@ Gemeinden: fulda, hünfeld, künzell, petersberg, neuhof, eichenzell, flieden, b
 Ortsteile/Dörfer (Auswahl): rückers, schweben, schmalnau, wehrda, gruben, hünhan, nüst, rothenkirchen, mackenzell, kirchhasel, molzbach, malges, steinbach, pilgerzell, bachrain, horas, johannesberg, maberzell, kämmerzell, bimbach, kleinlüder, uttrichshausen, rommerz, hainzell, blankenau, weyhers, wüstensachsen, sieblos, abtsroda, rodholz, ützhausen, mottgers, großentaft, soisdorf, leibolz, buchenau, arzell, melperts, günthers, lahrbach, neuswarts, dietges, liebhards, simmershausen, löschenrod, kerzell, welkers, haindorf.
 Trenne die Tags mit " · ".
 Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung, keine Erklärungen.
+
+Kategorie-Orientierung – wenn ein Begriff passt, nutze ihn als Tag (hilft bei der automatischen Einordnung):
+{_kategorie_hinweis()}
 
 Titel:
 {titel_text}"""
