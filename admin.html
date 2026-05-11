@@ -555,7 +555,7 @@ async function speichern(btn, id) {
 
     toast('Gespeichert ✓');
   } catch(e) {
-    toast('Fehler beim Speichern', true);
+    toast('Fehler: ' + (e.message || e).toString().slice(0, 80), true);
     console.error(e);
   } finally {
     btn.textContent = 'Speichern';
