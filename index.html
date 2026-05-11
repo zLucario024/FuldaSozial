@@ -1494,7 +1494,8 @@ const LANDKREIS_FREMDE = [
   'leipzig','berlin','hamburg','münchen','köln','frankfurt','stuttgart',
   'düsseldorf','dortmund','hannover','bremen','dresden','nürnberg',
   'kassel','gießen','wiesbaden','darmstadt','marburg','erfurt',
-  'mainz','magdeburg','potsdam','rostock','kiel','saarbrücken','hanau','thüringen', 'nordhessesn'
+  'mainz','magdeburg','potsdam','rostock','kiel','saarbrücken','hanau','thüringen', 'nordhessesn',
+  'main kinzig','main-kinzig','mkk',
 ];
 
 // ── ORTE LANDKREIS FULDA ──
@@ -1632,6 +1633,13 @@ const ORT_AUSSCHLUSS = {
 // Sie werden nur gegen a.tags geprüft, nicht gegen den Volltext.
 const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'nüst']);
 
+// Ortsteile, die auch in einem benachbarten Landkreis vorkommen.
+// Ein Treffer wird verworfen, wenn der Artikel einen der "fremd"-Begriffe enthält.
+// → Hier weitere Doppelgänger eintragen, falls nötig.
+const ORTSTEILE_DISAMBIG = {
+  steinau: ['main kinzig', 'main-kinzig', 'mkk', 'steinau an der straße'],
+};
+
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
 // Verhindert z.B. "fuldatal" bei Suche nach "fulda".
 // Erlaubt auch die deutsche Einwohner-/Adjektivform auf "-er" (z.B. "Fliedener", "Hainzeller").
@@ -1648,11 +1656,16 @@ function ortMatch(text, ort) {
 }
 
 // Wie ortMatch, aber ambige Ortsteil-Namen (ORTSTEILE_NUR_TAGS) werden nur in tags gesucht.
+// Anwendet ORTSTEILE_DISAMBIG: Treffer für mehrdeutige Ortsteile werden verworfen,
+// wenn der Artikel einen Fremd-Begriff (z.B. "mkk") enthält.
 function ortsteileMatch(text, tags) {
   const tagsLower = (tags || '').toLowerCase();
-  return Object.keys(ORTSTEILE_MAPPING).some(o =>
-    ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tagsLower, o) : ortMatch(text, o)
-  );
+  return Object.keys(ORTSTEILE_MAPPING).some(o => {
+    const hat = ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tagsLower, o) : ortMatch(text, o);
+    if (!hat) return false;
+    const disambig = ORTSTEILE_DISAMBIG[o];
+    return !disambig || !disambig.some(f => text.includes(f));
+  });
 }
 
 // ── KATEGORIEN ──
@@ -2006,7 +2019,12 @@ function gefilterteArtikel() {
         const elternGemeinde = ORTSTEILE_MAPPING[aktivOrt];
         const regionOk = r === aktivOrt || (elternGemeinde && r === elternGemeinde && text.includes(aktivOrt));
         const ortsteile = GEMEINDE_ORTSTEILE[aktivOrt] || [];
-        const textOk = ortMatch(text, aktivOrt) || ortsteile.some(o => ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o));
+        const textOk = ortMatch(text, aktivOrt) || ortsteile.some(o => {
+          const hat = ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o);
+          if (!hat) return false;
+          const disambig = ORTSTEILE_DISAMBIG[o];
+          return !disambig || !disambig.some(f => text.includes(f));
+        });
         const quelleExklusiv = QUELLE_REGION_EXKLUSIV[a.quelle] === aktivOrt;
         if (!quelleExklusiv && !regionOk && !textOk) return false;
         const ausschluss = ORT_AUSSCHLUSS[aktivOrt];
