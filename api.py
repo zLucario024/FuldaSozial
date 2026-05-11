@@ -43,8 +43,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Hünfeld
     'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
     # Ortsteile Künzell
-    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
-    'keulos', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
+    'pilgerzell', 'wissels',
     # Ortsteile Petersberg
     'almendorf', 'böckels', 'großsassen', 'habelsbach', 'haunedorf', 'kesselbach',
     'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex', 'roßbach',

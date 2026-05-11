@@ -1064,8 +1064,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Hünfeld
     'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
     # Ortsteile Künzell
-    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
-    'keulos', 'pilgerzell',
+    'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
+    'pilgerzell', 'wissels',
     # Ortsteile Petersberg
     'almendorf', 'böckels', 'großsassen', 'habelsbach', 'haunedorf', 'kesselbach',
     'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex', 'roßbach',
@@ -1146,7 +1146,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'molzbach': 'hünfeld',
     # Ortsteile Künzell
     'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell', 'dirlos': 'künzell',
-    'engelhelms': 'künzell', 'haunes': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell',
+    'engelhelms': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell', 'wissels': 'künzell',
     # Ortsteile Petersberg
     'almendorf': 'petersberg', 'böckels': 'petersberg', 'großsassen': 'petersberg', 'habelsbach': 'petersberg',
     'haunedorf': 'petersberg', 'kesselbach': 'petersberg', 'marbach': 'petersberg', 'margretenhaun': 'petersberg',

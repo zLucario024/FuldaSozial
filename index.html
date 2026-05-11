@@ -1552,7 +1552,7 @@ const ORTSTEILE_MAPPING = {
   'molzbach':'hünfeld',
   // Gemeinde Künzell
   'bachrain':'künzell','dassen':'künzell','dietershausen':'künzell','dirlos':'künzell',
-  'engelhelms':'künzell','haunes':'künzell','keulos':'künzell','pilgerzell':'künzell',
+  'engelhelms':'künzell','keulos':'künzell','pilgerzell':'künzell','wissels':'künzell',
   // Gemeinde Petersberg
   'almendorf':'petersberg','böckels':'petersberg','großsassen':'petersberg','habelsbach':'petersberg',
   'haunedorf':'petersberg','kesselbach':'petersberg','marbach':'petersberg','margretenhaun':'petersberg',
@@ -1644,7 +1644,14 @@ const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'nüst']);
 // Ein Treffer wird verworfen, wenn der Artikel einen der "fremd"-Begriffe enthält.
 // → Hier weitere Doppelgänger eintragen, falls nötig.
 const ORTSTEILE_DISAMBIG = {
-  steinau: ['main kinzig', 'main-kinzig', 'mkk', 'steinau an der straße'],
+  // fremd: Artikel wird verworfen, wenn einer dieser Begriffe vorkommt (gilt Landkreis-weit).
+  // gemeinde_fremd: Gilt nur im Gemeinde-Filter. Key = aktivOrt, Value = Begriffe die den Treffer disqualifizieren.
+  steinau: {
+    fremd: ['main kinzig', 'main-kinzig', 'mkk', 'steinau an der straße'],
+  },
+  dörmbach: {
+    gemeinde_fremd: { dipperz: ['hilders'], hilders: ['dipperz'] },
+  },
 };
 
 // Wort-Grenze prüfen: der Treffer darf nicht von einem weiteren Buchstaben gefolgt werden.
@@ -1671,7 +1678,9 @@ function ortsteileMatch(text, tags) {
     const hat = ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tagsLower, o) : ortMatch(text, o);
     if (!hat) return false;
     const disambig = ORTSTEILE_DISAMBIG[o];
-    return !disambig || !disambig.some(f => text.includes(f));
+    if (!disambig) return true;
+    // Nur "fremd" anwenden (extra-Landkreis) — "gemeinde_fremd" gilt nur im Gemeinde-Filter
+    return !disambig.fremd || !disambig.fremd.some(f => text.includes(f));
   });
 }
 
@@ -2030,7 +2039,11 @@ function gefilterteArtikel() {
           const hat = ORTSTEILE_NUR_TAGS.has(o) ? ortMatch(tags, o) : ortMatch(text, o);
           if (!hat) return false;
           const disambig = ORTSTEILE_DISAMBIG[o];
-          return !disambig || !disambig.some(f => text.includes(f));
+          if (!disambig) return true;
+          if (disambig.fremd && disambig.fremd.some(f => text.includes(f))) return false;
+          const gemFremd = disambig.gemeinde_fremd && disambig.gemeinde_fremd[aktivOrt];
+          if (gemFremd && gemFremd.some(f => text.includes(f))) return false;
+          return true;
         });
         const quelleExklusiv = QUELLE_REGION_EXKLUSIV[a.quelle] === aktivOrt;
         if (!quelleExklusiv && !regionOk && !textOk) return false;
