@@ -1062,7 +1062,9 @@ BEKANNTE_REGIONEN = (
     'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach', 'weimarer tunnel',
     'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
-    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
+    'dammersbach', 'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'michelsrombach',
+    'molzbach', 'nüst', 'oberfeld', 'oberrombach', 'rossbach', 'rudolphshan',
+    'rückers', 'sargenzell',
     # Ortsteile Künzell
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
     'pilgerzell', 'wissels',
@@ -1140,8 +1142,10 @@ ORTSTEILE_TO_GEMEINDE = {
     'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda', 'weimarer tunnel': 'fulda',
     'westend': 'fulda', 'ziehers': 'fulda', 'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
     # Ortsteile Hünfeld
-    'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld', 'malges': 'hünfeld',
-    'molzbach': 'hünfeld',
+    'dammersbach': 'hünfeld', 'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld',
+    'malges': 'hünfeld', 'michelsrombach': 'hünfeld', 'molzbach': 'hünfeld', 'nüst': 'hünfeld',
+    'oberfeld': 'hünfeld', 'oberrombach': 'hünfeld', 'rossbach': 'hünfeld', 'rudolphshan': 'hünfeld',
+    'rückers': 'hünfeld', 'sargenzell': 'hünfeld',
     # Ortsteile Künzell
     'bachrain': 'künzell', 'dassen': 'künzell', 'dietershausen': 'künzell', 'dirlos': 'künzell',
     'engelhelms': 'künzell', 'keulos': 'künzell', 'pilgerzell': 'künzell', 'wissels': 'künzell',

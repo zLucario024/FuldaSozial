@@ -41,7 +41,9 @@ BEKANNTE_REGIONEN = (
     'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach', 'weimarer tunnel',
     'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
-    'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
+    'dammersbach', 'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'michelsrombach',
+    'molzbach', 'nüst', 'oberfeld', 'oberrombach', 'rossbach', 'rudolphshan',
+    'rückers', 'sargenzell',
     # Ortsteile Künzell
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'keulos',
     'pilgerzell', 'wissels',
