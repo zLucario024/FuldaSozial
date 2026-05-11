@@ -1084,7 +1084,6 @@ BEKANNTE_REGIONEN = (
     'langenschwarz', 'rothenkirchen', 'schlotzau', 'steinbach',
     # Ortsteile Großenlüder
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
-    'uttrichshausen',
     # Ortsteile Hilders
     'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
     'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
@@ -1170,7 +1169,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'schlotzau': 'burghaun', 'steinbach': 'burghaun',
     # Ortsteile Großenlüder
     'bimbach': 'großenlüder', 'eichenau': 'großenlüder', 'kleinlüder': 'großenlüder', 'lütterz': 'großenlüder',
-    'müs': 'großenlüder', 'uffhausen': 'großenlüder', 'uttrichshausen': 'großenlüder',
+    'müs': 'großenlüder', 'uffhausen': 'großenlüder',
     # Ortsteile Hilders
     'batten': 'hilders', 'brand': 'hilders', 'dietges': 'hilders', 'dörmbach': 'hilders',
     'eckweisbach': 'hilders', 'liebhards': 'hilders', 'rupsroth': 'hilders', 'simmershausen': 'hilders',

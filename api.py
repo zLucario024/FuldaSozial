@@ -63,7 +63,6 @@ BEKANNTE_REGIONEN = (
     'langenschwarz', 'rothenkirchen', 'schlotzau', 'steinbach',
     # Ortsteile Großenlüder
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
-    'uttrichshausen',
     # Ortsteile Hilders
     'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
     'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
