@@ -46,9 +46,9 @@ BEKANNTE_REGIONEN = (
     'bachrain', 'dassen', 'dietershausen', 'dirlos', 'engelhelms', 'haunes',
     'keulos', 'pilgerzell',
     # Ortsteile Petersberg
-    'almendorf', 'böckels', 'dalherda', 'großsassen', 'habelsbach', 'haunedorf',
-    'kesselbach', 'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex',
-    'roßbach', 'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
+    'almendorf', 'böckels', 'großsassen', 'habelsbach', 'haunedorf', 'kesselbach',
+    'marbach', 'margretenhaun', 'melzdorf', 'orferode', 'rex', 'roßbach',
+    'steinau', 'steinhaus', 'stöckels', 'untergötzenhof',
     # Ortsteile Neuhof
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
@@ -72,7 +72,8 @@ BEKANNTE_REGIONEN = (
     'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
     'schackau', 'schwarzbach', 'traisbach', 'wiesen', 'wittges',
     # Ortsteile Gersfeld
-    'findlos', 'habelsdorf', 'obernhausen', 'schachen', 'seifertshausen',
+    'altenfeld', 'dalherda', 'gichenbach', 'hettenhausen', 'maiersbach', 'mosbach',
+    'obernhausen', 'rengersfeld', 'rodenbach', 'rommers', 'sandberg', 'schachen',
     # Ortsteile Tann
     'günthers', 'habel', 'hundsbach', 'lahrbach', 'neuschwammbach', 'neuswarts',
     'schlitzenhausen', 'theobaldshof', 'wendershausen',
