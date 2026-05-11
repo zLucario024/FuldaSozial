@@ -1086,7 +1086,8 @@ BEKANNTE_REGIONEN = (
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
     'uttrichshausen',
     # Ortsteile Hilders
-    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
+    'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
+    'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
     # Ortsteile Hofbieber
     'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
     'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
@@ -1171,8 +1172,9 @@ ORTSTEILE_TO_GEMEINDE = {
     'bimbach': 'großenlüder', 'eichenau': 'großenlüder', 'kleinlüder': 'großenlüder', 'lütterz': 'großenlüder',
     'müs': 'großenlüder', 'uffhausen': 'großenlüder', 'uttrichshausen': 'großenlüder',
     # Ortsteile Hilders
-    'dietges': 'hilders', 'gehilf': 'hilders', 'liebhards': 'hilders', 'simmershausen': 'hilders',
-    'unterweid': 'hilders', 'wickers': 'hilders',
+    'batten': 'hilders', 'brand': 'hilders', 'dietges': 'hilders', 'dörmbach': 'hilders',
+    'eckweisbach': 'hilders', 'liebhards': 'hilders', 'rupsroth': 'hilders', 'simmershausen': 'hilders',
+    'unterbernhards': 'hilders', 'wickers': 'hilders',
     # Ortsteile Hofbieber
     'allmus': 'hofbieber', 'danzwiesen': 'hofbieber', 'egelmes': 'hofbieber', 'elters': 'hofbieber',
     'kleinsassen': 'hofbieber', 'langenberg': 'hofbieber', 'langenbieber': 'hofbieber', 'mahlerts': 'hofbieber',

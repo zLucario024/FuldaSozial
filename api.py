@@ -65,7 +65,8 @@ BEKANNTE_REGIONEN = (
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
     'uttrichshausen',
     # Ortsteile Hilders
-    'dietges', 'gehilf', 'liebhards', 'simmershausen', 'unterweid', 'wickers',
+    'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
+    'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
     # Ortsteile Hofbieber
     'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
     'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
