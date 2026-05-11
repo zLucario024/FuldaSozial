@@ -56,8 +56,8 @@ BEKANNTE_REGIONEN = (
     'büchenberg', 'döllbach', 'kerzell', 'löschenrod', 'lütter', 'melters',
     'rothemann', 'rönshausen', 'welkers', 'zillbach',
     # Ortsteile Flieden
-    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
-    'rückers', 'schweben', 'stork', 'struth',
+    'buchenrod', 'döngesmühle', 'höf und haid', 'magdlos', 'rückers', 'schweben',
+    'stork', 'struth',
     # Ortsteile Burghaun
     'großenmoor', 'gruben', 'hechelmannskirchen', 'hünhan', 'kleinmoor', 'köhlersmoor',
     'langenschwarz', 'rothenkirchen', 'schlotzau', 'steinbach',
@@ -84,7 +84,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Rasdorf
     'grüsselbach', 'setzelbach',
     # Ortsteile Dipperz
-    'dörnhagen',
+    'armenhof', 'dörmbach', 'finkenhain', 'friesenhausen', 'kohlgrund', 'wisselsrod',
+    'wolferts',
     # Ortsteile Ebersburg
     'ebersberg', 'ried', 'schmalnau', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg

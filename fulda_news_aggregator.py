@@ -1077,8 +1077,8 @@ BEKANNTE_REGIONEN = (
     'büchenberg', 'döllbach', 'kerzell', 'löschenrod', 'lütter', 'melters',
     'rothemann', 'rönshausen', 'welkers', 'zillbach',
     # Ortsteile Flieden
-    'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
-    'rückers', 'schweben', 'stork', 'struth',
+    'buchenrod', 'döngesmühle', 'höf und haid', 'magdlos', 'rückers', 'schweben',
+    'stork', 'struth',
     # Ortsteile Burghaun
     'großenmoor', 'gruben', 'hechelmannskirchen', 'hünhan', 'kleinmoor', 'köhlersmoor',
     'langenschwarz', 'rothenkirchen', 'schlotzau', 'steinbach',
@@ -1105,7 +1105,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Rasdorf
     'grüsselbach', 'setzelbach',
     # Ortsteile Dipperz
-    'dörnhagen',
+    'armenhof', 'dörmbach', 'finkenhain', 'friesenhausen', 'kohlgrund', 'wisselsrod',
+    'wolferts',
     # Ortsteile Ebersburg
     'ebersberg', 'ried', 'schmalnau', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
@@ -1160,9 +1161,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'lütter': 'eichenzell', 'melters': 'eichenzell', 'rothemann': 'eichenzell', 'rönshausen': 'eichenzell',
     'welkers': 'eichenzell', 'zillbach': 'eichenzell',
     # Ortsteile Flieden
-    'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden', 'höf und haid': 'flieden',
-    'kohlgrund': 'flieden', 'magdlos': 'flieden', 'rückers': 'flieden', 'schweben': 'flieden',
-    'stork': 'flieden', 'struth': 'flieden',
+    'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'höf und haid': 'flieden', 'magdlos': 'flieden',
+    'rückers': 'flieden', 'schweben': 'flieden', 'stork': 'flieden', 'struth': 'flieden',
     # Ortsteile Burghaun
     'großenmoor': 'burghaun', 'gruben': 'burghaun', 'hechelmannskirchen': 'burghaun', 'hünhan': 'burghaun',
     'kleinmoor': 'burghaun', 'köhlersmoor': 'burghaun', 'langenschwarz': 'burghaun', 'rothenkirchen': 'burghaun',
@@ -1197,7 +1197,8 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Rasdorf
     'grüsselbach': 'rasdorf', 'setzelbach': 'rasdorf',
     # Ortsteile Dipperz
-    'dörnhagen': 'dipperz',
+    'armenhof': 'dipperz', 'dörmbach': 'dipperz', 'finkenhain': 'dipperz', 'friesenhausen': 'dipperz',
+    'kohlgrund': 'dipperz', 'wisselsrod': 'dipperz', 'wolferts': 'dipperz',
     # Ortsteile Ebersburg
     'ebersberg': 'ebersburg', 'ried': 'ebersburg', 'schmalnau': 'ebersburg', 'thalau': 'ebersburg',
     'weyhers': 'ebersburg',
