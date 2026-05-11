@@ -99,7 +99,7 @@ BEKANNTE_REGIONEN = (
     'gotthards', 'haselstein', 'hofaschenbach', 'mittelaschenbach', 'morles', 'oberaschenbach',
     'rimmels', 'silges',
     # Ortsteile Poppenhausen
-    'abtsroda', 'rodholz', 'sieblos',
+    'abtsroda', 'gackenhof', 'rodholz', 'steinwand',
 )
 _REGIONEN_SQL = tuple(BEKANNTE_REGIONEN)
 _ALLE_BEKANNTEN_SQL = _REGIONEN_SQL + REGIONEN_HESSEN

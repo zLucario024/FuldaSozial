@@ -1120,7 +1120,7 @@ BEKANNTE_REGIONEN = (
     'gotthards', 'haselstein', 'hofaschenbach', 'mittelaschenbach', 'morles', 'oberaschenbach',
     'rimmels', 'silges',
     # Ortsteile Poppenhausen
-    'abtsroda', 'rodholz', 'sieblos',
+    'abtsroda', 'gackenhof', 'rodholz', 'steinwand',
 )
 
 _BEKANNTE_SET     = set(BEKANNTE_REGIONEN)
@@ -1214,7 +1214,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'gotthards': 'nüsttal', 'haselstein': 'nüsttal', 'hofaschenbach': 'nüsttal', 'mittelaschenbach': 'nüsttal',
     'morles': 'nüsttal', 'oberaschenbach': 'nüsttal', 'rimmels': 'nüsttal', 'silges': 'nüsttal',
     # Ortsteile Poppenhausen
-    'abtsroda': 'poppenhausen', 'rodholz': 'poppenhausen', 'sieblos': 'poppenhausen',
+    'abtsroda': 'poppenhausen', 'gackenhof': 'poppenhausen', 'rodholz': 'poppenhausen', 'steinwand': 'poppenhausen',
 
 }
 
