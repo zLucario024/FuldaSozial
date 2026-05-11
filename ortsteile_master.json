@@ -166,7 +166,6 @@
   "gersfeld": [
     "findlos",
     "habelsdorf",
-    "melperts",
     "obernhausen",
     "schachen",
     "seifertshausen"
@@ -218,6 +217,8 @@
   ],
   "ehrenberg": [
     "reulbach",
+    "melperts",
+    "thaiden",
     "seiferts",
     "wüstensachsen"
   ],

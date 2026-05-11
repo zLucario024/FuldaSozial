@@ -1093,7 +1093,7 @@ BEKANNTE_REGIONEN = (
     'langenbieber', 'mahlerts', 'niederbieber', 'obergruben', 'obernüst', 'rödergrund',
     'schackau', 'schwarzbach', 'traisbach', 'wiesen', 'wittges',
     # Ortsteile Gersfeld
-    'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
+    'findlos', 'habelsdorf', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
     'günthers', 'habel', 'hundsbach', 'lahrbach', 'neuschwammbach', 'neuswarts',
     'schlitzenhausen', 'theobaldshof', 'wendershausen',
@@ -1109,7 +1109,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Ebersburg
     'euters', 'götzenhof', 'thalau', 'weyhers',
     # Ortsteile Ehrenberg
-    'reulbach', 'seiferts', 'wüstensachsen',
+    'melperts', 'reulbach', 'seiferts', 'thaiden', 'wüstensachsen',
     # Ortsteile Hosenfeld
     'blankenau', 'brandlos', 'hainzell', 'jossa', 'pfaffenrod', 'poppenrod',
     'schletzenhausen',
@@ -1182,8 +1182,8 @@ ORTSTEILE_TO_GEMEINDE = {
     'schackau': 'hofbieber', 'schwarzbach': 'hofbieber', 'traisbach': 'hofbieber', 'wiesen': 'hofbieber',
     'wittges': 'hofbieber',
     # Ortsteile Gersfeld
-    'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld', 'obernhausen': 'gersfeld',
-    'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',
+    'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'obernhausen': 'gersfeld', 'schachen': 'gersfeld',
+    'seifertshausen': 'gersfeld',
     # Ortsteile Tann
     'günthers': 'tann', 'habel': 'tann', 'hundsbach': 'tann', 'lahrbach': 'tann',
     'neuschwammbach': 'tann', 'neuswarts': 'tann', 'schlitzenhausen': 'tann', 'theobaldshof': 'tann',
@@ -1201,7 +1201,8 @@ ORTSTEILE_TO_GEMEINDE = {
     # Ortsteile Ebersburg
     'euters': 'ebersburg', 'götzenhof': 'ebersburg', 'thalau': 'ebersburg', 'weyhers': 'ebersburg',
     # Ortsteile Ehrenberg
-    'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'wüstensachsen': 'ehrenberg',
+    'melperts': 'ehrenberg', 'reulbach': 'ehrenberg', 'seiferts': 'ehrenberg', 'thaiden': 'ehrenberg',
+    'wüstensachsen': 'ehrenberg',
     # Ortsteile Hosenfeld
     'blankenau': 'hosenfeld', 'brandlos': 'hosenfeld', 'hainzell': 'hosenfeld', 'jossa': 'hosenfeld',
     'pfaffenrod': 'hosenfeld', 'poppenrod': 'hosenfeld', 'schletzenhausen': 'hosenfeld',
