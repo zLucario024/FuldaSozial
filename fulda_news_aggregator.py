@@ -459,6 +459,7 @@ Titel:
         zeilen = [z.strip() for z in message.content[0].text.strip().split("\n") if z.strip()]
         # Discard lines that look like prose (refusals/explanations) instead of tag lists
         zeilen = [z for z in zeilen if len(z) <= 120 and ('·' in z or len(z.split()) <= 5)]
+        zeilen = [z if not _tags_sind_meta(z) else "" for z in zeilen]
         # Return a list aligned by index — avoids key collisions when two articles share a title
         return [zeilen[i] if i < len(zeilen) else "" for i in range(len(titel_liste))]
     except Exception as e:
@@ -553,7 +554,7 @@ def feed_verarbeiten(feed, conn):
             tags_list = tags_generieren([t for _, t in batch], beschreibungen)
             for idx, (hash_wert, titel) in enumerate(batch):
                 tags = tags_list[idx] if idx < len(tags_list) else ""
-                if tags:
+                if tags and not _tags_sind_meta(tags):
                     cursor.execute(
                         "UPDATE artikel SET tags = %s WHERE hash = %s",
                         (tags, hash_wert)
@@ -860,7 +861,7 @@ def html_quelle_verarbeiten(quelle, conn):
             tags_list = tags_generieren([t for _, t in batch], beschreibungen)
             for idx, (hash_wert, titel) in enumerate(batch):
                 tags = tags_list[idx] if idx < len(tags_list) else ""
-                if tags:
+                if tags and not _tags_sind_meta(tags):
                     cursor.execute(
                         "UPDATE artikel SET tags = %s WHERE hash = %s",
                         (tags, hash_wert)
@@ -1298,6 +1299,19 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
         print(f"  Regionen verfeinert: {len(updates)} Artikel auf Gemeinde-Ebene angehoben")
 
 
+_TAGS_META_MUSTER = [
+    'keine tags', 'kein ortstag', 'kein orts', 'nicht im landkreis',
+    'deshalb kein', 'außerhalb', 'nicht erkennbar', 'nicht möglich',
+    'kein ort', 'keine ortschaft', 'leider', 'entschuldigung',
+    'tut mir leid', 'ist nicht', 'keine angabe', 'nicht zuordenbar',
+]
+
+def _tags_sind_meta(tags_str):
+    """True if the string looks like an AI refusal/explanation rather than actual tags."""
+    t = (tags_str or '').lower()
+    return any(m in t for m in _TAGS_META_MUSTER)
+
+
 def _tags_plausibel(tags_str, titel, beschreibung):
     """True if at least one tag (or a 5+-char word from a tag) appears in title+description.
     A complete mismatch — zero overlap — is the signature of a tag-swap bug."""
@@ -1318,6 +1332,15 @@ def tags_korrigieren(conn):
     """Detects articles whose tags have zero overlap with their own title+description
     (= likely a tag-swap from the batch write) and re-generates them."""
     cursor = conn.cursor()
+
+    # ── Schritt 1: Meta-Antworten der KI aus der DB entfernen ──
+    cursor.execute("SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''")
+    meta_hashes = [h for h, t in cursor.fetchall() if _tags_sind_meta(t)]
+    if meta_hashes:
+        cursor.executemany("UPDATE artikel SET tags = '' WHERE hash = %s", [(h,) for h in meta_hashes])
+        conn.commit()
+        print(f"  Tags-Bereinigung: {len(meta_hashes)} Meta-Antworten gelöscht")
+
     cursor.execute("""
         SELECT hash, titel, beschreibung, tags FROM artikel
         WHERE tags IS NOT NULL AND tags != ''
