@@ -73,7 +73,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Gersfeld
     'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
-    'dippach', 'günthers', 'lahrbach', 'neuswarts',
+    'günthers', 'habel', 'hundsbach', 'lahrbach', 'neuschwammbach', 'neuswarts',
+    'schlitzenhausen', 'theobaldshof', 'wendershausen',
     # Ortsteile Eiterfeld
     'arzell', 'betzenrod', 'branders', 'buchenau', 'dittlofrod', 'fürsteneck',
     'giesenhain', 'großentaft', 'körnbach', 'leibolz', 'leimbach', 'mengers',

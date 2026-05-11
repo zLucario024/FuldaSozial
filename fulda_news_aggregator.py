@@ -1094,7 +1094,8 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Gersfeld
     'findlos', 'habelsdorf', 'melperts', 'obernhausen', 'schachen', 'seifertshausen',
     # Ortsteile Tann
-    'dippach', 'günthers', 'lahrbach', 'neuswarts',
+    'günthers', 'habel', 'hundsbach', 'lahrbach', 'neuschwammbach', 'neuswarts',
+    'schlitzenhausen', 'theobaldshof', 'wendershausen',
     # Ortsteile Eiterfeld
     'arzell', 'betzenrod', 'branders', 'buchenau', 'dittlofrod', 'fürsteneck',
     'giesenhain', 'großentaft', 'körnbach', 'leibolz', 'leimbach', 'mengers',
@@ -1182,7 +1183,9 @@ ORTSTEILE_TO_GEMEINDE = {
     'findlos': 'gersfeld', 'habelsdorf': 'gersfeld', 'melperts': 'gersfeld', 'obernhausen': 'gersfeld',
     'schachen': 'gersfeld', 'seifertshausen': 'gersfeld',
     # Ortsteile Tann
-    'dippach': 'tann', 'günthers': 'tann', 'lahrbach': 'tann', 'neuswarts': 'tann',
+    'günthers': 'tann', 'habel': 'tann', 'hundsbach': 'tann', 'lahrbach': 'tann',
+    'neuschwammbach': 'tann', 'neuswarts': 'tann', 'schlitzenhausen': 'tann', 'theobaldshof': 'tann',
+    'wendershausen': 'tann',
     # Ortsteile Eiterfeld
     'arzell': 'eiterfeld', 'betzenrod': 'eiterfeld', 'branders': 'eiterfeld', 'buchenau': 'eiterfeld',
     'dittlofrod': 'eiterfeld', 'fürsteneck': 'eiterfeld', 'giesenhain': 'eiterfeld', 'großentaft': 'eiterfeld',
