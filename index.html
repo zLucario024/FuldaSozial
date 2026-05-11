@@ -929,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <header>
-  <a href="#" class="logo">
+  <a href="index.html" class="logo">
     <div class="logo-icon">
       <svg viewBox="0 0 24 24"><path d="M4 4h16v3H4zm0 5h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg>
     </div>
@@ -3101,7 +3101,7 @@ function urlAktualisieren(replace = false) {
   if (aktivKategorie) params.set('kategorie', aktivKategorie);
   if (aktivQuelle)    params.set('quelle', aktivQuelle);
   if (aktivTag)       params.set('tag', aktivTag);
-  if (suchbegriff)    params.set('suche', suchbegriff);
+  // search term intentionally excluded from URL — reloading clears the search box
   const query = params.toString();
   const neueUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
   const state = { ort: aktivOrt, kategorie: aktivKategorie, quelle: aktivQuelle, tag: aktivTag, suche: suchbegriff };
@@ -3185,7 +3185,6 @@ function filterAusUrlLesen() {
     const robots = document.querySelector('meta[name="robots"]');
     if (robots) robots.content = 'noindex, follow';
   }
-  if (params.has('suche')) { suchbegriff = params.get('suche').toLowerCase(); document.getElementById('suche').value = suchbegriff; }
   if (params.has('highlight')) window._pushHighlightHash = params.get('highlight');
   filterLeistAktualisieren();
 }
