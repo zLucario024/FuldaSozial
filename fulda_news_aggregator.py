@@ -459,7 +459,8 @@ Titel:
         zeilen = [z.strip() for z in message.content[0].text.strip().split("\n") if z.strip()]
         # Discard lines that look like prose (refusals/explanations) instead of tag lists
         zeilen = [z for z in zeilen if len(z) <= 120 and ('·' in z or len(z.split()) <= 5)]
-        return {titel: zeilen[i] for i, titel in enumerate(titel_liste) if i < len(zeilen)}
+        # Return a list aligned by index — avoids key collisions when two articles share a title
+        return [zeilen[i] if i < len(zeilen) else "" for i in range(len(titel_liste))]
     except Exception as e:
         print(f"  WARNUNG: Tag-Generierung fehlgeschlagen ({e})")
         return {}
@@ -549,9 +550,9 @@ def feed_verarbeiten(feed, conn):
             )
             desc_map = {row[0]: row[1] or "" for row in cursor.fetchall()}
             beschreibungen = [desc_map.get(h, "") for h, _ in batch]
-            tags_dict = tags_generieren([t for _, t in batch], beschreibungen)
-            for hash_wert, titel in batch:
-                tags = tags_dict.get(titel, "")
+            tags_list = tags_generieren([t for _, t in batch], beschreibungen)
+            for idx, (hash_wert, titel) in enumerate(batch):
+                tags = tags_list[idx] if idx < len(tags_list) else ""
                 if tags:
                     cursor.execute(
                         "UPDATE artikel SET tags = %s WHERE hash = %s",
@@ -856,9 +857,9 @@ def html_quelle_verarbeiten(quelle, conn):
             )
             desc_map = {row[0]: row[1] or "" for row in cursor.fetchall()}
             beschreibungen = [desc_map.get(h, "") for h, _ in batch]
-            tags_dict = tags_generieren([t for _, t in batch], beschreibungen)
-            for hash_wert, titel in batch:
-                tags = tags_dict.get(titel, "")
+            tags_list = tags_generieren([t for _, t in batch], beschreibungen)
+            for idx, (hash_wert, titel) in enumerate(batch):
+                tags = tags_list[idx] if idx < len(tags_list) else ""
                 if tags:
                     cursor.execute(
                         "UPDATE artikel SET tags = %s WHERE hash = %s",
@@ -1029,6 +1030,10 @@ def main():
     # Duplicate notifications are prevented at the device level by the push `tag` (= article hash).
     cutoff = (datetime.now() - timedelta(minutes=70)).strftime('%Y-%m-%d %H:%M:%S')
     benachrichtigungen_senden(conn, cutoff)
+
+    print(f"\n{'=' * 55}")
+    print("TAG-VALIDIERUNG")
+    tags_korrigieren(conn)
 
     print(f"\n{'=' * 55}")
     print("ARCHIV")
@@ -1279,6 +1284,60 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
     conn.commit()
     if updates:
         print(f"  Regionen verfeinert: {len(updates)} Artikel auf Gemeinde-Ebene angehoben")
+
+
+def _tags_plausibel(tags_str, titel, beschreibung):
+    """True if at least one tag (or a 5+-char word from a tag) appears in title+description.
+    A complete mismatch — zero overlap — is the signature of a tag-swap bug."""
+    combined = (titel + " " + beschreibung).lower()
+    for tag in tags_str.split('·'):
+        tag_lower = tag.strip().lower()
+        if not tag_lower:
+            continue
+        if tag_lower in combined:
+            return True
+        for word in tag_lower.split():
+            if len(word) >= 5 and word in combined:
+                return True
+    return False
+
+
+def tags_korrigieren(conn):
+    """Detects articles whose tags have zero overlap with their own title+description
+    (= likely a tag-swap from the batch write) and re-generates them."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT hash, titel, beschreibung, tags FROM artikel
+        WHERE tags IS NOT NULL AND tags != ''
+          AND beschreibung IS NOT NULL AND beschreibung != ''
+          AND gespeichert > TO_CHAR(NOW() - INTERVAL '30 days', 'YYYY-MM-DD HH24:MI:SS')
+    """)
+    rows = cursor.fetchall()
+
+    zu_korrigieren = [
+        (hash_wert, titel, beschreibung)
+        for hash_wert, titel, beschreibung, tags in rows
+        if not _tags_plausibel(tags, titel, beschreibung)
+    ][:50]  # cap per run to control API cost
+
+    if not zu_korrigieren:
+        cursor.close()
+        return
+
+    print(f"  Tags-Korrektur: {len(zu_korrigieren)} Artikel mit falsch zugeordneten Tags")
+    korrigiert = 0
+    for i in range(0, len(zu_korrigieren), 20):
+        batch = zu_korrigieren[i:i + 20]
+        tags_list = tags_generieren([t for _, t, _ in batch], [d for _, _, d in batch])
+        for idx, (hash_wert, _, _) in enumerate(batch):
+            tags = tags_list[idx] if idx < len(tags_list) else ""
+            if tags:
+                cursor.execute("UPDATE artikel SET tags = %s WHERE hash = %s", (tags, hash_wert))
+                korrigiert += 1
+        conn.commit()
+
+    cursor.close()
+    print(f"  Tags-Korrektur: {korrigiert} Artikel neu getaggt")
 
 
 def archiv_generieren(conn):
