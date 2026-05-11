@@ -180,6 +180,15 @@
     padding: 24px;
   }
   @media (max-width: 900px) { .stat-grid { grid-template-columns: 1fr; } }
+  .stat-panel.full { grid-column: 1 / -1; }
+  .matrix-wrap { overflow-x: auto; }
+  .matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .matrix-table th { text-align: center; padding: 5px 8px; font-size: 10px; font-weight: 700; color: #555; border-bottom: 2px solid #e5e7eb; white-space: nowrap; position: sticky; top: 0; background: #fff; }
+  .matrix-table th.matrix-region-hd { text-align: left; }
+  .matrix-table td { text-align: center; padding: 4px 8px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+  .matrix-table tr:hover td { background: #fafafa !important; }
+  .matrix-region { text-align: left !important; font-weight: 500; color: #333; min-width: 120px; }
+  .matrix-total { font-weight: 700; color: #1a1a1a; border-left: 2px solid #e5e7eb; }
   .stat-panel {
     background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
     padding: 20px;
@@ -733,6 +742,36 @@ function statistikRendern() {
     </div>`;
   }).join('');
 
+  // ── Kategorien × Regionen Matrix ──
+  const alleKats = [...KATEGORIE_NAMEN, 'Sonstiges'];
+  const regionKatMap = {};
+  alleArtikel.forEach(a => {
+    const r = a.region || '–';
+    const k = kategorieBestimmen(a.titel, a.tags);
+    if (!regionKatMap[r]) regionKatMap[r] = {};
+    regionKatMap[r][k] = (regionKatMap[r][k] || 0) + 1;
+  });
+  const regionenSortiert = Object.entries(regionKatMap)
+    .map(([r, kats]) => [r, Object.values(kats).reduce((s, n) => s + n, 0)])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 30)
+    .map(([r]) => r);
+
+  const matrixKopf = alleKats.map(k =>
+    `<th style="color:${KATEGORIEN[k].farbe}">${esc(k.replace(' & ', ' &<br>'))}</th>`
+  ).join('');
+  const matrixZeilen = regionenSortiert.map(r => {
+    const kats = regionKatMap[r] || {};
+    const total = Object.values(kats).reduce((s, n) => s + n, 0);
+    const cells = alleKats.map(k => {
+      const n = kats[k] || 0;
+      return n
+        ? `<td style="background:${KATEGORIEN[k].hell};color:${KATEGORIEN[k].farbe};font-weight:600">${n}</td>`
+        : `<td style="color:#ddd">–</td>`;
+    }).join('');
+    return `<tr><td class="matrix-region">${esc(r)}</td>${cells}<td class="matrix-total">${total}</td></tr>`;
+  }).join('');
+
   document.getElementById('stat-grid').innerHTML = `
     <div class="stat-panel">
       <h3>Quellen <span style="font-weight:400;color:#aaa;text-transform:none">(${gesamt.toLocaleString('de-DE')} Artikel gesamt)</span></h3>
@@ -741,6 +780,15 @@ function statistikRendern() {
     <div class="stat-panel">
       <h3>Kategorien</h3>
       ${katHtml}
+    </div>
+    <div class="stat-panel full">
+      <h3>Kategorien nach Region <span style="font-weight:400;color:#aaa;text-transform:none">Top 30 Regionen</span></h3>
+      <div class="matrix-wrap">
+        <table class="matrix-table">
+          <thead><tr><th class="matrix-region-hd">Region</th>${matrixKopf}<th class="matrix-total">Gesamt</th></tr></thead>
+          <tbody>${matrixZeilen}</tbody>
+        </table>
+      </div>
     </div>`;
 }
 
