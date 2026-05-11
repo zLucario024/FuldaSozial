@@ -1054,13 +1054,13 @@ BEKANNTE_REGIONEN = (
     'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
     'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
     # Stadtteile Fulda
-    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
-    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz',
-    'hochschule fulda', 'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus',
-    'kämmerzell', 'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes',
-    'mittelrode', 'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode',
-    'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
-    'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
+    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'edelzell',
+    'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz', 'hochschule fulda',
+    'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus', 'kämmerzell',
+    'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes', 'mittelrode',
+    'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode', 'ostend',
+    'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach', 'weimarer tunnel',
+    'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
     'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
     # Ortsteile Künzell
@@ -1074,8 +1074,8 @@ BEKANNTE_REGIONEN = (
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
-    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'rönshausen', 'welkers',
-    'wissels', 'zirkenbach',
+    'büchenberg', 'döllbach', 'kerzell', 'löschenrod', 'lütter', 'melters',
+    'rothemann', 'rönshausen', 'welkers', 'zillbach',
     # Ortsteile Flieden
     'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
     'rückers', 'schweben', 'stork', 'struth',
@@ -1132,16 +1132,15 @@ _BEKANNTE_SET_SQL = tuple(BEKANNTE_REGIONEN)  # for SQL NOT IN
 ORTSTEILE_TO_GEMEINDE = {
     # Stadtteile Fulda
     'aschenberg': 'fulda', 'bernhards': 'fulda', 'besges': 'fulda', 'bronnzell': 'fulda',
-    'dietershan': 'fulda', 'döllbach': 'fulda', 'edelzell': 'fulda', 'frauenberg': 'fulda',
-    'fulda-galerie': 'fulda', 'gläserzell': 'fulda', 'haimbach': 'fulda', 'harmerz': 'fulda',
-    'hochschule fulda': 'fulda', 'horas': 'fulda', 'innenstadt': 'fulda', 'istergiesel': 'fulda',
-    'johannesberg': 'fulda', 'kohlhaus': 'fulda', 'kämmerzell': 'fulda', 'lehnerz': 'fulda',
-    'lüdermünd': 'fulda', 'maberzell': 'fulda', 'maikes': 'fulda', 'malkes': 'fulda',
-    'mittelrode': 'fulda', 'neuenberg': 'fulda', 'niederrode': 'fulda', 'niesig': 'fulda',
-    'nordend': 'fulda', 'oberrode': 'fulda', 'ostend': 'fulda', 'rodges': 'fulda',
-    'roßberg': 'fulda', 'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda',
-    'weimarer tunnel': 'fulda', 'westend': 'fulda', 'ziehers': 'fulda', 'ziehers-nord': 'fulda',
-    'ziehers-süd': 'fulda',
+    'dietershan': 'fulda', 'edelzell': 'fulda', 'frauenberg': 'fulda', 'fulda-galerie': 'fulda',
+    'gläserzell': 'fulda', 'haimbach': 'fulda', 'harmerz': 'fulda', 'hochschule fulda': 'fulda',
+    'horas': 'fulda', 'innenstadt': 'fulda', 'istergiesel': 'fulda', 'johannesberg': 'fulda',
+    'kohlhaus': 'fulda', 'kämmerzell': 'fulda', 'lehnerz': 'fulda', 'lüdermünd': 'fulda',
+    'maberzell': 'fulda', 'maikes': 'fulda', 'malkes': 'fulda', 'mittelrode': 'fulda',
+    'neuenberg': 'fulda', 'niederrode': 'fulda', 'niesig': 'fulda', 'nordend': 'fulda',
+    'oberrode': 'fulda', 'ostend': 'fulda', 'rodges': 'fulda', 'roßberg': 'fulda',
+    'sickels': 'fulda', 'südend': 'fulda', 'süßenbach': 'fulda', 'weimarer tunnel': 'fulda',
+    'westend': 'fulda', 'ziehers': 'fulda', 'ziehers-nord': 'fulda', 'ziehers-süd': 'fulda',
     # Ortsteile Hünfeld
     'großenbach': 'hünfeld', 'kirchhasel': 'hünfeld', 'mackenzell': 'hünfeld', 'malges': 'hünfeld',
     'molzbach': 'hünfeld',
@@ -1158,8 +1157,9 @@ ORTSTEILE_TO_GEMEINDE = {
     'kauppen': 'neuhof', 'motzlar': 'neuhof', 'rommerz': 'neuhof', 'schachten': 'neuhof',
     'tiefengruben': 'neuhof',
     # Ortsteile Eichenzell
-    'kerzell': 'eichenzell', 'löschenrod': 'eichenzell', 'lütter': 'eichenzell', 'rothemann': 'eichenzell',
-    'rönshausen': 'eichenzell', 'welkers': 'eichenzell', 'wissels': 'eichenzell', 'zirkenbach': 'eichenzell',
+    'büchenberg': 'eichenzell', 'döllbach': 'eichenzell', 'kerzell': 'eichenzell', 'löschenrod': 'eichenzell',
+    'lütter': 'eichenzell', 'melters': 'eichenzell', 'rothemann': 'eichenzell', 'rönshausen': 'eichenzell',
+    'welkers': 'eichenzell', 'zillbach': 'eichenzell',
     # Ortsteile Flieden
     'buchenrod': 'flieden', 'döngesmühle': 'flieden', 'haindorf': 'flieden', 'höf und haid': 'flieden',
     'kohlgrund': 'flieden', 'magdlos': 'flieden', 'rückers': 'flieden', 'schweben': 'flieden',

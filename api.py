@@ -33,13 +33,13 @@ BEKANNTE_REGIONEN = (
     'tann', 'eiterfeld', 'rasdorf', 'dipperz', 'ebersburg', 'ehrenberg',
     'hosenfeld', 'kalbach', 'nüsttal', 'poppenhausen', 'bad salzschlirf',
     # Stadtteile Fulda
-    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'döllbach',
-    'edelzell', 'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz',
-    'hochschule fulda', 'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus',
-    'kämmerzell', 'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes',
-    'mittelrode', 'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode',
-    'ostend', 'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach',
-    'weimarer tunnel', 'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
+    'aschenberg', 'bernhards', 'besges', 'bronnzell', 'dietershan', 'edelzell',
+    'frauenberg', 'fulda-galerie', 'gläserzell', 'haimbach', 'harmerz', 'hochschule fulda',
+    'horas', 'innenstadt', 'istergiesel', 'johannesberg', 'kohlhaus', 'kämmerzell',
+    'lehnerz', 'lüdermünd', 'maberzell', 'maikes', 'malkes', 'mittelrode',
+    'neuenberg', 'niederrode', 'niesig', 'nordend', 'oberrode', 'ostend',
+    'rodges', 'roßberg', 'sickels', 'südend', 'süßenbach', 'weimarer tunnel',
+    'westend', 'ziehers', 'ziehers-nord', 'ziehers-süd',
     # Ortsteile Hünfeld
     'großenbach', 'kirchhasel', 'mackenzell', 'malges', 'molzbach',
     # Ortsteile Künzell
@@ -53,8 +53,8 @@ BEKANNTE_REGIONEN = (
     'dorfborn', 'giesel', 'hattenhof', 'hauswurz', 'kauppen', 'motzlar',
     'rommerz', 'schachten', 'tiefengruben',
     # Ortsteile Eichenzell
-    'kerzell', 'löschenrod', 'lütter', 'rothemann', 'rönshausen', 'welkers',
-    'wissels', 'zirkenbach',
+    'büchenberg', 'döllbach', 'kerzell', 'löschenrod', 'lütter', 'melters',
+    'rothemann', 'rönshausen', 'welkers', 'zillbach',
     # Ortsteile Flieden
     'buchenrod', 'döngesmühle', 'haindorf', 'höf und haid', 'kohlgrund', 'magdlos',
     'rückers', 'schweben', 'stork', 'struth',
