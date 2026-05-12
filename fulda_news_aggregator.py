@@ -1262,6 +1262,29 @@ def _region_retroaktiv_korrigieren(conn):
     Safe to run on every aggregator start — only updates rows that need it."""
     cursor = conn.cursor()
 
+    # Brand (Ortsteil Hilders) disambiguation: the AI uses 'Brand' as a tag for fires
+    # (Brand = German word for fire). Articles that ended up at region='hilders' solely
+    # because of this tag — but don't actually mention 'hilders' in their text — need
+    # to be reset so the promotion loop below can find their real region from other tags.
+    cursor.execute("""
+        SELECT hash, titel, beschreibung, tags FROM artikel
+        WHERE region = 'hilders' AND tags ILIKE '%brand%'
+    """)
+    brand_reset = []
+    for hash_wert, titel, beschreibung, tags_roh in cursor.fetchall():
+        tags_lower = [t.strip().lower() for t in (tags_roh or '').split('·')]
+        if 'brand' not in tags_lower:
+            continue
+        text = ((titel or '') + ' ' + (beschreibung or '')).lower()
+        if 'hilders' not in text:
+            brand_reset.append((hash_wert,))
+    if brand_reset:
+        cursor.executemany(
+            "UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s", brand_reset
+        )
+        conn.commit()
+        print(f"  Brand-Disambiguierung: {len(brand_reset)} Artikel von 'hilders' zurückgesetzt")
+
     # Reset any Ortsteil-level regions (e.g. 'rückers') back to 'landkreis-fulda'
     # so the loop below can re-promote them correctly to the parent Gemeinde.
     GEMEINDEN = tuple(WAPPEN_NAMEN.keys()) + ('landkreis-fulda', 'hessen', 'osthessen')
@@ -1274,22 +1297,29 @@ def _region_retroaktiv_korrigieren(conn):
         print(f"  Ortsteil-Regionen zurückgesetzt: {cursor.rowcount} Artikel")
 
     cursor.execute(
-        "SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''"
+        "SELECT hash, titel, beschreibung, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''"
         " AND (region IS NULL OR region NOT IN %s)",
         (_BEKANNTE_SET_SQL,)
     )
     rows = cursor.fetchall()
     updated = 0
-    for hash_wert, tags_str in rows:
+    for hash_wert, titel, beschreibung, tags_str in rows:
+        text = ((titel or '') + ' ' + (beschreibung or '')).lower()
         for tag in tags_str.split('·'):
-            ziel = _region_aus_tag_bestimmen(tag.strip().lower())
-            if ziel:
-                cursor.execute(
-                    "UPDATE artikel SET region = %s WHERE hash = %s",
-                    (ziel, hash_wert)
-                )
-                updated += 1
-                break
+            tag_norm = tag.strip().lower()
+            ziel = _region_aus_tag_bestimmen(tag_norm)
+            if not ziel:
+                continue
+            # 'brand' maps to 'hilders' via ORTSTEILE_TO_GEMEINDE, but 'Brand' is also
+            # German for fire — only promote if 'hilders' actually appears in the text.
+            if tag_norm == 'brand' and ziel == 'hilders' and 'hilders' not in text:
+                continue
+            cursor.execute(
+                "UPDATE artikel SET region = %s WHERE hash = %s",
+                (ziel, hash_wert)
+            )
+            updated += 1
+            break
     conn.commit()
     cursor.close()
     if updated:
