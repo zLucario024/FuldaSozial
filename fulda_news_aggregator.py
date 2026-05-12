@@ -352,6 +352,8 @@ def _kategorie_hinweis():
             lines.append(f"  {name}: {', '.join(alle)}")
     return '\n'.join(lines)
 
+_KATEGORIE_HINWEIS_TEXT = _kategorie_hinweis()
+
 HTML_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -473,14 +475,15 @@ Trenne die Tags mit " · ".
 Antworte NUR mit den Tags, eine Zeile pro Artikel, keine Nummerierung, keine Erklärungen.
 
 Kategorie-Orientierung – wenn ein Begriff passt, nutze ihn als Tag (hilft bei der automatischen Einordnung):
-{_kategorie_hinweis()}
+{_KATEGORIE_HINWEIS_TEXT}
 
 Titel:
 {titel_text}"""
     try:
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=1500,
+            max_tokens=600,
+            temperature=0.2,
             messages=[{"role": "user", "content": prompt}]
         )
         zeilen = [z.strip() for z in message.content[0].text.strip().split("\n") if z.strip()]
@@ -569,8 +572,8 @@ def feed_verarbeiten(feed, conn):
     if neue_artikel:
         print(f"  Gefunden: {len(parsed.entries)} | Neu: {neu} | Duplikate: {duplikate}")
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
-        for i in range(0, len(neue_artikel), 20):
-            batch = neue_artikel[i:i + 20]
+        for i in range(0, len(neue_artikel), 25):
+            batch = neue_artikel[i:i + 25]
             batch_hashes = [h for h, _ in batch]
             cursor.execute(
                 "SELECT hash, beschreibung FROM artikel WHERE hash = ANY(%s)",
@@ -876,8 +879,8 @@ def html_quelle_verarbeiten(quelle, conn):
             conn.commit()
 
         print(f"  Generiere Tags für {len(neue_artikel)} Artikel...")
-        for i in range(0, len(neue_artikel), 20):
-            batch = neue_artikel[i:i + 20]
+        for i in range(0, len(neue_artikel), 25):
+            batch = neue_artikel[i:i + 25]
             batch_hashes = [h for h, _ in batch]
             cursor.execute(
                 "SELECT hash, beschreibung FROM artikel WHERE hash = ANY(%s)",
@@ -1418,8 +1421,8 @@ def tags_korrigieren(conn):
 
     print(f"  Tags-Korrektur: {len(zu_korrigieren)} Artikel mit falsch zugeordneten Tags")
     korrigiert = 0
-    for i in range(0, len(zu_korrigieren), 20):
-        batch = zu_korrigieren[i:i + 20]
+    for i in range(0, len(zu_korrigieren), 25):
+        batch = zu_korrigieren[i:i + 25]
         tags_list = tags_generieren([t for _, t, _ in batch], [d for _, _, d in batch])
         for idx, (hash_wert, _, _) in enumerate(batch):
             tags = tags_list[idx] if idx < len(tags_list) else ""
