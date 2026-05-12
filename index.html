@@ -1644,8 +1644,9 @@ const ORTSTEILE_NUR_TAGS = new Set(['schweben', 'stork', 'nüst']);
 // Ein Treffer wird verworfen, wenn der Artikel einen der "fremd"-Begriffe enthält.
 // → Hier weitere Doppelgänger eintragen, falls nötig.
 const ORTSTEILE_DISAMBIG = {
-  // fremd: Artikel wird verworfen, wenn einer dieser Begriffe vorkommt (gilt Landkreis-weit).
+  // fremd:         Artikel wird verworfen, wenn einer dieser Begriffe vorkommt (gilt Landkreis-weit).
   // gemeinde_fremd: Gilt nur im Gemeinde-Filter. Key = aktivOrt, Value = Begriffe die den Treffer disqualifizieren.
+  // nur_mit:       Treffer wird nur gezählt, wenn mindestens einer dieser Begriffe ebenfalls vorkommt (opt-in).
   steinau: {
     fremd: ['main kinzig', 'main-kinzig', 'mkk', 'steinau an der straße'],
   },
@@ -1654,6 +1655,10 @@ const ORTSTEILE_DISAMBIG = {
   },
   rückers: {
     gemeinde_fremd: { flieden: ['hünfeld'], hünfeld: ['flieden'] },
+  },
+  brand: {
+    // "Brand" ist auch deutsches Wort für Feuer — nur als Ortsteil werten wenn "hilders" dabei steht
+    nur_mit: ['hilders'],
   },
 };
 
@@ -1683,7 +1688,9 @@ function ortsteileMatch(text, tags) {
     const disambig = ORTSTEILE_DISAMBIG[o];
     if (!disambig) return true;
     // Nur "fremd" anwenden (extra-Landkreis) — "gemeinde_fremd" gilt nur im Gemeinde-Filter
-    return !disambig.fremd || !disambig.fremd.some(f => text.includes(f));
+    if (disambig.fremd && disambig.fremd.some(f => text.includes(f))) return false;
+    if (disambig.nur_mit && !disambig.nur_mit.some(w => text.includes(w))) return false;
+    return true;
   });
 }
 
@@ -2069,6 +2076,7 @@ function gefilterteArtikel() {
           if (disambig.fremd && disambig.fremd.some(f => text.includes(f))) return false;
           const gemFremd = disambig.gemeinde_fremd && disambig.gemeinde_fremd[aktivOrt];
           if (gemFremd && gemFremd.some(f => text.includes(f))) return false;
+          if (disambig.nur_mit && !disambig.nur_mit.some(w => text.includes(w))) return false;
           return true;
         });
         const quelleExklusiv = QUELLE_REGION_EXKLUSIV[a.quelle] === aktivOrt;
