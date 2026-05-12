@@ -1116,7 +1116,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Großenlüder
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
     # Ortsteile Hilders
-    'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
+    'batten', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
     'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
     # Ortsteile Hofbieber
     'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
@@ -1202,7 +1202,7 @@ ORTSTEILE_TO_GEMEINDE = {
     'bimbach': 'großenlüder', 'eichenau': 'großenlüder', 'kleinlüder': 'großenlüder', 'lütterz': 'großenlüder',
     'müs': 'großenlüder', 'uffhausen': 'großenlüder',
     # Ortsteile Hilders
-    'batten': 'hilders', 'brand': 'hilders', 'dietges': 'hilders', 'dörmbach': 'hilders',
+    'batten': 'hilders', 'dietges': 'hilders', 'dörmbach': 'hilders',
     'eckweisbach': 'hilders', 'liebhards': 'hilders', 'rupsroth': 'hilders', 'simmershausen': 'hilders',
     'unterbernhards': 'hilders', 'wickers': 'hilders',
     # Ortsteile Hofbieber
@@ -1265,29 +1265,6 @@ def _region_retroaktiv_korrigieren(conn):
     Safe to run on every aggregator start — only updates rows that need it."""
     cursor = conn.cursor()
 
-    # Brand (Ortsteil Hilders) disambiguation: the AI uses 'Brand' as a tag for fires
-    # (Brand = German word for fire). Articles that ended up at region='hilders' solely
-    # because of this tag — but don't actually mention 'hilders' in their text — need
-    # to be reset so the promotion loop below can find their real region from other tags.
-    cursor.execute("""
-        SELECT hash, titel, beschreibung, tags FROM artikel
-        WHERE region = 'hilders' AND tags ILIKE '%brand%'
-    """)
-    brand_reset = []
-    for hash_wert, titel, beschreibung, tags_roh in cursor.fetchall():
-        tags_lower = [t.strip().lower() for t in (tags_roh or '').split('·')]
-        if 'brand' not in tags_lower:
-            continue
-        text = ((titel or '') + ' ' + (beschreibung or '')).lower()
-        if 'hilders' not in text:
-            brand_reset.append((hash_wert,))
-    if brand_reset:
-        cursor.executemany(
-            "UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s", brand_reset
-        )
-        conn.commit()
-        print(f"  Brand-Disambiguierung: {len(brand_reset)} Artikel von 'hilders' zurückgesetzt")
-
     # Reset any Ortsteil-level regions (e.g. 'rückers') back to 'landkreis-fulda'
     # so the loop below can re-promote them correctly to the parent Gemeinde.
     GEMEINDEN = tuple(WAPPEN_NAMEN.keys()) + ('landkreis-fulda', 'hessen', 'osthessen')
@@ -1312,10 +1289,6 @@ def _region_retroaktiv_korrigieren(conn):
             tag_norm = tag.strip().lower()
             ziel = _region_aus_tag_bestimmen(tag_norm)
             if not ziel:
-                continue
-            # 'brand' maps to 'hilders' via ORTSTEILE_TO_GEMEINDE, but 'Brand' is also
-            # German for fire — only promote if 'hilders' actually appears in the text.
-            if tag_norm == 'brand' and ziel == 'hilders' and 'hilders' not in text:
                 continue
             cursor.execute(
                 "UPDATE artikel SET region = %s WHERE hash = %s",

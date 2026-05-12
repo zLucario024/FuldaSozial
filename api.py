@@ -64,7 +64,7 @@ BEKANNTE_REGIONEN = (
     # Ortsteile Großenlüder
     'bimbach', 'eichenau', 'kleinlüder', 'lütterz', 'müs', 'uffhausen',
     # Ortsteile Hilders
-    'batten', 'brand', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
+    'batten', 'dietges', 'dörmbach', 'eckweisbach', 'liebhards',
     'rupsroth', 'simmershausen', 'unterbernhards', 'wickers',
     # Ortsteile Hofbieber
     'allmus', 'danzwiesen', 'egelmes', 'elters', 'kleinsassen', 'langenberg',
