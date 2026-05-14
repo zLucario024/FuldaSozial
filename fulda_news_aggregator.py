@@ -490,6 +490,7 @@ Titel:
         # Discard lines that look like prose (refusals/explanations) instead of tag lists
         zeilen = [z for z in zeilen if len(z) <= 120 and ('·' in z or len(z.split()) <= 5)]
         zeilen = [z if not _tags_sind_meta(z) else "" for z in zeilen]
+        zeilen = [_tags_kapitalisieren(z) if z else z for z in zeilen]
         # Return a list aligned by index — avoids key collisions when two articles share a title
         return [zeilen[i] if i < len(zeilen) else "" for i in range(len(titel_liste))]
     except Exception as e:
@@ -1345,6 +1346,15 @@ def _tags_sind_meta(tags_str):
     return any(m in t for m in _TAGS_META_MUSTER)
 
 
+def _tags_kapitalisieren(tags_str):
+    """Capitalize the first letter of each '·'-separated tag."""
+    parts = []
+    for part in tags_str.split('·'):
+        t = part.strip()
+        parts.append(t[0].upper() + t[1:] if t else '')
+    return ' · '.join(p for p in parts if p)
+
+
 def _tags_plausibel(tags_str, titel, beschreibung):
     """True if at least one tag (or a 5+-char word from a tag) appears in title+description.
     A complete mismatch — zero overlap — is the signature of a tag-swap bug."""
@@ -1366,7 +1376,16 @@ def tags_korrigieren(conn):
     (= likely a tag-swap from the batch write) and re-generates them."""
     cursor = conn.cursor()
 
-    # ── Schritt 1: Meta-Antworten der KI aus der DB entfernen ──
+    # ── Schritt 1a: Großschreibung normalisieren ──
+    cursor.execute("SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''")
+    gross_updates = [((_tags_kapitalisieren(t)), h) for h, t in cursor.fetchall()
+                     if _tags_kapitalisieren(t) != t]
+    if gross_updates:
+        cursor.executemany("UPDATE artikel SET tags = %s WHERE hash = %s", gross_updates)
+        conn.commit()
+        print(f"  Tags-Großschreibung: {len(gross_updates)} Artikel aktualisiert")
+
+    # ── Schritt 1b: Meta-Antworten der KI aus der DB entfernen ──
     cursor.execute("SELECT hash, tags FROM artikel WHERE tags IS NOT NULL AND tags != ''")
     meta_hashes = [h for h, t in cursor.fetchall() if _tags_sind_meta(t)]
     if meta_hashes:
