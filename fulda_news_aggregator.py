@@ -1465,11 +1465,25 @@ def tags_korrigieren(conn):
     for i in range(0, len(zu_korrigieren), 25):
         batch = zu_korrigieren[i:i + 25]
         tags_list = tags_generieren([t for _, t, _ in batch], [d for _, _, d in batch])
-        for idx, (hash_wert, _, _) in enumerate(batch):
+        for idx, (hash_wert, titel, beschreibung) in enumerate(batch):
             tags = tags_list[idx] if idx < len(tags_list) else ""
-            if tags:
-                cursor.execute("UPDATE artikel SET tags = %s WHERE hash = %s", (tags, hash_wert))
-                korrigiert += 1
+            if not tags:
+                continue
+            cursor.execute("UPDATE artikel SET tags = %s WHERE hash = %s", (tags, hash_wert))
+            # Re-derive region from the corrected tags so a wrong Gemeinde (e.g. 'hünfeld'
+            # on a Dalherda article) doesn't get stuck — _region_retroaktiv_korrigieren
+            # won't touch articles already at a valid Gemeinde level.
+            text = ((titel or '') + ' ' + (beschreibung or '')).lower()
+            for tag in tags.split('·'):
+                tag_norm = tag.strip().lower()
+                neue_region = _region_aus_tag_bestimmen(tag_norm)
+                if neue_region:
+                    if tag_norm in _FREMD_AUSSCHLUSS and any(f in text for f in _FREMD_AUSSCHLUSS[tag_norm]):
+                        continue
+                    neue_region = _region_doppel_korrigieren(tag_norm, neue_region, text)
+                    cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (neue_region, hash_wert))
+                    break
+            korrigiert += 1
         conn.commit()
 
     cursor.close()
