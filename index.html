@@ -1629,6 +1629,10 @@ const GEMEINDE_ORTSTEILE = {};
 for (const [ortsteil, gemeinde] of Object.entries(ORTSTEILE_MAPPING)) {
   (GEMEINDE_ORTSTEILE[gemeinde] ??= []).push(ortsteil);
 }
+// Some Ortsteile exist in TWO Gemeinden. The object literal above can only store one
+// mapping per key (last definition wins), so manually add the entry for the other Gemeinde.
+(GEMEINDE_ORTSTEILE['hünfeld'] ??= []).push('rückers');   // rückers → flieden in ORTSTEILE_MAPPING
+(GEMEINDE_ORTSTEILE['hilders'] ??= []).push('dörmbach');  // dörmbach → dipperz in ORTSTEILE_MAPPING
 
 // Ortsnamen, die in anderen Städten ebenfalls vorkommen.
 // Wenn der Artikel einen dieser Ausschluss-Orte enthält, wird er beim Filtern ignoriert.

@@ -1252,12 +1252,31 @@ ORTSTEILE_TO_GEMEINDE = {
 }
 
 
+# Ortsteile that exist in TWO different Gemeinden. ORTSTEILE_TO_GEMEINDE can only hold
+# one mapping per key (last definition wins), so region assignment must use text context.
+# Format: {ortsteil: {anchor_word: target_gemeinde, ..., '_default': fallback_gemeinde}}
+_DOPPEL_ORTSTEILE = {
+    'rückers':  {'hünfeld': 'hünfeld', 'flieden': 'flieden', '_default': 'flieden'},
+    'dörmbach': {'hilders': 'hilders', 'dipperz': 'dipperz', '_default': 'dipperz'},
+}
+
 def _region_aus_tag_bestimmen(tag_norm):
     """Resolve a normalised tag to a Gemeinde key, or None if not a known place.
     Checks Gemeinden first, then resolves Ortsteile to their parent Gemeinde."""
     if tag_norm in WAPPEN_NAMEN:
         return tag_norm
     return ORTSTEILE_TO_GEMEINDE.get(tag_norm)
+
+def _region_doppel_korrigieren(tag_norm, ziel, text):
+    """For Ortsteile that exist in two Gemeinden, override the default mapping
+    when the article text contains a disambiguating anchor word."""
+    if tag_norm not in _DOPPEL_ORTSTEILE:
+        return ziel
+    mapping = _DOPPEL_ORTSTEILE[tag_norm]
+    for anchor, gemeinde in mapping.items():
+        if anchor != '_default' and anchor in text:
+            return gemeinde
+    return mapping['_default']
 
 
 def _region_retroaktiv_korrigieren(conn):
@@ -1291,6 +1310,7 @@ def _region_retroaktiv_korrigieren(conn):
             ziel = _region_aus_tag_bestimmen(tag_norm)
             if not ziel:
                 continue
+            ziel = _region_doppel_korrigieren(tag_norm, ziel, text)
             cursor.execute(
                 "UPDATE artikel SET region = %s WHERE hash = %s",
                 (ziel, hash_wert)
@@ -1313,17 +1333,20 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
     BROAD = {'hessen', 'osthessen', 'landkreis-fulda', None}
     hashes = [h for h, _ in neue_artikel]
     cursor.execute(
-        "SELECT hash, tags, region FROM artikel WHERE hash = ANY(%s)",
+        "SELECT hash, tags, region, titel, beschreibung FROM artikel WHERE hash = ANY(%s)",
         (hashes,)
     )
     rows = cursor.fetchall()
     updates = []
-    for hash_wert, tags_roh, region in rows:
+    for hash_wert, tags_roh, region, titel, beschreibung in rows:
         if region not in BROAD or not tags_roh:
             continue
+        text = ((titel or '') + ' ' + (beschreibung or '')).lower()
         for tag in tags_roh.split('·'):
-            ziel = _region_aus_tag_bestimmen(tag.strip().lower())
+            tag_norm = tag.strip().lower()
+            ziel = _region_aus_tag_bestimmen(tag_norm)
             if ziel:
+                ziel = _region_doppel_korrigieren(tag_norm, ziel, text)
                 updates.append((ziel, hash_wert))
                 break
     for ziel, hash_wert in updates:
