@@ -1356,9 +1356,24 @@ def _tags_kapitalisieren(tags_str):
 
 
 def _tags_plausibel(tags_str, titel, beschreibung):
-    """True if at least one tag (or a 5+-char word from a tag) appears in title+description.
-    A complete mismatch — zero overlap — is the signature of a tag-swap bug."""
+    """True if tags look like they match the article.
+
+    Two checks:
+    1. Location check: if any tag is a known Gemeinde/Ortsteil, at least one of those
+       must appear in the text. A hallucinated location (e.g. "Flieden" on a
+       Neu-Isenburg article) fails here even if thematic tags like "Polizei" match.
+    2. Overlap check: at least one tag (or a 5+-char word from a tag) appears in
+       title+description — catches tag-swap bugs where tags belong to a different article.
+    """
     combined = (titel + " " + beschreibung).lower()
+
+    # 1. Location plausibility
+    location_tags = [t.strip().lower() for t in tags_str.split('·')
+                     if t.strip().lower() in _BEKANNTE_SET]
+    if location_tags and not any(loc in combined for loc in location_tags):
+        return False
+
+    # 2. General overlap
     for tag in tags_str.split('·'):
         tag_lower = tag.strip().lower()
         if not tag_lower:
