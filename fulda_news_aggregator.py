@@ -1260,6 +1260,13 @@ _DOPPEL_ORTSTEILE = {
     'dörmbach': {'hilders': 'hilders', 'dipperz': 'dipperz', '_default': 'dipperz'},
 }
 
+# Ortsteile whose name also appears in a place OUTSIDE Landkreis Fulda.
+# If the article text contains any listed term → skip region assignment for this tag.
+_FREMD_AUSSCHLUSS = {
+    'steinbach': ['haiger'],
+    'steinau':   ['main kinzig', 'main-kinzig', 'mkk', 'steinau an der straße'],
+}
+
 def _region_aus_tag_bestimmen(tag_norm):
     """Resolve a normalised tag to a Gemeinde key, or None if not a known place.
     Checks Gemeinden first, then resolves Ortsteile to their parent Gemeinde."""
@@ -1310,6 +1317,8 @@ def _region_retroaktiv_korrigieren(conn):
             ziel = _region_aus_tag_bestimmen(tag_norm)
             if not ziel:
                 continue
+            if tag_norm in _FREMD_AUSSCHLUSS and any(f in text for f in _FREMD_AUSSCHLUSS[tag_norm]):
+                continue
             ziel = _region_doppel_korrigieren(tag_norm, ziel, text)
             cursor.execute(
                 "UPDATE artikel SET region = %s WHERE hash = %s",
@@ -1346,6 +1355,8 @@ def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
             tag_norm = tag.strip().lower()
             ziel = _region_aus_tag_bestimmen(tag_norm)
             if ziel:
+                if tag_norm in _FREMD_AUSSCHLUSS and any(f in text for f in _FREMD_AUSSCHLUSS[tag_norm]):
+                    continue
                 ziel = _region_doppel_korrigieren(tag_norm, ziel, text)
                 updates.append((ziel, hash_wert))
                 break
