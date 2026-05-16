@@ -1484,6 +1484,11 @@ def tags_korrigieren(conn):
                     neue_region = _region_doppel_korrigieren(tag_norm, neue_region, text)
                     cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (neue_region, hash_wert))
                     break
+            else:
+                # No recognizable location tag found — reset to landkreis-fulda so the article
+                # doesn't stay stuck at a wrong Gemeinde-level region (e.g. 'fulda' for a
+                # Bad Wildungen article where AI correctly generated no location tag).
+                cursor.execute("UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s", (hash_wert,))
             korrigiert += 1
         conn.commit()
 
