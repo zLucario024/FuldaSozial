@@ -468,7 +468,8 @@ def tags_generieren(titel_liste, beschreibung_liste=None):
     )
     prompt = f"""Du bist ein Nachrichten-Tagger für den Landkreis Fulda (Hessen).
 Generiere für jeden Artikel-Titel genau 3-5 kurze deutsche Schlagwörter.
-Falls ein Ortsname aus dem Landkreis erkennbar ist, setze diesen als ersten Tag — auch kleinste Dörfer.
+Falls ein Ortsname aus dem Landkreis im Titel oder Kontext direkt genannt wird, setze diesen als ersten Tag — auch kleinste Dörfer.
+Wird kein Landkreis-Ort im Text erwähnt, keinen Ortstag erfinden — dann direkt mit dem Thema beginnen.
 Gemeinden: fulda, hünfeld, künzell, petersberg, neuhof, eichenzell, flieden, burghaun, großenlüder, hilders, hofbieber, gersfeld, tann, eiterfeld, rasdorf, dipperz, ebersburg, ehrenberg, hosenfeld, kalbach, nüsttal, poppenhausen.
 Ortsteile/Dörfer (Auswahl): rückers, schweben, schmalnau, wehrda, gruben, hünhan, nüst, rothenkirchen, mackenzell, kirchhasel, molzbach, malges, steinbach, pilgerzell, bachrain, horas, johannesberg, maberzell, kämmerzell, bimbach, kleinlüder, uttrichshausen, rommerz, hainzell, blankenau, weyhers, wüstensachsen, sieblos, abtsroda, rodholz, ützhausen, mottgers, großentaft, soisdorf, leibolz, buchenau, arzell, melperts, günthers, lahrbach, neuswarts, dietges, liebhards, simmershausen, löschenrod, kerzell, welkers, haindorf.
 Trenne die Tags mit " · ".
