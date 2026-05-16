@@ -188,7 +188,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Archiv-Seiten (31 Seiten) -->
+  <!-- Archiv-Seiten (32 Seiten) -->
   <url>
     <loc>https://www.rnfulda.de/archiv/seite-1.html</loc>
     <changefreq>weekly</changefreq>
@@ -311,6 +311,11 @@
   </url>
   <url>
     <loc>https://www.rnfulda.de/archiv/seite-31.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.rnfulda.de/archiv/seite-32.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
   </url>
