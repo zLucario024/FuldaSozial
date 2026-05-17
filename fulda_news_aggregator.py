@@ -441,9 +441,79 @@ def datenbank_einrichten(conn):
             gesendet_am TEXT NOT NULL
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS aggregator_laeufe (
+            id          SERIAL PRIMARY KEY,
+            gelaufen_am TEXT NOT NULL
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS werbung (
+            id          SERIAL PRIMARY KEY,
+            aktiv       BOOLEAN DEFAULT TRUE,
+            titel       TEXT NOT NULL,
+            untertitel  TEXT,
+            link        TEXT NOT NULL,
+            bild_pfad   TEXT,
+            werbender   TEXT NOT NULL,
+            wappen_ort  TEXT,
+            region      TEXT DEFAULT 'landkreis-fulda',
+            zeige_bis   TEXT,
+            erstellt_am TEXT NOT NULL
+        )
+    """)
     conn.commit()
     cursor.close()
     print("Datenbank bereit (PostgreSQL/Supabase)")
+
+
+# Werbung-Konfiguration: Einträge werden über POST /werbung in der DB gepflegt.
+# Erster Eintrag wird beim ersten Lauf automatisch angelegt, falls die Tabelle leer ist.
+_WERBUNG_SEED = {
+    "titel":      "Offene Kirmesprobe in Flieden (Rückers)",
+    "untertitel": "Alle sind willkommen! Schau vorbei und lern die Kirmestanzgruppe kennen.",
+    "link":       "https://www.instagram.com/kirmestanzgruppe.rueckers/",
+    "bild_pfad":  "/WerbeFotos/kirmesprobe-rueckers.jpg",
+    "werbender":  "Kirmestanzgruppe Rückers",
+    "wappen_ort": "Flieden",
+    "region":     "flieden",
+}
+
+
+def _werbung_aktivieren_wenn_faellig(conn):
+    """Zählt jeden Aggregator-Lauf. Alle 3 Läufe: aktive Werbung für ~3h aktivieren."""
+    cursor = conn.cursor()
+
+    # Seed: ersten Werbeeintrag anlegen falls Tabelle leer
+    cursor.execute("SELECT COUNT(*) FROM werbung")
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("""
+            INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, erstellt_am)
+            VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s, TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
+        """, (
+            _WERBUNG_SEED["titel"], _WERBUNG_SEED["untertitel"],
+            _WERBUNG_SEED["link"],  _WERBUNG_SEED["bild_pfad"],
+            _WERBUNG_SEED["werbender"], _WERBUNG_SEED["wappen_ort"],
+            _WERBUNG_SEED["region"],
+        ))
+        print("  Werbung: erster Eintrag angelegt")
+
+    # Laufzähler erhöhen
+    cursor.execute("INSERT INTO aggregator_laeufe (gelaufen_am) VALUES (TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))")
+    cursor.execute("SELECT COUNT(*) FROM aggregator_laeufe")
+    lauf_nr = cursor.fetchone()[0]
+
+    if lauf_nr % 3 == 0:
+        cursor.execute("""
+            UPDATE werbung
+            SET zeige_bis = TO_CHAR(NOW() + INTERVAL '3 hours', 'YYYY-MM-DD HH24:MI:SS')
+            WHERE aktiv = TRUE
+        """)
+        if cursor.rowcount:
+            print(f"  Werbung aktiviert bis +3h (Lauf #{lauf_nr})")
+
+    conn.commit()
+    cursor.close()
 
 def artikel_hash(link):
     return hashlib.md5(link.encode()).hexdigest()
@@ -1039,6 +1109,7 @@ def main():
 
     conn = db_verbinden()
     datenbank_einrichten(conn)
+    _werbung_aktivieren_wenn_faellig(conn)
     _region_retroaktiv_korrigieren(conn)
 
     gesamt_neu = 0

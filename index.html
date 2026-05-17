@@ -415,6 +415,27 @@ Fulda Nachrichten">
   .lese-link { display: flex; align-items: center; gap: 5px; color: var(--rot); font-size: .8rem; font-weight: 600; text-decoration: none; transition: gap .15s; }
   .lese-link:hover { gap: 8px; }
   .lese-link svg { width: 14px; height: 14px; stroke: var(--rot); fill: none; }
+
+  /* ── Werbung ── */
+  .karte-werbung { border: 2px solid var(--rot); cursor: pointer; }
+  .karte-werbung .karte-bild { background: #fee2e2 !important; }
+  .badge-anzeige { background: var(--rot) !important; letter-spacing: .12em; }
+  .karte-werbung .karte-titel { color: var(--rot); }
+  #werbung-banner { display: none; align-items: center; gap: .75rem; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: .55rem 1rem; margin-bottom: 1rem; font-size: .82rem; cursor: pointer; }
+  #werbung-banner:hover { background: #fecaca; }
+  .werbung-banner-label { font-weight: 700; color: var(--rot); letter-spacing: .06em; font-size: .72rem; flex-shrink: 0; }
+  .werbung-banner-titel { font-weight: 600; color: #991b1b; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .werbung-banner-cta { color: var(--rot); font-weight: 600; font-size: .78rem; flex-shrink: 0; }
+  #werbung-modal { display: none; position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem; }
+  #werbung-modal.offen { display: flex; }
+  #werbung-modal-inhalt { background: var(--weiss); border-radius: 16px; overflow: hidden; max-width: 480px; width: 100%; animation: heimat-einblenden .18s ease; }
+  #werbung-modal-bild { width: 100%; max-height: 70vh; object-fit: contain; display: block; background: #f9f9f9; }
+  #werbung-modal-footer { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); gap: .75rem; }
+  #werbung-modal-label { font-size: .7rem; font-weight: 700; color: var(--rot); letter-spacing: .08em; }
+  #werbung-modal-cta { display: inline-flex; align-items: center; gap: 6px; background: var(--rot); color: #fff; padding: .45rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: .85rem; }
+  #werbung-modal-cta:hover { opacity: .9; }
+  #werbung-modal-schliessen { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--grau-hell); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--grau-dunkel); font-size: 1rem; flex-shrink: 0; }
+  html.dark-mode #werbung-modal-inhalt { background: #1e1e1e; }
   .meld-btn { font-size: .75rem; color: var(--grau-mittel); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 6px; margin: -4px -6px; }
   .meld-btn:hover { color: var(--rot); }
   .meld-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
@@ -1389,11 +1410,31 @@ document.addEventListener('DOMContentLoaded', function() {
   <span id="anzahl-text">Lade Artikel...</span>
 </div>
 
+<div id="werbung-banner" onclick="werbungModalOeffnen()">
+  <span class="werbung-banner-label">ANZEIGE</span>
+  <span class="werbung-banner-titel" id="werbung-banner-titel"></span>
+  <span class="werbung-banner-cta">Mehr erfahren →</span>
+</div>
+
 <div class="grid" id="artikel-grid"></div>
 <button class="mehr-btn" id="mehr-btn" onclick="mehrLaden()" style="display:none">Mehr laden</button>
 <p class="archiv-hinweis" id="archiv-hinweis" style="display:none">
   Ältere Artikel (über 200 je Gemeinde) sind im <a href="archiv.html" data-umami-event="nav-archiv">Archiv</a> verfügbar.
 </p>
+
+<div id="werbung-modal" onclick="if(event.target===this)werbungModalSchliessen()">
+  <div id="werbung-modal-inhalt">
+    <img id="werbung-modal-bild" src="" alt="Werbung" loading="lazy">
+    <div id="werbung-modal-footer">
+      <span id="werbung-modal-label">ANZEIGE</span>
+      <a id="werbung-modal-cta" href="" target="_blank" rel="noopener sponsored">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/></svg>
+        Auf Instagram ansehen
+      </a>
+      <button id="werbung-modal-schliessen" onclick="werbungModalSchliessen()" aria-label="Schließen">✕</button>
+    </div>
+  </div>
+</div>
 
 <div id="heimat-modal" onclick="heimatModalHintergrundKlick(event)">
   <div id="heimat-modal-inhalt">
@@ -2154,6 +2195,18 @@ function artikelAnzeigen() {
   // Load 30-day window the first time a filter is applied
   if (filterIstAktiv() && ladeModusTage < 30) { artikelLaden(30); return; }
 
+  // Sync global ad state and sticky banner visibility
+  _aktiverWerbungArtikel = alleArtikel.find(a => a.typ === 'Werbung') || null;
+  const _wBanner = document.getElementById('werbung-banner');
+  if (_wBanner) {
+    if (_aktiverWerbungArtikel && aktivOrt === 'landkreis-fulda') {
+      document.getElementById('werbung-banner-titel').textContent = _aktiverWerbungArtikel.titel;
+      _wBanner.style.display = 'flex';
+    } else {
+      _wBanner.style.display = 'none';
+    }
+  }
+
   const gefiltert = gefilterteArtikel();
   const grid = document.getElementById('artikel-grid');
   grid.innerHTML = ''; gezeigt = 0;
@@ -2229,7 +2282,16 @@ function artikelAnzeigen() {
     document.getElementById('archiv-hinweis').style.display = 'none';
     return;
   }
-  gefiltert.slice(0, PRO_SEITE).forEach((a, i) => grid.appendChild(karteErstellen(a, i)));
+  let _echteZaehler = 0;
+  gefiltert.slice(0, PRO_SEITE).forEach((a, i) => {
+    grid.appendChild(karteErstellen(a, i));
+    if (a.typ !== 'Werbung') {
+      _echteZaehler++;
+      if (_aktiverWerbungArtikel && _echteZaehler % 10 === 0) {
+        grid.appendChild(werbeKarteErstellen(_aktiverWerbungArtikel));
+      }
+    }
+  });
   gezeigt = angzeigt;
   const nochMehr = gezeigt < gefiltert.length || hatMehr;
   document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
@@ -2301,7 +2363,69 @@ async function mehrLaden() {
   _pruefOrtArchiv(); _pruefQuelleArchiv();
 }
 
+// ── Werbung ─────────────────────────────────────────────────────────────────
+
+let _aktiverWerbungArtikel = null;
+
+function werbeKarteErstellen(ad) {
+  const div = document.createElement('div');
+  div.className = 'karte karte-werbung';
+  div.onclick = () => werbungModalOeffnen();
+
+  // Wappen — reuse the same WAPPEN lookup as regular articles
+  let wappenHTML = '';
+  if (ad.wappen_ort && WAPPEN[ad.wappen_ort]) {
+    wappenHTML = `<div class="wappen-badge" style="cursor:pointer" title="${ad.wappen_ort}">
+      <div class="wappen-svg">${WAPPEN[ad.wappen_ort]}</div>
+      <span class="wappen-name">${ad.wappen_ort}</span>
+    </div>`;
+  }
+
+  div.innerHTML = `
+    <div class="karte-bild-wrap">
+      <div class="karte-bild">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" style="opacity:.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+        <div class="badge badge-anzeige">ANZEIGE</div>
+      </div>
+      ${wappenHTML}
+    </div>
+    <div class="karte-inhalt">
+      <div class="karte-titel">${ad.titel}</div>
+      ${ad.beschreibung ? `<p style="font-size:.82rem;color:var(--grau-mittel);margin:0;line-height:1.45">${ad.beschreibung}</p>` : ''}
+      <div class="karte-meta">
+        <span class="quelle-pill" style="background:#fee2e2;color:var(--rot)">${ad.quelle}</span>
+      </div>
+    </div>
+    <div class="karte-footer">
+      <span class="lese-link" style="cursor:pointer">
+        Flyer ansehen
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </div>`;
+  return div;
+}
+
+function werbungModalOeffnen() {
+  if (!_aktiverWerbungArtikel) return;
+  const ad = _aktiverWerbungArtikel;
+  const bild = document.getElementById('werbung-modal-bild');
+  bild.src = ad.bild_pfad || '';
+  bild.style.display = ad.bild_pfad ? 'block' : 'none';
+  const cta = document.getElementById('werbung-modal-cta');
+  cta.href = ad.link;
+  document.getElementById('werbung-modal').classList.add('offen');
+  document.body.style.overflow = 'hidden';
+}
+
+function werbungModalSchliessen() {
+  document.getElementById('werbung-modal').classList.remove('offen');
+  document.body.style.overflow = '';
+}
+
+// ── Ende Werbung ─────────────────────────────────────────────────────────────
+
 function karteErstellen(artikel, index) {
+  if (artikel.typ === 'Werbung') return werbeKarteErstellen(artikel);
   const kategorie = kategorieBestimmen(artikel.titel, artikel.tags);
   const kat = KATEGORIEN[kategorie];
   const div = document.createElement('div');

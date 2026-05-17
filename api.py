@@ -210,11 +210,41 @@ def artikel_hauptseite(limit: int = Query(200, ge=1, le=500), offset: int = Quer
     rows = cursor.fetchall()
     hat_mehr = len(rows) > limit
     rows = rows[:limit]
+    artikel = [dict(r) for r in rows]
+
+    # Aktive Werbung als erstes Objekt prependen
+    cursor.execute("""
+        SELECT titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, zeige_bis
+        FROM werbung
+        WHERE aktiv = TRUE
+          AND zeige_bis IS NOT NULL
+          AND zeige_bis > TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+        ORDER BY id DESC LIMIT 1
+    """)
+    ad = cursor.fetchone()
+    if ad:
+        ad = dict(ad)
+        artikel.insert(0, {
+            "id":          None,
+            "hash":        "werbung-slot",
+            "titel":       ad["titel"],
+            "link":        ad["link"],
+            "quelle":      ad["werbender"],
+            "typ":         "Werbung",
+            "region":      ad["region"],
+            "datum":       ad["zeige_bis"],
+            "gespeichert": None,
+            "tags":        "",
+            "beschreibung": ad.get("untertitel") or "",
+            "bild_pfad":   ad.get("bild_pfad") or "",
+            "wappen_ort":  ad.get("wappen_ort") or "",
+        })
+
     cursor.close()
     conn.close()
     if response:
         response.headers["Cache-Control"] = "public, max-age=60"
-    return {"anzahl": len(rows), "hat_mehr": hat_mehr, "offset": offset, "artikel": [dict(r) for r in rows]}
+    return {"anzahl": len(artikel), "hat_mehr": hat_mehr, "offset": offset, "artikel": artikel}
 
 
 @app.get("/archiv")
@@ -496,6 +526,33 @@ def artikel_loeschen(artikel_id: int, key: str):
     cursor.close()
     conn.close()
     return {"status": "gelöscht"}
+
+
+@app.post("/werbung")
+def werbung_anlegen(key: str, daten: dict):
+    """Neuen Werbeeintrag anlegen oder bestehenden aktualisieren (deaktiviert alle anderen)."""
+    if key != os.getenv("AGGREGATOR_KEY"):
+        raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
+    erlaubt = {"titel", "untertitel", "link", "bild_pfad", "werbender", "wappen_ort", "region", "aktiv"}
+    felder = {k: v for k, v in daten.items() if k in erlaubt}
+    if not felder.get("titel") or not felder.get("link") or not felder.get("werbender"):
+        raise HTTPException(status_code=400, detail="titel, link und werbender sind Pflichtfelder")
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE werbung SET aktiv = FALSE")
+    cursor.execute("""
+        INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, erstellt_am)
+        VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s, TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
+    """, (
+        felder.get("titel"), felder.get("untertitel"),
+        felder.get("link"), felder.get("bild_pfad"),
+        felder.get("werbender"), felder.get("wappen_ort"),
+        felder.get("region", "landkreis-fulda"),
+    ))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok", "nachricht": "Werbung angelegt"}
 
 
 @app.get("/aggregator-starten")
