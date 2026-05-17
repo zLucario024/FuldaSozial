@@ -1671,6 +1671,8 @@ const ORTSTEILE_DISAMBIG = {
 function ortMatch(text, ort) {
   let idx = 0;
   while ((idx = text.indexOf(ort, idx)) >= 0) {
+    // Left-side word boundary: must not be preceded by a letter (prevents "zell" matching in "eichenzell")
+    if (idx > 0 && /[a-zäöüß]/.test(text[idx - 1])) { idx += 1; continue; }
     const rest = text.slice(idx + ort.length);
     if (!rest || !/[a-zäöüß]/.test(rest[0])) return true;
     // "-er" Demonym erlauben: "Fliedener", "Hainzeller" usw.
