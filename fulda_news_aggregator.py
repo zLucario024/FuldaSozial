@@ -296,6 +296,7 @@ HTML_QUELLEN = [
         "base_url": "https://www.fuldaerzeitung.de",
         "typ": "Tageszeitung",
         "region": "landkreis-fulda",
+        "region_default": "fulda",  # FZ covers mainly Fulda city; fall back here when no specific Ort found
         "parser": "fuldaer_zeitung",
     },
     {
@@ -323,6 +324,14 @@ HTML_QUELLEN = [
         "parser": "wittich",
     },
 ]
+
+# Sources that have a non-generic region default: when no specific Ort is identified by the AI,
+# use this region instead of 'landkreis-fulda'. Keyed by quelle name.
+_QUELLEN_REGION_DEFAULTS: dict[str, str] = {
+    q["name"]: q["region_default"]
+    for q in HTML_QUELLEN + FEEDS
+    if "region_default" in q
+}
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -602,7 +611,10 @@ def feed_verarbeiten(feed, conn):
     return neu, duplikate
 
 def html_artikel_holen(url, base_url):
-    """Scrapt eine HTML-Listenseite und gibt (titel, link)-Paare zurück."""
+    """Scrapt eine HTML-Listenseite (Fuldaer-Zeitung-Layout) und gibt
+    (titel, link, datum, beschreibung)-Tupel zurück.
+    Beschreibung wird direkt aus dem id-Teaser-el-content-text-text-Span
+    der Listenseite gewonnen — ohne extra HTTP-Requests."""
     try:
         session = html_session_erstellen()
         session.headers["Referer"] = base_url + "/"
@@ -615,13 +627,15 @@ def html_artikel_holen(url, base_url):
     artikel = []
     gesehen_links = set()
 
-    for match in re.finditer(r'<a\s([^>]*class="[^"]*id-LinkOverlay-link[^"]*"[^>]*)>', r.text):
-        attrs = match.group(1)
-        href_m = re.search(r'href="([^"]+)"', attrs)
-        title_m = re.search(r'title="([^"]+)"', attrs)
-        if not (href_m and title_m):
+    # Split by article-card boundary; each chunk contains content + overlay-link
+    for teil in r.text.split('"id-LinkOverlay id-Teaser-el ')[1:]:
+        # Link (overlay anchor comes after the content div)
+        link_m = re.search(r'href="([^"]+)"[^>]*class="[^"]*id-LinkOverlay-link', teil)
+        if not link_m:
+            link_m = re.search(r'class="[^"]*id-LinkOverlay-link[^"]*"[^>]*href="([^"]+)"', teil)
+        if not link_m:
             continue
-        link = href_m.group(1)
+        link = link_m.group(1)
         if link.startswith('//'):
             link = 'https:' + link
         elif link.startswith('/'):
@@ -631,9 +645,25 @@ def html_artikel_holen(url, base_url):
         if link in gesehen_links:
             continue
         gesehen_links.add(link)
-        titel = html_unescape(title_m.group(1)).strip()
-        if titel:
-            artikel.append((titel, link, None, ""))
+
+        # Title from headline span; fall back to link title attribute
+        title_m = re.search(r'id-Teaser-el-content-headline-text"[^>]*>\s*([^<]+)', teil)
+        if title_m:
+            titel = html_unescape(title_m.group(1)).strip()
+        else:
+            title_attr_m = re.search(r'title="([^"]+)"', teil)
+            titel = html_unescape(title_attr_m.group(1)).strip() if title_attr_m else ""
+        if not titel:
+            continue
+
+        # Teaser description from listing page (already truncated at source, good enough for AI)
+        desc_m = re.search(r'id-Teaser-el-content-text-text"[^>]*>\s*(.*?)\s*</span>', teil, re.DOTALL)
+        beschreibung = ""
+        if desc_m:
+            beschreibung = html_unescape(re.sub(r'<[^>]+>', '', desc_m.group(1))).strip()
+            beschreibung = beschreibung.rstrip('…').rstrip('…').strip()
+
+        artikel.append((titel, link, None, beschreibung))
 
     return artikel
 
@@ -1328,9 +1358,21 @@ def _region_retroaktiv_korrigieren(conn):
             updated += 1
             break
     conn.commit()
-    cursor.close()
     if updated:
         print(f"  Regionen korrigiert (retroaktiv): {updated} Artikel")
+
+    # Apply source-specific region defaults AFTER promotion loop so that articles
+    # with a recognizable location tag are already at the correct Gemeinde level
+    # and won't be touched here.
+    for quelle_name, default_region in _QUELLEN_REGION_DEFAULTS.items():
+        cursor.execute(
+            "UPDATE artikel SET region = %s WHERE quelle = %s AND region = 'landkreis-fulda'",
+            (default_region, quelle_name)
+        )
+        if cursor.rowcount:
+            print(f"  Standardregion '{quelle_name}': {cursor.rowcount} Artikel → '{default_region}'")
+    conn.commit()
+    cursor.close()
 
 
 def region_aus_tags_verfeinern(neue_artikel, cursor, conn):
@@ -1444,7 +1486,7 @@ def tags_korrigieren(conn):
         print(f"  Tags-Bereinigung: {len(meta_hashes)} Meta-Antworten gelöscht")
 
     cursor.execute("""
-        SELECT hash, titel, beschreibung, tags FROM artikel
+        SELECT hash, titel, beschreibung, tags, quelle FROM artikel
         WHERE tags IS NOT NULL AND tags != ''
           AND beschreibung IS NOT NULL AND beschreibung != ''
           AND gespeichert > TO_CHAR(NOW() - INTERVAL '30 days', 'YYYY-MM-DD HH24:MI:SS')
@@ -1452,8 +1494,8 @@ def tags_korrigieren(conn):
     rows = cursor.fetchall()
 
     zu_korrigieren = [
-        (hash_wert, titel, beschreibung)
-        for hash_wert, titel, beschreibung, tags in rows
+        (hash_wert, titel, beschreibung, quelle)
+        for hash_wert, titel, beschreibung, tags, quelle in rows
         if not _tags_plausibel(tags, titel, beschreibung)
     ][:50]  # cap per run to control API cost
 
@@ -1466,7 +1508,7 @@ def tags_korrigieren(conn):
     for i in range(0, len(zu_korrigieren), 25):
         batch = zu_korrigieren[i:i + 25]
         tags_list = tags_generieren([t for _, t, _ in batch], [d for _, _, d in batch])
-        for idx, (hash_wert, titel, beschreibung) in enumerate(batch):
+        for idx, (hash_wert, titel, beschreibung, quelle) in enumerate(batch):
             tags = tags_list[idx] if idx < len(tags_list) else ""
             if not tags:
                 continue
@@ -1485,10 +1527,10 @@ def tags_korrigieren(conn):
                     cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (neue_region, hash_wert))
                     break
             else:
-                # No recognizable location tag found — reset to landkreis-fulda so the article
-                # doesn't stay stuck at a wrong Gemeinde-level region (e.g. 'fulda' for a
-                # Bad Wildungen article where AI correctly generated no location tag).
-                cursor.execute("UPDATE artikel SET region = 'landkreis-fulda' WHERE hash = %s", (hash_wert,))
+                # No recognizable location tag found — reset to the source's default region
+                # (or landkreis-fulda) so a wrong Gemeinde-level region doesn't persist.
+                fallback = _QUELLEN_REGION_DEFAULTS.get(quelle, 'landkreis-fulda')
+                cursor.execute("UPDATE artikel SET region = %s WHERE hash = %s", (fallback, hash_wert))
             korrigiert += 1
         conn.commit()
 
