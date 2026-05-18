@@ -541,8 +541,10 @@ def werbung_anlegen(key: str, daten: dict):
     cursor = conn.cursor()
     cursor.execute("UPDATE werbung SET aktiv = FALSE")
     cursor.execute("""
-        INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, erstellt_am)
-        VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s, TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
+        INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, zeige_bis, erstellt_am)
+        VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s,
+                TO_CHAR(NOW() + INTERVAL '72 hours', 'YYYY-MM-DD HH24:MI:SS'),
+                TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
     """, (
         felder.get("titel"), felder.get("untertitel"),
         felder.get("link"), felder.get("bild_pfad"),
@@ -552,7 +554,26 @@ def werbung_anlegen(key: str, daten: dict):
     conn.commit()
     cursor.close()
     conn.close()
-    return {"status": "ok", "nachricht": "Werbung angelegt"}
+    return {"status": "ok", "nachricht": "Werbung angelegt (aktiv für 72h)"}
+
+
+@app.patch("/werbung/aktivieren")
+def werbung_aktivieren(key: str, stunden: int = 72):
+    """Setzt zeige_bis der aktiven Werbung auf jetzt + N Stunden (default 72)."""
+    if key != os.getenv("AGGREGATOR_KEY"):
+        raise HTTPException(status_code=403, detail="Ungültiger Schlüssel")
+    conn = db_verbinden()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE werbung
+        SET zeige_bis = TO_CHAR(NOW() + %s * INTERVAL '1 hour', 'YYYY-MM-DD HH24:MI:SS')
+        WHERE aktiv = TRUE
+    """, (stunden,))
+    updated = cursor.rowcount
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"status": "ok", "aktualisiert": updated, "stunden": stunden}
 
 
 @app.get("/aggregator-starten")

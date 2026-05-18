@@ -473,7 +473,7 @@ _WERBUNG_SEED = {
     "titel":      "Offene Kirmesprobe in Flieden (Rückers)",
     "untertitel": "Alle sind willkommen! Schau vorbei und lern die Kirmestanzgruppe kennen.",
     "link":       "https://www.instagram.com/kirmestanzgruppe.rueckers/",
-    "bild_pfad":  "/WerbeFotos/kirmesprobe-rueckers.jpg",
+    "bild_pfad":  "/Design/WerbeFotos/kirmesprobe-rueckers.jpeg",
     "werbender":  "Kirmestanzgruppe Rückers",
     "wappen_ort": "Flieden",
     "region":     "flieden",
@@ -488,15 +488,17 @@ def _werbung_aktivieren_wenn_faellig(conn):
     cursor.execute("SELECT COUNT(*) FROM werbung")
     if cursor.fetchone()[0] == 0:
         cursor.execute("""
-            INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, erstellt_am)
-            VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s, TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
+            INSERT INTO werbung (aktiv, titel, untertitel, link, bild_pfad, werbender, wappen_ort, region, zeige_bis, erstellt_am)
+            VALUES (TRUE, %s, %s, %s, %s, %s, %s, %s,
+                    TO_CHAR(NOW() + INTERVAL '3 hours', 'YYYY-MM-DD HH24:MI:SS'),
+                    TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))
         """, (
             _WERBUNG_SEED["titel"], _WERBUNG_SEED["untertitel"],
             _WERBUNG_SEED["link"],  _WERBUNG_SEED["bild_pfad"],
             _WERBUNG_SEED["werbender"], _WERBUNG_SEED["wappen_ort"],
             _WERBUNG_SEED["region"],
         ))
-        print("  Werbung: erster Eintrag angelegt")
+        print("  Werbung: erster Eintrag angelegt (zeige_bis +3h)")
 
     # Laufzähler erhöhen
     cursor.execute("INSERT INTO aggregator_laeufe (gelaufen_am) VALUES (TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS'))")
