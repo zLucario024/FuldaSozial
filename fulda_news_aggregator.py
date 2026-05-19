@@ -473,7 +473,7 @@ _WERBUNG_SEED = {
     "titel":      "Offene Kirmesprobe in Flieden (Rückers)",
     "untertitel": "Alle sind willkommen! Schau vorbei und lern die Kirmestanzgruppe kennen.",
     "link":       "https://www.instagram.com/kirmestanzgruppe.rueckers/",
-    "bild_pfad":  "/Design/WerbeFotos/kirmesprobe-rueckers.jpeg",
+    "bild_pfad":  "Design/WerbeFotos/kirmesprobe-rueckers.jpeg",
     "werbender":  "Kirmestanzgruppe Rückers",
     "wappen_ort": "Flieden",
     "region":     "flieden",
