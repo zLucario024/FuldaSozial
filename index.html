@@ -1991,6 +1991,9 @@ function veranstaltungsDatumExtrahieren(a) {
   // Numerisch ("15.06." / "15.06.2026")
   m = text.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{2,4})?\b/);
   if (m) return m[3] ? `${m[1]}.${m[2]}.${m[3]}` : `${m[1]}.${m[2]}.`;
+  // "kommenden/nächsten Wochentag" ("kommenden Sonntag")
+  m = text.match(/\b(?:nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
+  if (m) { const i = TAGE.indexOf(m[1].toLowerCase()); return i >= 0 ? TAGE_K[i] : m[1]; }
   // Wochentag allein
   m = text.match(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
   if (m) { const i = TAGE.indexOf(m[1].toLowerCase()); return i >= 0 ? TAGE_K[i] + ' ' + m[1].charAt(0).toUpperCase() + m[1].slice(1).replace(m[1].slice(0,1), '') : m[1]; }
@@ -2018,12 +2021,14 @@ function veranstaltungsDatumIstVergangen(a) {
   // Numerisch ("15.06." / "15.06.2026")
   m = text.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{2,4})?\b/);
   if (m) { const j = m[3] ? (m[3].length <= 2 ? 2000 + parseInt(m[3]) : parseInt(m[3])) : heute.getFullYear(); return new Date(j, parseInt(m[2]) - 1, parseInt(m[1])) < heute; }
+  // "kommenden/nächsten Wochentag" → definitiv zukünftig
+  if (/\b(nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i.test(text)) return false;
   // "letzten Samstag" → vergangen
   if (/\b(letzt(?:en|em|e)?|vergangen(?:en|em)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i.test(text)) return true;
   // Wochentag allein → vergangen wenn früher in der Woche als heute
   m = text.match(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
   if (m) return TAGE.indexOf(m[1].toLowerCase()) < heute.getDay();
-  // "nächste/kommende" → definitiv zukünftig
+  // "nächste/kommende Woche/Wochenende/Monat" → definitiv zukünftig
   if (/\b(nächste[nrs]?|kommende[nrs]?)\s+(woche|wochenende|monat)\b/i.test(text)) return false;
   return false;
 }
