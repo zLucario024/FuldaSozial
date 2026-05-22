@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -150,7 +150,7 @@
   <hr>
 
   <p class="section-label">Besonderheiten</p>
-  <p style="font-size:.9rem;color:var(--grau-mittel);font-style:italic;">Besondere Ortsmerkmale, Sehenswürdigkeiten und Wissenswertes werden hier ergänzt. <a href="mailto:adrian.jestaedt@gmail.com">Hast du einen Hinweis?</a></p>
+  <p style="font-size:.9rem;color:var(--grau-mittel);font-style:italic;">Besondere Ortsmerkmale, Sehenswürdigkeiten und Wissenswertes werden hier ergänzt. <a href="mailto:rnfulda@gmail.com">Hast du einen Hinweis?</a></p>
 
   <hr>
 
@@ -222,13 +222,13 @@
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <h2>Inhalte ergänzen oder korrigieren</h2>
-    <p class="modal-sub">Schreib deinen Vorschlag – oder direkt an <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a>.</p>
+    <p class="modal-sub">Schreib deinen Vorschlag – oder direkt an <a href="mailto:rnfulda@gmail.com">rnfulda@gmail.com</a>.</p>
     <textarea id="feedback-textarea" placeholder="Dein Vorschlag zum Kernort Flieden…"></textarea>
     <div class="feedback-modal-actions">
-      <span class="feedback-email-hint"><a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a></span>
+      <span class="feedback-email-hint"><a href="mailto:rnfulda@gmail.com">rnfulda@gmail.com</a></span>
       <button class="btn-senden" onclick="feedbackSenden('Flieden Kernort')">Per E-Mail senden</button>
     </div>
-    <p class="foto-hinweis">Fotos einsenden per E-Mail an <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a></p>
+    <p class="foto-hinweis">Fotos einsenden per E-Mail an <a href="mailto:rnfulda@gmail.com">rnfulda@gmail.com</a></p>
   </div>
 </div>
 
@@ -239,7 +239,7 @@ function fotoSchliessen(e) { if (e.target === document.getElementById('foto-moda
 function feedbackOeffnen() { document.getElementById('feedback-modal').classList.add('offen'); document.body.style.overflow = 'hidden'; setTimeout(function(){ document.getElementById('feedback-textarea').focus(); }, 100); }
 function feedbackZu() { document.getElementById('feedback-modal').classList.remove('offen'); document.body.style.overflow = ''; }
 function feedbackSchliessen(e) { if (e.target === document.getElementById('feedback-modal')) feedbackZu(); }
-function feedbackSenden(ort) { var text = document.getElementById('feedback-textarea').value.trim(); if (!text) { document.getElementById('feedback-textarea').focus(); return; } window.location.href = 'mailto:adrian.jestaedt@gmail.com?subject=' + encodeURIComponent('Vorschlag: ' + ort) + '&body=' + encodeURIComponent(text); }
+function feedbackSenden(ort) { var text = document.getElementById('feedback-textarea').value.trim(); if (!text) { document.getElementById('feedback-textarea').focus(); return; } window.location.href = 'mailto:rnfulda@gmail.com?subject=' + encodeURIComponent('Vorschlag: ' + ort) + '&body=' + encodeURIComponent(text); }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { fotoZu(); feedbackZu(); } });
 </script>
 </body>

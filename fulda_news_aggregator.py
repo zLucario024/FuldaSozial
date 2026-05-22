@@ -1,4 +1,4 @@
-"""
+﻿"""
 Fulda News Aggregator
 =====================
 Ruft RSS-Feeds ab, speichert Artikel in PostgreSQL und generiert Tags per KI.
@@ -225,7 +225,7 @@ def benachrichtigungen_senden(conn, cutoff_iso):
                         subscription_info={"endpoint": endpoint, "keys": {"p256dh": p256dh, "auth": auth}},
                         data=web_payload,
                         vapid_private_key=private_key,
-                        vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'adrian.jestaedt@gmail.com')}"},
+                        vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'rnfulda@gmail.com')}"},
                     )
                     web_gesendet += 1
                 except WebPushException as e:

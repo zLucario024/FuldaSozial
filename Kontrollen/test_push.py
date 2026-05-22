@@ -1,4 +1,4 @@
-import os, json, sys
+﻿import os, json, sys
 import requests
 from urllib.parse import quote
 from dotenv import load_dotenv
@@ -65,7 +65,7 @@ else:
                 subscription_info={"endpoint": endpoint, "keys": {"p256dh": p256dh, "auth": auth}},
                 data=web_payload,
                 vapid_private_key=private_key,
-                vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'adrian.jestaedt@gmail.com')}"},
+                vapid_claims={"sub": f"mailto:{os.getenv('VAPID_EMAIL', 'rnfulda@gmail.com')}"},
             )
             print(f"  OK  -> {heimat} ({endpoint[:60]}...)")
             web_gesendet += 1

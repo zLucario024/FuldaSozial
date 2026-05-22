@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -702,7 +702,7 @@
     <div class="feedback-modal-actions">
       <span class="feedback-email-hint">
         Oder direkt per E-Mail:<br>
-        <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a>
+        <a href="mailto:rnfulda@gmail.com">rnfulda@gmail.com</a>
       </span>
       <button class="btn-senden" onclick="feedbackSenden()">
         <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -711,7 +711,7 @@
     </div>
     <p class="foto-hinweis">
       Möchtest du <strong>Fotos einreichen</strong>? Sende sie bitte direkt per E-Mail an
-      <a href="mailto:adrian.jestaedt@gmail.com">adrian.jestaedt@gmail.com</a> – wir freuen uns über Bilder aus allen Ortsteilen.
+      <a href="mailto:rnfulda@gmail.com">rnfulda@gmail.com</a> – wir freuen uns über Bilder aus allen Ortsteilen.
     </p>
   </div>
 </div>
@@ -752,7 +752,7 @@ function feedbackSchliessen(e) {
 function feedbackSenden() {
   var text = document.getElementById('feedback-textarea').value.trim();
   if (!text) { document.getElementById('feedback-textarea').focus(); return; }
-  window.location.href = 'mailto:adrian.jestaedt@gmail.com'
+  window.location.href = 'mailto:rnfulda@gmail.com'
     + '?subject=' + encodeURIComponent('Vorschlag: Gemeinde Flieden')
     + '&body=' + encodeURIComponent(text);
 }
