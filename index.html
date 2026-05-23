@@ -1962,6 +1962,7 @@ const VERANSTALTUNG_DATUM = [
   /\bum\s+\d{1,2}[:.h]\d{0,2}\s*uhr\b/i,
   /\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i,
   /\b(nächste[nrs]?|diese[nrs]?|kommende[nrs]?)\s+(woche|wochenende|monat)\b/i,
+  /\b(pfingstmontag|pfingstsonntag|ostermontag|ostersonntag|karfreitag|karsamstag|rosenm(?:on)?tag|heiligabend|silvester|neujahrstag?|himmelfahrt|fronleichnam|allerheiligen|reformationstag)\b/i,
 ];
 const VERANSTALTUNG_KEYS = [
   'veranstaltung','konzert','festival','ausstellung','theater','oper','aufführung',
@@ -1994,6 +1995,9 @@ function veranstaltungsDatumExtrahieren(a) {
   // "kommenden/nächsten Wochentag" ("kommenden Sonntag")
   m = text.match(/\b(?:nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
   if (m) { const i = TAGE.indexOf(m[1].toLowerCase()); return i >= 0 ? TAGE_K[i] : m[1]; }
+  // Feiertage / zusammengesetzte Tagesnamen ("Pfingstmontag", "Heiligabend" …)
+  m = text.match(/\b(pfingstmontag|pfingstsonntag|ostermontag|ostersonntag|karfreitag|karsamstag|rosenm(?:on)?tag|heiligabend|silvester|neujahrstag?|himmelfahrt|fronleichnam|allerheiligen|reformationstag)\b/i);
+  if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1);
   // Wochentag allein
   m = text.match(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
   if (m) { const i = TAGE.indexOf(m[1].toLowerCase()); return i >= 0 ? TAGE_K[i] + ' ' + m[1].charAt(0).toUpperCase() + m[1].slice(1).replace(m[1].slice(0,1), '') : m[1]; }
@@ -2023,6 +2027,9 @@ function veranstaltungsDatumIstVergangen(a) {
   if (m) { const j = m[3] ? (m[3].length <= 2 ? 2000 + parseInt(m[3]) : parseInt(m[3])) : heute.getFullYear(); return new Date(j, parseInt(m[2]) - 1, parseInt(m[1])) < heute; }
   // "kommenden/nächsten Wochentag" → definitiv zukünftig
   if (/\b(nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i.test(text)) return false;
+  // Feiertage: vergangen nur wenn explizit "letzten/vergangenen" davor, sonst zukünftig
+  if (/\b(?:letzt(?:en|em|e)?|vergangen(?:en|em)?)\s+(?:pfingstmontag|pfingstsonntag|ostermontag|ostersonntag|karfreitag|karsamstag|rosenm(?:on)?tag|heiligabend|silvester|neujahrstag?|himmelfahrt|fronleichnam|allerheiligen|reformationstag)\b/i.test(text)) return true;
+  if (/\b(pfingstmontag|pfingstsonntag|ostermontag|ostersonntag|karfreitag|karsamstag|rosenm(?:on)?tag|heiligabend|silvester|neujahrstag?|himmelfahrt|fronleichnam|allerheiligen|reformationstag)\b/i.test(text)) return false;
   // "letzten Samstag" → vergangen
   if (/\b(letzt(?:en|em|e)?|vergangen(?:en|em)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i.test(text)) return true;
   // Wochentag allein → vergangen wenn früher in der Woche als heute
@@ -2031,6 +2038,30 @@ function veranstaltungsDatumIstVergangen(a) {
   // "nächste/kommende Woche/Wochenende/Monat" → definitiv zukünftig
   if (/\b(nächste[nrs]?|kommende[nrs]?)\s+(woche|wochenende|monat)\b/i.test(text)) return false;
   return false;
+}
+
+function veranstaltungsDatumAlsDate(a) {
+  const text = ((a.titel || '') + ' ' + (a.beschreibung || '') + ' ' + (a.tags || '')).toLowerCase();
+  const heute = new Date(); heute.setHours(0, 0, 0, 0);
+  const M = {januar:0,februar:1,märz:2,april:3,mai:4,juni:5,juli:6,august:7,september:8,oktober:9,november:10,dezember:11};
+  const TAGE = ['sonntag','montag','dienstag','mittwoch','donnerstag','freitag','samstag'];
+  let m;
+  // Wochentag + Datum
+  m = text.match(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)[,\s]+(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)(?:\s+(\d{4}))?\b/i);
+  if (m) { try { return new Date(m[4] ? parseInt(m[4]) : heute.getFullYear(), M[m[3].toLowerCase()], parseInt(m[2])); } catch(e){} }
+  // Datum + Monatsname
+  m = text.match(/\b(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)(?:\s+(\d{4}))?\b/i);
+  if (m) { try { return new Date(m[3] ? parseInt(m[3]) : heute.getFullYear(), M[m[2].toLowerCase()], parseInt(m[1])); } catch(e){} }
+  // Numerisch
+  m = text.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{2,4})?\b/);
+  if (m) { const j = m[3] ? (m[3].length<=2 ? 2000+parseInt(m[3]) : parseInt(m[3])) : heute.getFullYear(); try { return new Date(j, parseInt(m[2])-1, parseInt(m[1])); } catch(e){} }
+  // "kommenden/nächsten [Wochentag]" → nächstes Vorkommen berechnen
+  m = text.match(/\b(?:nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
+  if (m) { const idx = TAGE.indexOf(m[1].toLowerCase()); let diff = idx - heute.getDay(); if (diff <= 0) diff += 7; const d = new Date(heute); d.setDate(d.getDate() + diff); return d; }
+  // Wochentag allein → Vorkommen in dieser Woche
+  m = text.match(/\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i);
+  if (m) { const idx = TAGE.indexOf(m[1].toLowerCase()); const d = new Date(heute); d.setDate(d.getDate() + (idx - heute.getDay())); return d; }
+  return null; // Feiertage / Relativangaben ohne berechenbare Datum
 }
 
 function kategorieBestimmen(titel, tags) {
@@ -2294,6 +2325,19 @@ function artikelAnzeigen() {
   _aktiverWerbungArtikel = alleArtikel.find(a => a.typ === 'Werbung') || null;
 
   const gefiltert = gefilterteArtikel();
+  if (aktivKategorie === 'Veranstaltungen') {
+    const _heute = new Date(); _heute.setHours(0, 0, 0, 0);
+    gefiltert.sort((a, b) => {
+      const da = veranstaltungsDatumAlsDate(a), db = veranstaltungsDatumAlsDate(b);
+      const aV = veranstaltungsDatumIstVergangen(a), bV = veranstaltungsDatumIstVergangen(b);
+      if (!aV && bV) return -1;
+      if (aV && !bV) return 1;
+      if (da && db) return aV ? db - da : da - db;
+      if (da) return -1;
+      if (db) return 1;
+      return 0;
+    });
+  }
   const grid = document.getElementById('artikel-grid');
   grid.innerHTML = ''; gezeigt = 0;
   const angzeigt = Math.min(PRO_SEITE, gefiltert.length);

@@ -89,6 +89,7 @@ _VERANST_DATUM_RGX = [
     re.compile(r'\bum\s+\d{1,2}[:.h]\d{0,2}\s*uhr\b', re.I),
     re.compile(r'\b(?:montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b', re.I),
     re.compile(r'\b(?:nächste[nrs]?|diese[nrs]?|kommende[nrs]?)\s+(?:woche|wochenende|monat)\b', re.I),
+    re.compile(r'\b(?:pfingstmontag|pfingstsonntag|ostermontag|ostersonntag|karfreitag|karsamstag|rosenm(?:on)?tag|heiligabend|silvester|neujahrstag?|himmelfahrt|fronleichnam|allerheiligen|reformationstag)\b', re.I),
 ]
 
 _VERANST_KEYS = [
