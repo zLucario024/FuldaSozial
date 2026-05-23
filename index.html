@@ -2368,17 +2368,18 @@ function artikelAnzeigen() {
     document.getElementById('archiv-hinweis').style.display = 'none';
     return;
   }
-  let _echteZaehler = 0;
-  gefiltert.slice(0, PRO_SEITE).forEach((a, i) => {
+  // Ad: show once only, after article 8 (not pinned to position 0)
+  let _werbeEingefuegt = false;
+  const _echteArtikel = gefiltert.filter(a => a.typ !== 'Werbung');
+  const _slice = _echteArtikel.slice(0, PRO_SEITE);
+  _slice.forEach((a, i) => {
     grid.appendChild(karteErstellen(a, i));
-    if (a.typ !== 'Werbung') {
-      _echteZaehler++;
-      if (_aktiverWerbungArtikel && _echteZaehler % 10 === 0) {
-        grid.appendChild(werbeKarteErstellen(_aktiverWerbungArtikel));
-      }
+    if (_aktiverWerbungArtikel && !_werbeEingefuegt && (i === 7 || i === _slice.length - 1)) {
+      grid.appendChild(werbeKarteErstellen(_aktiverWerbungArtikel));
+      _werbeEingefuegt = true;
     }
   });
-  gezeigt = angzeigt;
+  gezeigt = _slice.length;
   const nochMehr = gezeigt < gefiltert.length || hatMehr;
   document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
