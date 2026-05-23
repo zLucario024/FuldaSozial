@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
-Generiert den wöchentlichen Instagram-Post "Fulda der Woche".
+Wochenbriefing – Datenbasis für Instagram-Posts.
 
 Aufruf:
     python instagram_woche.py              # laufende Woche bisher
     python instagram_woche.py --vorwoche   # abgeschlossene Vorwoche (für Montag-Post)
+
+Ausgabe: strukturierter Datenkatalog (kein fertiger Post) –
+         Abschnitte einzeln kopierbar für eigene Zusammenstellung.
 """
 
 import io
@@ -12,7 +15,7 @@ import json
 import os
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 
 import psycopg2
@@ -51,6 +54,12 @@ WAPPEN_NAMEN = {
 
 _IGNORIERTE_REGIONEN = frozenset({'hessen', 'osthessen', 'bundesweit'})
 
+# Tags, die keine inhaltliche Bedeutung tragen (Ortsrauschen)
+_ORT_BLACKLIST = frozenset(v.lower() for v in WAPPEN_NAMEN.values()) | frozenset({
+    'landkreis fulda', 'osthessen', 'hessen', 'deutschland', 'fulda',
+    'region fulda', 'landkreis',
+})
+
 # ── Kategorien-Keywords ────────────────────────────────────────────────────────
 
 def _lade_kategorie_keywords() -> dict:
@@ -72,7 +81,7 @@ def kategorie_bestimmen(titel: str, tags: str) -> str:
     return 'Sonstiges'
 
 
-# ── Veranstaltungs-Erkennung (portiert aus index.html) ────────────────────────
+# ── Veranstaltungs-Erkennung ───────────────────────────────────────────────────
 
 _VERANST_DATUM_RGX = [
     re.compile(r'\b\d{1,2}\.\s*(?:januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)\b', re.I),
@@ -97,7 +106,6 @@ _MONAT_NR = {
     'juli': 7, 'august': 8, 'september': 9, 'oktober': 10, 'november': 11, 'dezember': 12,
 }
 
-# JS-style weekday index (0=Sonntag, 1=Montag … 6=Samstag) – spiegelt index.html
 _TAG_JS = {
     'sonntag': 0, 'montag': 1, 'dienstag': 2, 'mittwoch': 3,
     'donnerstag': 4, 'freitag': 5, 'samstag': 6,
@@ -114,10 +122,8 @@ def ist_veranstaltung(a: dict) -> bool:
 
 
 def ist_vergangen(a: dict, heute: date) -> bool:
-    """Portiert 1:1 aus veranstaltungsDatumIstVergangen() in index.html."""
     text = _artikel_text(a)
 
-    # Wochentag + Monatsname: "Samstag, 24. Mai [2026]"
     m = re.search(
         r'\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)[,\s]+'
         r'(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)'
@@ -129,7 +135,6 @@ def ist_vergangen(a: dict, heute: date) -> bool:
         except ValueError:
             pass
 
-    # Datum + Monatsname: "15. Mai [2026]"
     m = re.search(
         r'\b(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)'
         r'(?:\s+(\d{4}))?\b', text, re.I)
@@ -140,7 +145,6 @@ def ist_vergangen(a: dict, heute: date) -> bool:
         except ValueError:
             pass
 
-    # Numerisch: "15.06." / "15.06.2026"
     m = re.search(r'\b(\d{1,2})\.(\d{1,2})\.(\d{2,4})?\b', text)
     if m:
         j_raw = m.group(3)
@@ -150,23 +154,19 @@ def ist_vergangen(a: dict, heute: date) -> bool:
         except ValueError:
             pass
 
-    # "kommenden/nächsten Wochentag" → definitiv zukünftig
     if re.search(r'\b(?:nächst(?:en|em|e)?|kommend(?:en|em|e)?)\s+'
                  r'(?:montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b', text, re.I):
         return False
 
-    # "letzten/vergangenen Wochentag" → vergangen
     if re.search(r'\b(?:letzt(?:en|em|e)?|vergangen(?:en|em)?)\s+'
                  r'(?:montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b', text, re.I):
         return True
 
-    # Wochentag allein → vergangen wenn Index kleiner als heutiger JS-Wochentag
     m = re.search(r'\b(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b', text, re.I)
     if m:
-        heute_js = (heute.weekday() + 1) % 7  # Python Mon=0 → JS Mon=1, Sun=0
+        heute_js = (heute.weekday() + 1) % 7
         return _TAG_JS.get(m.group(1).lower(), -1) < heute_js
 
-    # "nächste/kommende Woche/Wochenende/Monat" → zukünftig
     if re.search(r'\b(?:nächste[nrs]?|kommende[nrs]?)\s+(?:woche|wochenende|monat)\b', text, re.I):
         return False
 
@@ -182,8 +182,8 @@ _STOPPWOERTER = frozenset({
     'und', 'oder', 'aber', 'doch', 'wenn', 'weil', 'dass', 'als', 'wie',
     'auf', 'an', 'zu', 'über', 'unter', 'durch', 'gegen', 'vor', 'seit',
     'auch', 'noch', 'schon', 'nur', 'nicht', 'mehr', 'sehr', 'neue', 'neuen',
-    'laut', 'beim', 'gibt', 'gab', 'hatte', 'beim', 'zwei', 'drei', 'vier',
-    'nach', 'beim', 'wird', 'gaben', 'haben',
+    'laut', 'beim', 'gibt', 'gab', 'hatte', 'zwei', 'drei', 'vier',
+    'nach', 'wird', 'gaben', 'haben',
 })
 
 
@@ -192,16 +192,14 @@ def _schluesselwoerter(titel: str) -> frozenset:
     return frozenset(w for w in woerter if w not in _STOPPWOERTER)
 
 
-def top_multiquellen_events(rows: list, top_n: int = 3) -> list:
-    """Findet Ereignisse, über die die meisten verschiedenen Quellen berichteten."""
+def top_multiquellen_events(rows: list, top_n: int = 5) -> list:
     cluster_liste: list[list[dict]] = []
-
     for artikel in rows:
         kw = _schluesselwoerter(artikel['titel'])
         if len(kw) < 2:
             continue
         beste_gruppe = None
-        bester_score = 1  # Minimum: mindestens 2 gemeinsame Wörter
+        bester_score = 1
         for gruppe in cluster_liste:
             ref_kw = _schluesselwoerter(gruppe[0]['titel'])
             gemeinsam = len(kw & ref_kw)
@@ -221,20 +219,33 @@ def top_multiquellen_events(rows: list, top_n: int = 3) -> list:
                 'titel':   gruppe[0]['titel'],
                 'quellen': quellen,
                 'anzahl':  len(quellen),
+                'datum':   gruppe[0].get('datum', '')[:10],
             })
 
     multi.sort(key=lambda x: x['anzahl'], reverse=True)
     return multi[:top_n]
 
 
-# ── Umami-Klick-Daten ─────────────────────────────────────────────────────────
+# ── Top-Tags ───────────────────────────────────────────────────────────────────
+
+def top_tags_aus_artikeln(artikels: list, top_n: int = 25) -> list[tuple[str, int]]:
+    zaehler: Counter = Counter()
+    for a in artikels:
+        tags_raw = a.get('tags', '') or ''
+        for tag in re.split(r'[·,]', tags_raw):
+            tag = tag.strip()
+            if len(tag) >= 3 and tag.lower() not in _ORT_BLACKLIST:
+                zaehler[tag] += 1
+    return zaehler.most_common(top_n)
+
+
+# ── Umami ──────────────────────────────────────────────────────────────────────
 
 _UMAMI_BASE    = 'https://api.umami.is/v1'
 _UMAMI_SITE_ID = 'ff8bd343-419c-41c7-86fe-c96a60506d8a'
 
 
-def umami_top_klicks(von: datetime, bis: datetime, top_n: int = 1) -> list:
-    """Fragt Umami nach den meistgeklickten Artikeln im Zeitraum (Event: artikel-geklickt)."""
+def umami_top_klicks(von: datetime, bis: datetime, top_n: int = 5) -> list:
     api_key = os.getenv('UMAMI_API_KEY')
     if not api_key:
         return []
@@ -262,6 +273,18 @@ def umami_top_klicks(von: datetime, bis: datetime, top_n: int = 1) -> list:
         return []
 
 
+# ── Hilfsfunktionen Ausgabe ────────────────────────────────────────────────────
+
+def _titel_kurz(t: str, n: int = 70) -> str:
+    return t[:n] + ('…' if len(t) > n else '')
+
+def _datum_kurz(iso: str) -> str:
+    return iso[8:10] + '.' + iso[5:7] + '.' if iso and len(iso) >= 10 else ''
+
+def _abschnitt(titel: str) -> None:
+    print(f"\n── {titel} {'─' * max(0, 54 - len(titel))}")
+
+
 # ── Hauptprogramm ──────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -270,7 +293,7 @@ def main() -> None:
     vorwoche  = '--vorwoche' in sys.argv
     heute     = datetime.now()
     heute_d   = heute.date()
-    wochentag = heute.weekday()  # 0=Mo
+    wochentag = heute.weekday()
 
     if vorwoche:
         montag = heute - timedelta(days=wochentag + 7)
@@ -286,7 +309,6 @@ def main() -> None:
     conn   = psycopg2.connect(os.getenv("DATABASE_URL"))
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    # Artikel der Woche
     cursor.execute("""
         SELECT titel, region, tags, quelle, beschreibung, datum, link
         FROM artikel
@@ -295,7 +317,6 @@ def main() -> None:
     """, (von.strftime('%Y-%m-%d %H:%M:%S'), bis.strftime('%Y-%m-%d %H:%M:%S')))
     rows = [dict(r) for r in cursor.fetchall()]
 
-    # Breiteres Fenster für Veranstaltungs-Ankündigungen (14 Tage)
     vor14 = (heute - timedelta(days=14)).strftime('%Y-%m-%d %H:%M:%S')
     cursor.execute("""
         SELECT titel, region, tags, quelle, beschreibung, datum, link
@@ -312,129 +333,175 @@ def main() -> None:
         print(f"Keine Artikel für KW {kw}/{jahr} gefunden.")
         return
 
-    lokale = [r for r in rows if r.get('region') not in _IGNORIERTE_REGIONEN]
-    gesamt = len(lokale)
+    lokale  = [r for r in rows if r.get('region') not in _IGNORIERTE_REGIONEN]
+    gesamt  = len(lokale)
+    bis_str = (bis - timedelta(seconds=1)).strftime('%d.%m.%Y')
 
-    # Kategorien-Ranking (alle, ohne Sonstiges)
-    kategorien: dict[str, int] = defaultdict(int)
+    # ── Aggregationen ──────────────────────────────────────────────────────────
+
+    # Kategorie je Artikel
     for r in lokale:
-        kat = kategorie_bestimmen(r['titel'], r['tags'])
-        kategorien[kat] += 1
-    alle_kategorien = [
-        (k, n) for k, n in sorted(kategorien.items(), key=lambda x: x[1], reverse=True)
+        r['_kat'] = kategorie_bestimmen(r['titel'], r['tags'])
+
+    # Kategorie-Ranking
+    kat_zaehler: Counter = Counter(r['_kat'] for r in lokale)
+    kategorien_ranked = [
+        (k, n) for k, n in kat_zaehler.most_common()
         if k != 'Sonstiges'
     ]
+    # Sonstiges ans Ende
+    if kat_zaehler.get('Sonstiges'):
+        kategorien_ranked.append(('Sonstiges', kat_zaehler['Sonstiges']))
 
-    # Top-5-Gemeinden (ohne Fulda und ohne Landkreis-Gesamt)
-    regionen: dict[str, int] = defaultdict(int)
+    # Gemeinden-Ranking (alle)
+    reg_zaehler: Counter = Counter()
     for r in lokale:
         reg = r.get('region')
-        if reg and reg in WAPPEN_NAMEN and reg not in ('fulda', 'landkreis-fulda'):
-            regionen[reg] += 1
-    top_gemeinden = sorted(regionen.items(), key=lambda x: x[1], reverse=True)[:5]
+        if reg and reg in WAPPEN_NAMEN:
+            reg_zaehler[reg] += 1
+
+    # Matrix: Gemeinde → Kategorie → Artikel-Liste
+    matrix: dict[str, dict[str, list]] = defaultdict(lambda: defaultdict(list))
+    for r in lokale:
+        ort = r.get('region', '')
+        if ort in WAPPEN_NAMEN:
+            matrix[ort][r['_kat']].append(r)
 
     # Multi-Quellen-Events
-    multi_events = top_multiquellen_events(lokale, top_n=3)
+    multi_events = top_multiquellen_events(lokale, top_n=5)
 
-    # Meistgeklickter Artikel (Umami)
-    top_klicks = umami_top_klicks(von, bis, top_n=1)
+    # Top-Tags
+    top_tags = top_tags_aus_artikeln(lokale, top_n=25)
 
-    # Bevorstehende Veranstaltungen
+    # Umami
+    top_klicks = umami_top_klicks(von, bis, top_n=5)
+
+    # Bevorstehende Veranstaltungen (14-Tage-Fenster)
     upcoming = [
         a for a in alle_recent
         if ist_veranstaltung(a) and not ist_vergangen(a, heute_d)
-    ][:2]
-
-    # ── Caption bauen ──────────────────────────────────────────────────────────
-    L = []
-
-    L.append(f"📰 FULDA DER WOCHE — KW {kw}/{jahr}")
-    L.append(f"📊 {gesamt} Meldungen aus dem Landkreis")
-    L.append("")
-
-    # Gemeinden
-    L.append("📍 AKTIVSTE GEMEINDEN (ohne Fulda)")
-    for i, (ort, anzahl) in enumerate(top_gemeinden, 1):
-        L.append(f"{i}. {WAPPEN_NAMEN[ort]} – {anzahl}")
-    L.append("")
-
-    # Kategorie-Ranking
-    L.append("📊 THEMEN DER WOCHE")
-    for kat, anzahl in alle_kategorien:
-        emoji = KATEGORIE_EMOJI.get(kat, '📰')
-        L.append(f"{emoji} {kat}: {anzahl}")
-    L.append("")
-
-    # Meistgeklickter Artikel
-    if top_klicks:
-        tk = top_klicks[0]
-        titel_kurz = tk['titel'][:65] + ('…' if len(tk['titel']) > 65 else '')
-        L.append('🏆 MEISTGEKLICKTER ARTIKEL')
-        L.append(f"👆 {titel_kurz}")
-        L.append(f"   {tk['klicks']} Klicks diese Woche")
-        L.append('')
-
-    # Meistberichtete Ereignisse
-    if multi_events:
-        L.append("🗞️ MEISTBERICHTETE EREIGNISSE")
-        for i, ev in enumerate(multi_events, 1):
-            quellen_str = " · ".join(ev['quellen'])
-            titel_kurz  = ev['titel'][:65] + ("…" if len(ev['titel']) > 65 else "")
-            L.append(f"{i}. {titel_kurz}")
-            L.append(f"   📡 {ev['anzahl']} Quellen: {quellen_str}")
-        L.append("")
-
-    # Bevorstehende Veranstaltungen
-    if upcoming:
-        L.append("📅 BALD IN DEINER REGION")
-        for a in upcoming:
-            ort_name   = WAPPEN_NAMEN.get(a.get('region') or '', '') or 'Landkreis Fulda'
-            titel_kurz = a['titel'][:65] + ("…" if len(a['titel']) > 65 else "")
-            L.append(f"📌 {titel_kurz}")
-            L.append(f"   {ort_name}")
-        L.append("")
-
-    L.append("📲 Alle Meldungen kostenlos auf rnfulda.de")
-    L.append("🔔 Push-Nachrichten für deine Gemeinde aktivieren!")
-    L.append("")
-
-    # Hashtags
-    basis       = ["#Fulda", "#LandkreisFulda", "#Osthessen", "#RegioNachrichten",
-                   "#NachrichtenFulda", "#Lokalnachrichten", "#Hessen"]
-    basis_lower = {h.lower() for h in basis}
-    extra: list[str] = []
-    for ort, _ in top_gemeinden[:3]:
-        tag = "#" + WAPPEN_NAMEN[ort].replace(" ", "").replace("-", "")
-        if tag.lower() not in basis_lower:
-            extra.append(tag)
-    L.append(" ".join(basis + extra))
-
-    caption = "\n".join(L)
+    ]
 
     # ── Ausgabe ────────────────────────────────────────────────────────────────
-    sep = "-" * 55
-    print(sep)
-    print(f"  Instagram KW {kw}/{jahr}  |  "
-          f"{von.strftime('%d.%m.')}–{(bis - timedelta(seconds=1)).strftime('%d.%m.%Y')}")
-    print(f"  Lokale Artikel: {gesamt}  |  Gesamt inkl. überregional: {len(rows)}")
-    print(sep)
-    print()
-    print(caption)
-    print()
-    print(sep)
-    print(f"  Canva / Grafik:")
-    print(f"    Hero-Zahl : {gesamt}")
-    print(f"    KW-Badge  : KW {kw}")
-    print(f"    Top-Thema : {alle_kategorien[0][0] if alle_kategorien else '-'}")
-    top_ort_name = WAPPEN_NAMEN.get(top_gemeinden[0][0], '-') if top_gemeinden else '-'
-    print(f"    Top-Ort   : {top_ort_name} (excl. Fulda)")
-    print(f"    Zeichen   : {len(caption)} / 2200 (Instagram-Limit)")
-    print(sep)
-    if not top_klicks:
-        print()
-        print("  [!] Kein UMAMI_API_KEY in .env → Klick-Daten übersprungen.")
-        print("      Key unter cloud.umami.is → Profil → API Keys erstellen.")
-    print(sep)
+    SEP = '═' * 60
+
+    print(SEP)
+    print(f"  WOCHENBRIEFING  KW {kw}/{jahr}  │  {von.strftime('%d.%m.')}–{bis_str}")
+    print(f"  Lokale Artikel: {gesamt}  │  gesamt inkl. überregional: {len(rows)}")
+    print(SEP)
+
+    # ── [1] GEMEINDEN ──────────────────────────────────────────────────────────
+    _abschnitt('[1] GEMEINDEN — alle, nach Artikelzahl')
+    for ort, n in reg_zaehler.most_common():
+        name = WAPPEN_NAMEN[ort]
+        balken = '█' * min(n, 30)
+        print(f"  {name:<20}  {balken}  {n}")
+
+    # ── [2] THEMEN ─────────────────────────────────────────────────────────────
+    _abschnitt('[2] THEMEN — Kategorien dieser Woche')
+    for kat, n in kategorien_ranked:
+        emoji = KATEGORIE_EMOJI.get(kat, '📰')
+        pct   = round(n / gesamt * 100) if gesamt else 0
+        balken = '█' * min(n, 25)
+        print(f"  {emoji} {kat:<25}  {balken}  {n} ({pct}%)")
+
+    # ── [3] TOP STICHWORTE ─────────────────────────────────────────────────────
+    _abschnitt('[3] TOP STICHWORTE — häufigste Tags aus Artikeln')
+    if top_tags:
+        max_n = top_tags[0][1]
+        for tag, n in top_tags:
+            balken = '▪' * round(n / max_n * 20)
+            print(f"  {tag:<30}  {balken}  ×{n}")
+    else:
+        print("  (keine Tags vorhanden)")
+
+    # ── [4] ARTIKEL JE GEMEINDE & KATEGORIE ───────────────────────────────────
+    _abschnitt('[4] ARTIKEL JE GEMEINDE & KATEGORIE — Beispiele')
+    print("  (je Kategorie: bis zu 2 Artikel; nur Gemeinden mit ≥3 Artikeln)")
+
+    for ort, n in reg_zaehler.most_common():
+        if n < 3:
+            continue
+        name = WAPPEN_NAMEN[ort]
+        kats_hier = matrix[ort]
+        print(f"\n  ┌─ {name.upper()} ({n} Artikel)")
+        for kat, arts in sorted(kats_hier.items(), key=lambda x: len(x[1]), reverse=True):
+            emoji = KATEGORIE_EMOJI.get(kat, '📰')
+            print(f"  │  {emoji} {kat} ({len(arts)})")
+            for a in arts[:2]:
+                datum  = _datum_kurz(a.get('datum', '') or '')
+                quelle = (a.get('quelle') or '').split('.')[0]  # domain ohne TLD
+                print(f"  │      → {_titel_kurz(a['titel'], 65)}")
+                print(f"  │        {quelle}  {datum}  {a.get('link','')}")
+        print(f"  └{'─'*50}")
+
+    # ── [5] MEISTBERICHTETE EREIGNISSE ────────────────────────────────────────
+    _abschnitt('[5] MEISTBERICHTETE EREIGNISSE — mehrere Quellen')
+    if multi_events:
+        for i, ev in enumerate(multi_events, 1):
+            print(f"  {i}. {_titel_kurz(ev['titel'])}  [{ev['datum']}]")
+            print(f"     {ev['anzahl']} Quellen: {' · '.join(ev['quellen'])}")
+    else:
+        print("  (keine Ereignisse mit mehreren Quellen)")
+
+    # ── [6] BEVORSTEHENDE VERANSTALTUNGEN ─────────────────────────────────────
+    _abschnitt('[6] BEVORSTEHENDE VERANSTALTUNGEN (14-Tage-Fenster)')
+    if upcoming:
+        seen: set = set()
+        for a in upcoming:
+            key = a['titel'][:40]
+            if key in seen:
+                continue
+            seen.add(key)
+            ort_name = WAPPEN_NAMEN.get(a.get('region') or '', 'Landkreis Fulda')
+            datum    = _datum_kurz(a.get('datum', '') or '')
+            print(f"  📅 {_titel_kurz(a['titel'])}")
+            print(f"     {ort_name}  │  {datum}  │  {a.get('quelle','')}")
+    else:
+        print("  (keine bevorstehenden Veranstaltungen erkannt)")
+
+    # ── [7] MEISTGEKLICKT (Umami) ─────────────────────────────────────────────
+    _abschnitt('[7] MEISTGEKLICKT diese Woche (Umami)')
+    if top_klicks:
+        for i, tk in enumerate(top_klicks, 1):
+            print(f"  {i}. {_titel_kurz(tk['titel'])}  ({tk['klicks']} Klicks)")
+    else:
+        print("  (kein UMAMI_API_KEY → übersprungen)")
+
+    # ── [8] CANVA / GRAFIK-DATEN ───────────────────────────────────────────────
+    _abschnitt('[8] CANVA / GRAFIK-DATEN')
+    top_ort_name = WAPPEN_NAMEN.get(reg_zaehler.most_common(1)[0][0], '-') if reg_zaehler else '-'
+    print(f"  Hero-Zahl  : {gesamt}")
+    print(f"  KW-Badge   : KW {kw}")
+    print(f"  Top-Thema  : {kategorien_ranked[0][0] if kategorien_ranked else '-'}")
+    print(f"  Top-Ort    : {top_ort_name}  (inkl. Fulda)")
+    # Top-Ort ohne Fulda
+    ohne_fulda = [(o, n) for o, n in reg_zaehler.most_common() if o not in ('fulda', 'landkreis-fulda')]
+    if ohne_fulda:
+        print(f"  Top-Ort*   : {WAPPEN_NAMEN[ohne_fulda[0][0]]}  (* excl. Fulda)")
+
+    # ── [9] HASHTAG-BAUSTEINE ─────────────────────────────────────────────────
+    _abschnitt('[9] HASHTAG-BAUSTEINE — kopierfertig')
+    basis = ["#Fulda", "#LandkreisFulda", "#Osthessen", "#RegioNachrichten",
+             "#NachrichtenFulda", "#Lokalnachrichten", "#Hessen"]
+    basis_lower = {h.lower() for h in basis}
+    print(f"  Basis:  {' '.join(basis)}")
+    extra_ort: list[str] = []
+    for ort, _ in reg_zaehler.most_common(5):
+        if ort in ('landkreis-fulda',):
+            continue
+        tag = "#" + WAPPEN_NAMEN[ort].replace(" ", "").replace("-", "")
+        if tag.lower() not in basis_lower:
+            extra_ort.append(tag)
+    if extra_ort:
+        print(f"  Orte:   {' '.join(extra_ort)}")
+    extra_kat: list[str] = []
+    for kat, _ in kategorien_ranked[:3]:
+        tag = "#" + kat.replace(" ", "").replace("&", "").replace("ä","ae").replace("ü","ue").replace("ö","oe")
+        extra_kat.append(tag)
+    print(f"  Themen: {' '.join(extra_kat)}")
+
+    print(f"\n{SEP}")
 
 
 if __name__ == "__main__":
