@@ -2428,7 +2428,7 @@ function artikelAnzeigen() {
     }
   });
   gezeigt = _slice.length;
-  const nochMehr = gezeigt < gefiltert.length || hatMehr;
+  const nochMehr = gezeigt < gefiltert.length || hatMehr || (!filterIstAktiv() && ladeModusTage < 30);
   document.getElementById('mehr-btn').style.display = nochMehr ? 'block' : 'none';
   document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
   karteZahlenAktualisieren();
@@ -2452,10 +2452,17 @@ async function mehrLaden() {
       const suffix = hatMehr ? '+' : '';
       document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length}${suffix} Artikeln`;
     }
-    const nochMehr = gezeigt < gefiltert.length || hatMehr;
+    const nochMehr = gezeigt < gefiltert.length || hatMehr || (!filterIstAktiv() && ladeModusTage < 30);
     btn.style.display = nochMehr ? 'block' : 'none';
     document.getElementById('archiv-hinweis').style.display = !nochMehr ? 'block' : 'none';
     return;
+  }
+
+  // Extend time window to 30 days when default view has exhausted its 1-day results
+  if (!hatMehr && !filterIstAktiv() && ladeModusTage < 30) {
+    ladeModusTage = 30;
+    aktuellerOffset = 0;
+    hatMehr = true;
   }
 
   // Case B: keep fetching server pages until we have PRO_SEITE new matching articles or run out
@@ -2488,7 +2495,7 @@ async function mehrLaden() {
   heimatNeuZaehlen();
   btn.disabled = false;
   btn.textContent = 'Mehr laden';
-  const nochMehr = gezeigt < gefiltert.length || hatMehr;
+  const nochMehr = gezeigt < gefiltert.length || hatMehr || (!filterIstAktiv() && ladeModusTage < 30);
   if (filterIstAktiv()) {
     const suffix = hatMehr ? '+' : '';
     document.getElementById('anzahl-text').textContent = `${gezeigt} von ${gefiltert.length}${suffix} Artikeln`;
